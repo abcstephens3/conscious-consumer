@@ -1,6 +1,7 @@
 import os
 port = int(os.environ.get("PORT", 8000))
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fec import get_fec_donations
 from news import get_news_sentiment
@@ -24,6 +25,10 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"message": "Conscious Consumer API is running"}
+    
+@app.get("/app")
+def serve_frontend():
+    return FileResponse("index.html")    
 
 @app.post("/search")
 def search_business(business_name: str):
