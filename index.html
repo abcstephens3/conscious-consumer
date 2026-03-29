@@ -502,7 +502,7 @@ async function searchBusiness() {
     resultsDiv.innerHTML = "<div class='loading'>Searching records...</div>";
     try {
         const response = await fetch(
-            `http://127.0.0.1:8000/search?business_name=${encodeURIComponent(name)}`,
+            `/search?business_name=${encodeURIComponent(name)}`,
             { method: 'POST' }
         );
         const data = await response.json();
@@ -550,8 +550,8 @@ async function searchTravel() {
     resultsDiv.innerHTML = "<div class='loading'>Looking up safety data...</div>";
     try {
         const [travelRes, localRes] = await Promise.all([
-            fetch(`http://127.0.0.1:8000/travel?location=${encodeURIComponent(location)}`, { method: 'POST' }),
-            fetch(`http://127.0.0.1:8000/local?location=${encodeURIComponent(location)}`, { method: 'POST' })
+            fetch(`/travel?location=${encodeURIComponent(location)}`, { method: 'POST' }),
+            fetch(`/local?location=${encodeURIComponent(location)}`, { method: 'POST' })
         ]);
         const travelData = await travelRes.json();
         const localData = await localRes.json();
