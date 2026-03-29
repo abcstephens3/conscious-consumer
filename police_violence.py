@@ -1,12 +1,22 @@
 import pandas as pd
 
 # Load the dataset once at startup
+import os
+import requests as req
+
+def download_dataset():
+    url = "https://mappingpoliceviolence.us/s/MPVDatasetDownload.xlsx"
+    path = "mpv_data.xlsx"
+    if not os.path.exists(path):
+        print("Downloading MPV dataset...")
+        r = req.get(url, timeout=30)
+        with open(path, 'wb') as f:
+            f.write(r.content)
+        print("MPV dataset downloaded.")
+
 try:
+    download_dataset()
     df = pd.read_excel('mpv_data.xlsx')
-    df.columns = df.columns.str.strip()
-    df['State'] = df['State'].str.strip().str.upper()
-    df['City'] = df['City'].str.strip().str.lower()
-    DATASET_LOADED = True
 except Exception as e:
     print(f"Warning: Could not load MPV dataset: {e}")
     DATASET_LOADED = False
