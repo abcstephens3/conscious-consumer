@@ -37,7 +37,7 @@ def search_nearby_businesses(lat, lon, radius=5000):
                 "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
                 params={
                     "location": f"{lat},{lon}",
-                    "radius": radius,
+                    "rankby": "distance",
                     "type": place_type,
                     "key": GOOGLE_API_KEY
                 }
