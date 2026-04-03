@@ -38,7 +38,7 @@
         .topbar { background: var(--white); border-bottom: 1px solid var(--slate-200); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
         .topbar h2 { font-family: 'DM Serif Display', serif; font-size: 1.3em; color: var(--slate-900); }
         .topbar p { font-size: 0.85em; color: var(--slate-400); margin-top: 2px; }
-        .content { padding: 32px; }
+        .content { padding: 32px; max-width: 100%; overflow-x: hidden; }
         .search-bar { display: flex; gap: 0; max-width: 600px; margin-bottom: 8px; }
         .search-bar input { flex: 1; padding: 14px 18px; font-size: 0.95em; border: 1.5px solid var(--slate-200); border-right: none; border-radius: 10px 0 0 10px; outline: none; background: var(--white); color: var(--slate-900); font-family: 'DM Sans', sans-serif; transition: border-color 0.15s; }
         .search-bar input:focus { border-color: var(--coral-500); }
@@ -95,11 +95,11 @@
         .ticker-track { display: flex; gap: 0; white-space: nowrap; animation: ticker 40s linear infinite; }
         .ticker-item { color: var(--slate-400); font-size: 0.82em; padding-right: 60px; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+        ..stats-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; width: 100%; }
         .stat-card { background: var(--white); border-radius: 12px; padding: 20px; border: 1px solid var(--slate-200); text-align: center; }
         .stat-num { font-family: 'DM Serif Display', serif; font-size: 2em; color: var(--coral-600); line-height: 1; }
         .stat-label { font-size: 0.78em; color: var(--slate-400); margin-top: 6px; }
-        .featured-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .featured-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; width: 100%; }
         .featured-section { background: var(--white); border-radius: 12px; border: 1px solid var(--slate-200); overflow: hidden; }
         .featured-header { padding: 10px 16px; font-size: 0.78em; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
         .featured-header.good { background: #e6f4ea; color: #1e6e3a; }
