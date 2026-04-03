@@ -1,66 +1,51 @@
 import requests
+import os
 from esg import ESG_DATA
 from humanrights import HUMAN_RIGHTS_DATA
 
-NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
-REVERSE_URL = "https://nominatim.openstreetmap.org/reverse"
-
-HEADERS = {"User-Agent": "ConsciousConsumer/1.0"}
-
-# Business categories to search for
-SEARCH_CATEGORIES = [
-    "supermarket",
-    "fast_food",
-    "restaurant",
-    "bank",
-    "fuel",
-    "convenience",
-    "department_store",
-    "clothes"
-]
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "AIzaSyBalxLq35w_7SCawNXOq-xpzpd06cWUpyM")
 
 def geocode_location(location):
-    """Convert a city/state name to coordinates"""
+    """Convert location name to coordinates using Google"""
     try:
         response = requests.get(
-            NOMINATIM_URL,
-            headers=HEADERS,
+            "https://maps.googleapis.com/maps/api/geocode/json",
             params={
-                "q": location,
-                "format": "json",
-                "limit": 1,
-                "countrycodes": "us"
+                "address": location,
+                "key": GOOGLE_API_KEY
             }
         )
-        results = response.json()
-        if not results:
+        data = response.json()
+        if data["status"] != "OK":
             return None
-        return {
-            "lat": float(results[0]["lat"]),
-            "lon": float(results[0]["lon"]),
-            "display_name": results[0]["display_name"]
-        }
+        result = data["results"][0]
+        lat = result["geometry"]["location"]["lat"]
+        lon = result["geometry"]["location"]["lng"]
+        display = result["formatted_address"]
+        return {"lat": lat, "lon": lon, "display_name": display}
     except Exception as e:
         return None
 
-def search_nearby_businesses(lat, lon, category, radius=5000):
-    """Search for nearby businesses using Overpass API"""
+def search_nearby_businesses(lat, lon, radius=5000):
+    """Search for nearby businesses using Google Places"""
     try:
-        overpass_url = "https://overpass-api.de/api/interpreter"
-        query = f"""
-        [out:json][timeout:10];
-        node["amenity"="{category}"]
-          (around:{radius},{lat},{lon});
-        out body 10;
-        """
-        response = requests.post(
-            overpass_url,
-            data=query,
-            headers=HEADERS,
-            timeout=15
-        )
-        data = response.json()
-        return data.get("elements", [])
+        businesses = []
+        types = ["supermarket", "restaurant", "bank", "gas_station", "department_store"]
+        
+        for place_type in types:
+            response = requests.get(
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+                params={
+                    "location": f"{lat},{lon}",
+                    "radius": radius,
+                    "type": place_type,
+                    "key": GOOGLE_API_KEY
+                }
+            )
+            data = response.json()
+            businesses.extend(data.get("results", []))
+        
+        return businesses
     except Exception as e:
         return []
 
@@ -71,13 +56,12 @@ def match_business_score(name):
 
     name_lower = name.lower().strip()
 
-    # Check for partial matches in our datasets
     for key in ESG_DATA:
         key_words = key.split()
         if (name_lower == key or
             (len(key_words) > 1 and key in name_lower) or
             (len(key) > 6 and key in name_lower)):
-            
+
             esg = ESG_DATA[key]
             hr = HUMAN_RIGHTS_DATA.get(key, {})
 
@@ -94,7 +78,7 @@ def match_business_score(name):
             }
     return None
 
-def get_ethical_alternatives(category_scores):
+def get_ethical_alternatives(scored_businesses):
     """Find the best scoring businesses from our dataset"""
     alternatives = []
     seen = set()
@@ -124,7 +108,6 @@ def get_ethical_alternatives(category_scores):
 def get_local_awareness(location):
     """Main function - get local business awareness for a location"""
     try:
-        # Step 1: Geocode the location
         coords = geocode_location(location)
         if not coords:
             return {
@@ -132,23 +115,13 @@ def get_local_awareness(location):
                 "message": f"Could not find location: {location}"
             }
 
-        # Step 2: Search for nearby businesses
-        found_businesses = []
+        businesses = search_nearby_businesses(coords["lat"], coords["lon"])
+
+        seen_names = set()
         scored_businesses = []
 
-        for category in SEARCH_CATEGORIES[:4]:  # Limit to 4 categories
-            businesses = search_nearby_businesses(
-                coords["lat"],
-                coords["lon"],
-                category
-            )
-            found_businesses.extend(businesses)
-
-        # Step 3: Match against our scoring dataset
-        seen_names = set()
-        for business in found_businesses:
-            tags = business.get("tags", {})
-            name = tags.get("name", "")
+        for business in businesses:
+            name = business.get("name", "")
             if not name or name in seen_names:
                 continue
             seen_names.add(name)
@@ -157,10 +130,7 @@ def get_local_awareness(location):
             if scored:
                 scored_businesses.append(scored)
 
-        # Sort by score
         scored_businesses.sort(key=lambda x: x["score"], reverse=True)
-
-        # Step 4: Get ethical alternatives
         alternatives = get_ethical_alternatives(scored_businesses)
 
         return {
@@ -169,7 +139,7 @@ def get_local_awareness(location):
             "coordinates": {"lat": coords["lat"], "lon": coords["lon"]},
             "nearby_scored": scored_businesses[:10],
             "ethical_alternatives": alternatives,
-            "total_found": len(found_businesses)
+            "total_found": len(businesses)
         }
 
     except Exception as e:
