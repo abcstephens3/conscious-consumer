@@ -2,6 +2,7 @@ import os
 port = int(os.environ.get("PORT", 8000))
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fec import get_fec_donations
 from news import get_news_sentiment
@@ -28,7 +29,15 @@ def root():
     
 @app.get("/app")
 def serve_frontend():
-    return FileResponse("index.html")    
+    return FileResponse("index.html")  
+    
+@app.get("/manifest.json")
+def serve_manifest():
+    return FileResponse("manifest.json")
+
+@app.get("/service_worker.js")
+def serve_service_worker():
+    return FileResponse("service_worker.js")      
 
 @app.post("/search")
 def search_business(business_name: str):
