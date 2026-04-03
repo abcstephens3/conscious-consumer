@@ -34,11 +34,11 @@
         .nav-item.active { background: var(--coral-600); color: var(--white); }
         .nav-icon { width: 18px; height: 18px; flex-shrink: 0; }
         .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--slate-700); font-size: 0.75em; color: var(--slate-600); line-height: 1.6; }
-        .main { margin-left: 260px; flex: 1; min-height: 100vh; }
+        .main { margin-left: 260px; flex: 1; min-height: 100vh; min-width: 0; overflow-x: hidden; width: calc(100% - 260px); }
         .topbar { background: var(--white); border-bottom: 1px solid var(--slate-200); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
         .topbar h2 { font-family: 'DM Serif Display', serif; font-size: 1.3em; color: var(--slate-900); }
         .topbar p { font-size: 0.85em; color: var(--slate-400); margin-top: 2px; }
-        .content { padding: 32px; max-width: 100%; overflow-x: hidden; }
+        .content { padding: 32px; box-sizing: border-box; width: 100%; }
         .search-bar { display: flex; gap: 0; max-width: 600px; margin-bottom: 8px; }
         .search-bar input { flex: 1; padding: 14px 18px; font-size: 0.95em; border: 1.5px solid var(--slate-200); border-right: none; border-radius: 10px 0 0 10px; outline: none; background: var(--white); color: var(--slate-900); font-family: 'DM Sans', sans-serif; transition: border-color 0.15s; }
         .search-bar input:focus { border-color: var(--coral-500); }
