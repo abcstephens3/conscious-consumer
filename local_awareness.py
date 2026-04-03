@@ -53,8 +53,9 @@ def match_business_score(name):
     """Match a business name against our scoring datasets"""
     if not name:
         return None
-
-    name_lower = name.lower().strip()
+    import re
+    name_lower = re.sub(r"['\-&.,]", "", name.lower().strip())
+    name_lower = re.sub(r"\s+", " ", name_lower).strip()
 
     for key in ESG_DATA:
         key_words = key.split()
@@ -119,6 +120,7 @@ def get_local_awareness(location):
 
         seen_names = set()
         scored_businesses = []
+        unrated_businesses = []
 
         for business in businesses:
             name = business.get("name", "")
@@ -129,6 +131,14 @@ def get_local_awareness(location):
             scored = match_business_score(name)
             if scored:
                 scored_businesses.append(scored)
+            else:
+                unrated_businesses.append({
+                    "name": name,
+                    "score": None,
+                    "esg_rating": "Unrated",
+                    "hr_rating": "Unrated",
+                    "matched_key": None
+                })
 
         scored_businesses.sort(key=lambda x: x["score"], reverse=True)
         alternatives = get_ethical_alternatives(scored_businesses)
@@ -138,6 +148,7 @@ def get_local_awareness(location):
             "location": coords["display_name"],
             "coordinates": {"lat": coords["lat"], "lon": coords["lon"]},
             "nearby_scored": scored_businesses[:10],
+            "nearby_unrated": unrated_businesses[:5],
             "ethical_alternatives": alternatives,
             "total_found": len(businesses)
         }
