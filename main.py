@@ -15,6 +15,7 @@ from local_awareness import get_local_awareness
 from ai_summary import generate_summary
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
