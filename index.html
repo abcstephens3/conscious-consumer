@@ -194,6 +194,24 @@
             .score-circle { width: 80px; height: 80px; }
             .score-num { font-size: 2em; }
         }
+        .route-inputs { background: var(--white); border-radius: 12px; padding: 24px; border: 1px solid var(--slate-200); margin-bottom: 24px; display: flex; flex-direction: column; gap: 16px; max-width: 600px; }
+        .route-input-group { display: flex; flex-direction: column; gap: 6px; }
+        .route-input-group label { font-size: 0.8em; font-weight: 600; color: var(--slate-600); text-transform: uppercase; letter-spacing: 0.5px; }
+        .route-input-group input { padding: 12px 16px; border: 1.5px solid var(--slate-200); border-radius: 8px; font-size: 0.95em; font-family: 'DM Sans', sans-serif; outline: none; color: var(--slate-900); background: var(--white); }
+        .route-input-group input:focus { border-color: var(--coral-500); }
+        .route-btn { padding: 14px 24px; background: var(--coral-600); color: white; border: none; border-radius: 10px; font-size: 0.95em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+        .route-btn:hover { background: var(--slate-900); }
+        .route-summary { background: var(--slate-900); color: white; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; display: flex; gap: 32px; align-items: center; }
+        .route-stat { text-align: center; }
+        .route-stat-num { font-family: 'DM Serif Display', serif; font-size: 1.8em; color: var(--coral-400); }
+        .route-stat-label { font-size: 0.75em; color: var(--slate-400); margin-top: 4px; }
+        .route-state { background: var(--white); border-radius: 10px; padding: 16px; border: 1px solid var(--slate-200); margin-bottom: 10px; }
+        .route-state.high-risk { border-left: 4px solid var(--coral-600); }
+        .route-state.low-risk { border-left: 4px solid #4caf7d; }
+        .route-state.medium-risk { border-left: 4px solid #f0a500; }
+        .route-state-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .route-state-name { font-weight: 600; font-size: 1em; color: var(--slate-900); }
+        .route-state-ratings { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
     </style>
 </head>
 <body>
@@ -212,6 +230,10 @@
         <div class="nav-item" id="nav-travel" onclick="switchPanel('travel')">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
             Safe Travel Guide
+        </div>
+        <div class="nav-item" id="nav-route" onclick="switchPanel('route')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/></svg>
+            Route Planner
         </div>
         <div class="nav-label">About</div>
         <div class="nav-item" id="nav-about" onclick="switchPanel('about')">
@@ -408,6 +430,22 @@
             <div id="travel-results"></div>
         </div>
 
+<!-- ROUTE PANEL -->
+        <div class="panel" id="panel-route">
+            <div class="route-inputs">
+                <div class="route-input-group">
+                    <label>Starting Point</label>
+                    <input type="text" id="routeOrigin" placeholder="e.g. Atlanta, GA" />
+                </div>
+                <div class="route-input-group">
+                    <label>Destination</label>
+                    <input type="text" id="routeDestination" placeholder="e.g. New Orleans, LA" />
+                </div>
+                <button onclick="planRoute()" class="route-btn">Plan Safe Route</button>
+            </div>
+            <div id="route-results"></div>
+        </div>
+
         <!-- ABOUT PANEL -->
         <div class="panel" id="panel-about">
             <div class="card full">
@@ -425,6 +463,7 @@
 const TITLES = {
     business: ['Business Transparency', 'Search any business, brand, or law enforcement agency'],
     travel: ['Safe Travel Guide', 'Search any US city, state, or full address'],
+    route: ['Route Planner', 'Check safety ratings for your entire journey'],
     about: ['About & Sources', 'Learn about Conscious Consumer and our data sources']
 };
 
@@ -744,6 +783,85 @@ const TRAVEL_TIPS = [
 
 let currentTip = 0;
 let currentTravelTip = 0;
+
+async function planRoute() {
+    const origin = document.getElementById('routeOrigin').value.trim();
+    const destination = document.getElementById('routeDestination').value.trim();
+    if (!origin || !destination) return;
+
+    const resultsDiv = document.getElementById('route-results');
+    resultsDiv.innerHTML = "<div class='loading'>Planning your route and checking safety...</div>";
+
+    try {
+        const response = await fetch(
+            `/route_safety?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`,
+            { method: 'POST' }
+        );
+        const data = await response.json();
+        displayRouteResults(data);
+    } catch (e) {
+        resultsDiv.innerHTML = "<div class='error-msg'>Could not plan route. Please try again.</div>";
+    }
+}
+
+function getRouteStateClass(overall) {
+    if (!overall) return '';
+    const r = overall.toLowerCase();
+    if (r.includes('low')) return 'low-risk';
+    if (r.includes('medium')) return 'medium-risk';
+    return 'high-risk';
+}
+
+function displayRouteResults(data) {
+    const resultsDiv = document.getElementById('route-results');
+    if (!data.found) {
+        resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`;
+        return;
+    }
+
+    const highRiskColor = data.high_risk_states > 0 ? 'var(--coral-400)' : '#4caf7d';
+
+    resultsDiv.innerHTML = `
+        <div class="route-summary">
+            <div class="route-stat">
+                <div class="route-stat-num">${data.distance_miles}</div>
+                <div class="route-stat-label">Miles</div>
+            </div>
+            <div class="route-stat">
+                <div class="route-stat-num">${data.duration_hours}</div>
+                <div class="route-stat-label">Hours</div>
+            </div>
+            <div class="route-stat">
+                <div class="route-stat-num">${data.states_on_route.length}</div>
+                <div class="route-stat-label">States</div>
+            </div>
+            <div class="route-stat">
+                <div class="route-stat-num" style="color:${highRiskColor}">${data.high_risk_states}</div>
+                <div class="route-stat-label">High Risk States</div>
+            </div>
+        </div>
+        <p style="font-size:0.85em; color:var(--slate-400); margin-bottom:16px;">
+            ${data.origin} → ${data.destination} via ${data.route_summary}
+        </p>
+        <div class="section-divider">States Along Your Route</div>
+        ${data.states_on_route.map(state => `
+            <div class="route-state ${getRouteStateClass(state.overall)}">
+                <div class="route-state-header">
+                    <div class="route-state-name">${state.state}</div>
+                    <span class="badge ${getBadgeClass(state.overall)}">${state.overall}</span>
+                </div>
+                <div class="route-state-ratings">
+                    <span class="badge ${getBadgeClass(state.lgbtq)}" style="font-size:0.7em;">LGBTQ+: ${state.lgbtq}</span>
+                    <span class="badge ${getBadgeClass(state.racial)}" style="font-size:0.7em;">Racial: ${state.racial}</span>
+                    <span class="badge ${getBadgeClass(state.women)}" style="font-size:0.7em;">Women: ${state.women}</span>
+                </div>
+                ${state.advisories && state.advisories.length > 0 ? `
+                    <div class="advisory" style="margin-top:8px;">${state.advisories[0]}</div>
+                ` : ''}
+            </div>
+        `).join('')}
+    `;
+}
 
 function showTip() {
     document.getElementById('tips-body').textContent = TIPS[currentTip];

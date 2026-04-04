@@ -217,3 +217,81 @@ def travel_by_address(address: str):
             "city": city_violence
         }
     }    
+    
+@app.post("/route_safety")
+def route_safety(origin: str, destination: str):
+    GOOGLE_KEY = os.getenv("GOOGLE_API_KEY", "")
+    
+    # Get route from Google Directions API
+    response = requests.get(
+        "https://maps.googleapis.com/maps/api/directions/json",
+        params={
+            "origin": origin,
+            "destination": destination,
+            "key": GOOGLE_KEY
+        }
+    )
+    data = response.json()
+    
+    if data.get("status") != "OK":
+        return {"found": False, "message": "Could not find route between those locations"}
+    
+    route = data["routes"][0]
+    legs = route["legs"]
+    
+    # Extract states from the route
+    states_on_route = []
+    seen_states = set()
+    
+    for leg in legs:
+        for step in leg["steps"]:
+            # Get location of each step
+            lat = step["end_location"]["lat"]
+            lon = step["end_location"]["lng"]
+            
+            # Reverse geocode to get state
+            geo_response = requests.get(
+                "https://maps.googleapis.com/maps/api/geocode/json",
+                params={
+                    "latlng": f"{lat},{lon}",
+                    "result_type": "administrative_area_level_1",
+                    "key": GOOGLE_KEY
+                }
+            )
+            geo_data = geo_response.json()
+            
+            if geo_data.get("results"):
+                for component in geo_data["results"][0]["address_components"]:
+                    if "administrative_area_level_1" in component["types"]:
+                        state_name = component["long_name"]
+                        if state_name not in seen_states:
+                            seen_states.add(state_name)
+                            safety = get_state_safety(state_name)
+                            states_on_route.append({
+                                "state": state_name,
+                                "overall": safety.get("overall", "Unknown") if safety.get("found") else "Unknown",
+                                "lgbtq": safety.get("lgbtq", {}).get("rating", "Unknown") if safety.get("found") else "Unknown",
+                                "racial": safety.get("racial", {}).get("rating", "Unknown") if safety.get("found") else "Unknown",
+                                "women": safety.get("women", {}).get("rating", "Unknown") if safety.get("found") else "Unknown",
+                                "advisories": safety.get("lgbtq", {}).get("advisories", []) if safety.get("found") else []
+                            })
+    
+    # Calculate total distance and duration
+    total_distance = sum(leg["distance"]["value"] for leg in legs)
+    total_duration = sum(leg["duration"]["value"] for leg in legs)
+    distance_miles = round(total_distance * 0.000621371, 1)
+    duration_hours = round(total_duration / 3600, 1)
+    
+    # Count high risk states
+    high_risk = [s for s in states_on_route if "High" in s["overall"] or "Severe" in s["overall"]]
+    
+    return {
+        "found": True,
+        "origin": legs[0]["start_address"],
+        "destination": legs[-1]["end_address"],
+        "distance_miles": distance_miles,
+        "duration_hours": duration_hours,
+        "states_on_route": states_on_route,
+        "high_risk_states": len(high_risk),
+        "route_summary": route["summary"]
+    }    
