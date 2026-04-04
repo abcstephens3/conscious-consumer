@@ -106,6 +106,22 @@ def get_ethical_alternatives(scored_businesses):
     alternatives.sort(key=lambda x: x["score"], reverse=True)
     return alternatives[:8]
 
+def get_local_awareness(location):
+    """Get local business awareness for a location string"""
+    try:
+        coords = geocode_location(location)
+        if not coords:
+            return {
+                "found": False,
+                "message": f"Could not find location: {location}"
+            }
+        return get_local_awareness_by_coords(coords["lat"], coords["lon"])
+    except Exception as e:
+        return {
+            "found": False,
+            "message": f"Error looking up location: {str(e)}"
+        }
+
 def get_local_awareness_by_coords(lat, lon):
     """Get local business awareness using exact coordinates"""
     try:
