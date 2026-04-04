@@ -144,3 +144,64 @@ def local_by_coords(lat: float, lon: float):
     from local_awareness import get_local_awareness_by_coords
     data = get_local_awareness_by_coords(lat, lon)
     return data
+    
+@app.post("/travel_by_address")
+def travel_by_address(address: str):
+    import requests as req
+    import os
+    
+    GOOGLE_KEY = os.getenv("GOOGLE_API_KEY", "")
+    
+    # Geocode the address to get coordinates and state
+    response = req.get(
+        "https://maps.googleapis.com/maps/api/geocode/json",
+        params={"address": address, "key": GOOGLE_KEY}
+    )
+    data = response.json()
+    
+    if not data.get("results"):
+        return {"found": False, "message": "Address not found"}
+    
+    result = data["results"][0]
+    lat = result["geometry"]["location"]["lat"]
+    lon = result["geometry"]["location"]["lng"]
+    
+    # Extract state from address components
+    state_name = ""
+    city_name = ""
+    for component in result["address_components"]:
+        if "administrative_area_level_1" in component["types"]:
+            state_name = component["long_name"]
+        if "locality" in component["types"]:
+            city_name = component["long_name"]
+    
+    location = f"{city_name}, {state_name}" if city_name else state_name
+    
+    # Get safety ratings by state
+    safety_data = get_state_safety(state_name)
+    
+    # Parse city/state for police violence
+    parts = [p.strip() for p in location.split(",")]
+    city_violence = {"found": False}
+    if len(parts) >= 2:
+        city_violence = get_police_violence_by_city(parts[0], parts[-1])
+    state_violence = get_police_violence_by_state(state_name)
+    
+    if not safety_data["found"]:
+        return {"found": False, "message": f"No safety data for {state_name}"}
+    
+    return {
+        "found": True,
+        "location": result["formatted_address"],
+        "coordinates": {"lat": lat, "lon": lon},
+        "overall_rating": safety_data["overall"],
+        "lgbtq": safety_data["lgbtq"],
+        "racial": safety_data["racial"],
+        "religious_minority": safety_data["religious_minority"],
+        "disability": safety_data["disability"],
+        "women": safety_data["women"],
+        "police_violence": {
+            "state": state_violence,
+            "city": city_violence
+        }
+    }    
