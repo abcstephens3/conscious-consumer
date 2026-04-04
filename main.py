@@ -374,7 +374,8 @@ def route_safety(origin: str, destination: str):
     for leg in route["legs"]:
         for step in leg["steps"]:
             import re
-            clean_text = re.sub('<[^<]+?>', '', step["html_instructions"])
+            clean_text = re.sub('<[^<]+?>', ' ', step["html_instructions"]).strip()
+            clean_text = re.sub(r'\s+', ' ', clean_text)
             distance = step["distance"]["text"]
             
             step_lat = step["end_location"]["lat"]
