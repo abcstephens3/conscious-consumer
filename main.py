@@ -38,6 +38,10 @@ def serve_frontend():
 def serve_manifest():
     return FileResponse("manifest.json")
 
+@app.get("/favicon.ico")
+def serve_favicon():
+    return FileResponse("static/favicon.ico")
+
 @app.get("/service_worker.js")
 def serve_service_worker():
     return FileResponse("service_worker.js")      
