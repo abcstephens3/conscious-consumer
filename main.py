@@ -1,4 +1,5 @@
 import os
+import requests
 port = int(os.environ.get("PORT", 8000))
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
@@ -164,7 +165,7 @@ def travel_by_address(address: str):
     GOOGLE_KEY = os.getenv("GOOGLE_API_KEY", "")
     
     # Geocode the address to get coordinates and state
-    response = req.get(
+    response = requests.get(
         "https://maps.googleapis.com/maps/api/geocode/json",
         params={"address": address, "key": GOOGLE_KEY}
     )
