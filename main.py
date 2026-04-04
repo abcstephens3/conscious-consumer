@@ -58,7 +58,10 @@ def search_business(business_name: str):
         base_score -= news_data["score_impact"]
         flags.append("Negative news coverage detected")
         for headline in news_data["flagged_headlines"]:
-            flags.append(f"Headline: {headline}")
+            if isinstance(headline, dict):
+                flags.append(f"HEADLINE|{headline.get('title','')}|{headline.get('url','')}|{headline.get('source','')}")
+            else:
+                flags.append(f"Headline: {headline}")
     if legal_data["found"]:
         base_score -= legal_data["score_impact"]
         flags.append(f"Legal cases found in court records: {legal_data['case_count']} cases")
@@ -154,6 +157,67 @@ def local_by_coords(lat: float, lon: float):
     from local_awareness import get_local_awareness_by_coords
     data = get_local_awareness_by_coords(lat, lon)
     return data
+  
+@app.post("/nearest_location")
+def nearest_location(business_name: str, lat: float, lon: float):
+    GOOGLE_KEY = os.getenv("GOOGLE_API_KEY", "")
+    response = requests.get(
+        "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+        params={
+            "location": f"{lat},{lon}",
+            "rankby": "distance",
+            "keyword": business_name,
+            "key": GOOGLE_KEY
+        }
+    )
+    data = response.json()
+    results = data.get("results", [])
+    if not results:
+        return {"found": False, "message": f"No {business_name} locations found nearby"}
+    
+    nearest = results[0]
+    return {
+        "found": True,
+        "name": nearest.get("name"),
+        "address": nearest.get("vicinity"),
+        "lat": nearest["geometry"]["location"]["lat"],
+        "lon": nearest["geometry"]["location"]["lng"],
+        "place_id": nearest.get("place_id")
+    }
+
+@app.post("/submit_company")
+def submit_company(
+    company_name: str,
+    category: str,
+    website: str = "",
+    notes: str = ""
+):
+    import json
+    from datetime import datetime
+    
+    submission = {
+        "company_name": company_name,
+        "category": category,
+        "website": website,
+        "notes": notes,
+        "submitted_at": datetime.now().isoformat()
+    }
+    
+    try:
+        try:
+            with open("submissions.json", "r") as f:
+                submissions = json.load(f)
+        except:
+            submissions = []
+        
+        submissions.append(submission)
+        
+        with open("submissions.json", "w") as f:
+            json.dump(submissions, f, indent=2)
+        
+        return {"success": True, "message": f"Thank you! {company_name} has been submitted for review."}
+    except Exception as e:
+        return {"success": False, "message": "Could not save submission. Please try again."}  
     
 @app.post("/local")
 def local_awareness(location: str):
@@ -285,6 +349,49 @@ def route_safety(origin: str, destination: str):
     # Count high risk states
     high_risk = [s for s in states_on_route if "High" in s["overall"] or "Severe" in s["overall"]]
     
+    # Build directions with safety overlays
+    directions = []
+    seen_direction_states = set()
+    
+    for leg in route["legs"]:
+        for step in leg["steps"]:
+            import re
+            clean_text = re.sub('<[^<]+?>', '', step["html_instructions"])
+            distance = step["distance"]["text"]
+            
+            step_lat = step["end_location"]["lat"]
+            step_lon = step["end_location"]["lng"]
+            
+            geo_response = requests.get(
+                "https://maps.googleapis.com/maps/api/geocode/json",
+                params={
+                    "latlng": f"{step_lat},{step_lon}",
+                    "result_type": "administrative_area_level_1",
+                    "key": GOOGLE_KEY
+                }
+            )
+            geo_data = geo_response.json()
+            
+            if geo_data.get("results"):
+                for component in geo_data["results"][0]["address_components"]:
+                    if "administrative_area_level_1" in component["types"]:
+                        step_state = component["long_name"]
+                        if step_state not in seen_direction_states:
+                            seen_direction_states.add(step_state)
+                            safety = get_state_safety(step_state)
+                            overall = safety.get("overall", "") if safety.get("found") else ""
+                            if "High" in overall or "Severe" in overall:
+                                directions.append({
+                                    "type": "warning",
+                                    "text": f"Entering {step_state} — {overall} state. Review safety ratings."
+                                })
+            
+            directions.append({
+                "type": "step",
+                "text": clean_text,
+                "distance": distance
+            })
+
     return {
         "found": True,
         "origin": legs[0]["start_address"],
@@ -293,5 +400,6 @@ def route_safety(origin: str, destination: str):
         "duration_hours": duration_hours,
         "states_on_route": states_on_route,
         "high_risk_states": len(high_risk),
-        "route_summary": route["summary"]
-    }    
+        "route_summary": route["summary"],
+        "directions": directions
+    }

@@ -35,7 +35,11 @@ def get_news_sentiment(business_name):
             for word in negative_words:
                 if word in title:
                     negative_count += 1
-                    flagged_headlines.append(article.get("title"))
+                    flagged_headlines.append({
+                        "title": article.get("title"),
+                        "url": article.get("url", ""),
+                        "source": article.get("source", {}).get("name", "")
+                    })
                     break
 
         score_impact = min(negative_count * 8, 30)
