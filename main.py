@@ -11,7 +11,7 @@ from esg import get_esg_rating
 from humanrights import get_human_rights_rating
 from state_safety import get_state_safety
 from police_violence import get_police_violence_by_state, get_police_violence_by_city, get_agency_violence_score
-from local_awareness import get_local_awareness
+from local_awareness import get_local_awareness, get_local_awareness_by_coords
 from ai_summary import generate_summary
 
 app = FastAPI()
