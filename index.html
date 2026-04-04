@@ -427,6 +427,11 @@
                 <button class="location-btn" onclick="getLocation()">Use My Location</button>
             </div>
             <p id="location-status" class="search-hint">Or click "Use My Location" to auto-detect your location.</p>
+            <div id="tracking-bar" style="display:none; background:var(--slate-900); color:white; padding:12px 16px; border-radius:10px; margin-bottom:16px; display:none; align-items:center; justify-content:space-between;">
+                <span id="tracking-status">Tracking your location...</span>
+                <button onclick="stopTracking()" style="background:var(--coral-600); color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.85em;">Stop Tracking</button>
+            </div>
+            <button onclick="startTracking()" id="tracking-btn" class="location-btn" style="margin-bottom:16px; width:100%; max-width:600px;">Enable Real-Time Safety Tracking</button>
             <div id="travel-results"></div>
         </div>
 
@@ -783,6 +788,121 @@ const TRAVEL_TIPS = [
 
 let currentTip = 0;
 let currentTravelTip = 0;
+
+// REAL-TIME GPS TRACKING
+let trackingInterval = null;
+let lastTrackedState = null;
+
+function startTracking() {
+    if (!navigator.geolocation) {
+        alert('Geolocation not supported by your browser.');
+        return;
+    }
+
+    document.getElementById('tracking-btn').style.display = 'none';
+    document.getElementById('tracking-bar').style.display = 'flex';
+    document.getElementById('tracking-status').textContent = 'Getting your location...';
+
+    // Switch to travel panel
+    switchPanel('travel');
+
+    // Initial check
+    checkCurrentLocation();
+
+    // Poll every 30 seconds
+    trackingInterval = setInterval(checkCurrentLocation, 30000);
+}
+
+function stopTracking() {
+    if (trackingInterval) {
+        clearInterval(trackingInterval);
+        trackingInterval = null;
+    }
+    lastTrackedState = null;
+    document.getElementById('tracking-btn').style.display = 'block';
+    document.getElementById('tracking-bar').style.display = 'none';
+    document.getElementById('tracking-status').textContent = 'Tracking stopped.';
+}
+
+function checkCurrentLocation() {
+    navigator.geolocation.getCurrentPosition(
+        async position => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            try {
+                const response = await fetch(
+                    `/travel_by_address?address=${encodeURIComponent(lat + ',' + lon)}`,
+                    { method: 'POST' }
+                );
+                const data = await response.json();
+
+                if (data.found) {
+                    // Extract state from location
+                    const parts = data.location.split(',');
+                    const currentState = parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim();
+
+                    document.getElementById('tracking-status').textContent = `Tracking: ${data.location}`;
+
+                    // Only update if state changed
+                    if (currentState !== lastTrackedState) {
+                        lastTrackedState = currentState;
+                        checkSafetyAlert(data.location);
+
+                        // Show state change notification
+                        const alertDiv = document.getElementById('safety-alert');
+                        const isHighRisk = HIGH_RISK_STATES.some(s => data.location.toUpperCase().includes(s.toUpperCase()));
+
+                        if (isHighRisk) {
+                            showTrackingNotification(`You have entered ${currentState} — High Risk state. Review safety ratings.`, true);
+                        } else {
+                            showTrackingNotification(`You have entered ${currentState}.`, false);
+                        }
+
+                        // Update travel results
+                        const localRes = await fetch(`/local_by_coords?lat=${lat}&lon=${lon}`, { method: 'POST' });
+                        const localData = await localRes.json();
+                        displayTravelResults(data, localData);
+                    }
+                }
+            } catch (e) {
+                document.getElementById('tracking-status').textContent = 'Could not update location.';
+            }
+        },
+        error => {
+            document.getElementById('tracking-status').textContent = 'Location access denied.';
+            stopTracking();
+        }
+    );
+}
+
+function showTrackingNotification(message, isHighRisk) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${isHighRisk ? 'var(--coral-600)' : '#4caf7d'};
+        color: white;
+        padding: 16px 20px;
+        border-radius: 10px;
+        font-size: 0.9em;
+        font-weight: 600;
+        z-index: 9999;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        font-family: 'DM Sans', sans-serif;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // Auto dismiss after 5 seconds
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.5s';
+        setTimeout(() => notification.remove(), 500);
+    }, 5000);
+}
 
 async function planRoute() {
     const origin = document.getElementById('routeOrigin').value.trim();
