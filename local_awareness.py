@@ -1,5 +1,16 @@
 import requests
 import os
+import math
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    """Calculate distance in miles between two coordinates"""
+    R = 3958.8
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.asin(math.sqrt(a))
+    return round(R * c, 1)
 from esg import ESG_DATA
 from humanrights import HUMAN_RIGHTS_DATA
 
@@ -26,7 +37,7 @@ def geocode_location(location):
     except Exception as e:
         return None
 
-def search_nearby_businesses(lat, lon, radius=5000):
+def search_nearby_businesses(lat, lon, radius=2000):
     """Search for nearby businesses using Google Places"""
     try:
         businesses = []
@@ -43,7 +54,11 @@ def search_nearby_businesses(lat, lon, radius=5000):
                 }
             )
             data = response.json()
-            businesses.extend(data.get("results", []))
+            results = data.get("results", [])
+            for r in results:
+                r['_search_lat'] = lat
+                r['_search_lon'] = lon
+            businesses.extend(results)
         
         return businesses
     except Exception as e:
