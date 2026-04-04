@@ -608,6 +608,20 @@ function displayResults(data) {
                 ${flagsHtml}
             </div>
         </div>
+        ${data.alternatives && data.alternatives.length > 0 ? `
+        <div class="card full" style="margin-top:16px;">
+            <h4>Ethical Alternatives in Same Category</h4>
+            ${data.alternatives.map(a => `
+                <div class="biz-row">
+                    <div>
+                        <div class="biz-name">${a.name}</div>
+                        <div class="biz-sub">ESG: ${a.esg_rating}</div>
+                    </div>
+                    <span class="badge badge-low">${a.score}/100</span>
+                </div>
+            `).join('')}
+        </div>
+        ` : ''}
     `;
 }
 

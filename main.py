@@ -13,6 +13,7 @@ from state_safety import get_state_safety
 from police_violence import get_police_violence_by_state, get_police_violence_by_city, get_agency_violence_score
 from local_awareness import get_local_awareness, get_local_awareness_by_coords
 from ai_summary import generate_summary
+from categories import get_category, get_alternatives_in_category
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -89,11 +90,19 @@ def search_business(business_name: str):
         hr_data,
         legal_data
     )
+# Get ethical alternatives if score is low
+    alternatives = []
+    if final_score < 50:
+        category = get_category(business_name)
+        if category:
+            alternatives = get_alternatives_in_category(category, business_name)
+
     return {
         "business": business_name,
         "score": final_score,
         "flags": flags,
         "summary": ai_summary,
+        "alternatives": alternatives,
         "fec_data": fec_data,
         "news_data": news_data,
         "legal_data": legal_data,
