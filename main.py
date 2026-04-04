@@ -218,6 +218,20 @@ def submit_company(
         return {"success": True, "message": f"Thank you! {company_name} has been submitted for review."}
     except Exception as e:
         return {"success": False, "message": "Could not save submission. Please try again."}  
+
+@app.get("/admin/submissions")
+def view_submissions(key: str = ""):
+    import json
+    
+    if key != os.getenv("ADMIN_KEY", "consciousconsumer2024"):
+        return {"error": "Unauthorized"}
+    
+    try:
+        with open("submissions.json", "r") as f:
+            submissions = json.load(f)
+        return {"total": len(submissions), "submissions": submissions}
+    except:
+        return {"total": 0, "submissions": []}
     
 @app.post("/local")
 def local_awareness(location: str):
