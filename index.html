@@ -28,1037 +28,217 @@
             --white: #ffffff;
             --gray-100: #f4f6fa;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--gray-100);
-            color: var(--navy-900);
-            min-height: 100vh;
-            display: flex;
-            overflow-x: hidden;
-        }
-
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: 260px;
-            min-height: 100vh;
-            background: var(--navy-900);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 0; top: 0; bottom: 0;
-            z-index: 200;
-            overflow-y: auto;
-        }
-
-        .sidebar-logo {
-            padding: 24px 20px 16px;
-            border-bottom: 1px solid var(--navy-700);
-        }
-
-        .sidebar-logo h1 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.3em;
-            color: var(--white);
-            line-height: 1.2;
-        }
-
-        .sidebar-logo p {
-            font-size: 0.72em;
-            color: var(--navy-400);
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
+        body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: var(--navy-900); min-height: 100vh; display: flex; overflow-x: hidden; }
+        .sidebar { width: 260px; min-height: 100vh; background: var(--navy-900); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 200; overflow-y: auto; }
+        .sidebar-logo { padding: 24px 20px 16px; border-bottom: 1px solid var(--navy-700); }
+        .sidebar-logo h1 { font-family: 'DM Serif Display', serif; font-size: 1.3em; color: var(--white); line-height: 1.2; }
+        .sidebar-logo p { font-size: 0.72em; color: var(--navy-400); margin-top: 4px; line-height: 1.4; }
         .sidebar-nav { padding: 16px 10px; flex: 1; }
-
-        .nav-label {
-            font-size: 0.65em;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--navy-600);
-            padding: 0 10px;
-            margin-bottom: 6px;
-            margin-top: 14px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--navy-400);
-            font-size: 0.88em;
-            font-weight: 500;
-            transition: all 0.15s;
-            margin-bottom: 2px;
-        }
-
+        .nav-label { font-size: 0.65em; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--navy-600); padding: 0 10px; margin-bottom: 6px; margin-top: 14px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; color: var(--navy-400); font-size: 0.88em; font-weight: 500; transition: all 0.15s; margin-bottom: 2px; }
         .nav-item:hover { background: var(--navy-800); color: var(--white); }
         .nav-item.active { background: var(--coral-600); color: var(--white); }
-
         .nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
-
-        .sidebar-footer {
-            padding: 14px 20px;
-            border-top: 1px solid var(--navy-700);
-            font-size: 0.72em;
-            color: var(--navy-600);
-            line-height: 1.6;
-        }
-
-        /* ===== MAIN ===== */
-        .main {
-            margin-left: 260px;
-            flex: 1;
-            min-height: 100vh;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .topbar {
-            background: var(--white);
-            border-bottom: 1px solid var(--navy-200);
-            padding: 14px 28px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .topbar-left h2 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.2em;
-            color: var(--navy-900);
-        }
-
-        .topbar-left p {
-            font-size: 0.8em;
-            color: var(--navy-400);
-            margin-top: 1px;
-        }
-
+        .sidebar-footer { padding: 14px 20px; border-top: 1px solid var(--navy-700); font-size: 0.72em; color: var(--navy-600); line-height: 1.6; }
+        .main { margin-left: 260px; flex: 1; min-height: 100vh; min-width: 0; display: flex; flex-direction: column; }
+        .topbar { background: var(--white); border-bottom: 1px solid var(--navy-200); padding: 14px 28px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
+        .topbar-left h2 { font-family: 'DM Serif Display', serif; font-size: 1.2em; color: var(--navy-900); }
+        .topbar-left p { font-size: 0.8em; color: var(--navy-400); margin-top: 1px; }
         .content { padding: 24px 28px; flex: 1; }
-
-        /* ===== PANELS ===== */
         .panel { display: none; }
         .panel.active { display: block; }
-
-        /* ===== SEARCH BAR ===== */
-        .search-section {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--navy-200);
-            margin-bottom: 20px;
-        }
-
-        .search-section h3 {
-            font-size: 0.75em;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--navy-400);
-            margin-bottom: 10px;
-        }
-
-        .search-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .search-bar input {
-            flex: 1;
-            min-width: 180px;
-            padding: 12px 16px;
-            font-size: 0.95em;
-            border: 1.5px solid var(--navy-200);
-            border-radius: 8px;
-            outline: none;
-            background: var(--gray-100);
-            color: var(--navy-900);
-            font-family: 'DM Sans', sans-serif;
-            transition: border-color 0.15s;
-        }
-
+        .search-section { background: var(--white); border-radius: 12px; padding: 20px; border: 1px solid var(--navy-200); margin-bottom: 20px; }
+        .search-section h3 { font-size: 0.75em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--navy-400); margin-bottom: 10px; }
+        .search-bar { display: flex; flex-wrap: wrap; gap: 8px; }
+        .search-bar input { flex: 1; min-width: 180px; padding: 12px 16px; font-size: 0.95em; border: 1.5px solid var(--navy-200); border-radius: 8px; outline: none; background: var(--gray-100); color: var(--navy-900); font-family: 'DM Sans', sans-serif; transition: border-color 0.15s; }
         .search-bar input:focus { border-color: var(--coral-500); background: var(--white); }
-
-        .btn-primary {
-            padding: 12px 22px;
-            background: var(--coral-600);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.92em;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
+        .btn-primary { padding: 12px 22px; background: var(--coral-600); color: white; border: none; border-radius: 8px; font-size: 0.92em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; white-space: nowrap; }
         .btn-primary:hover { background: var(--navy-900); }
-
-        .btn-secondary {
-            padding: 12px 18px;
-            background: var(--navy-700);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.92em;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: background 0.15s;
-            white-space: nowrap;
-        }
-
+        .btn-secondary { padding: 12px 18px; background: var(--navy-700); color: white; border: none; border-radius: 8px; font-size: 0.92em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; white-space: nowrap; }
         .btn-secondary:hover { background: var(--coral-600); }
-
-        .btn-outline {
-            padding: 8px 14px;
-            background: transparent;
-            color: var(--coral-600);
-            border: 1.5px solid var(--coral-600);
-            border-radius: 6px;
-            font-size: 0.82em;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.15s;
-            white-space: nowrap;
-        }
-
+        .btn-outline { padding: 8px 14px; background: transparent; color: var(--coral-600); border: 1.5px solid var(--coral-600); border-radius: 6px; font-size: 0.82em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
         .btn-outline:hover { background: var(--coral-600); color: white; }
-
-        .btn-outline-navy {
-            padding: 8px 14px;
-            background: transparent;
-            color: var(--navy-700);
-            border: 1.5px solid var(--navy-200);
-            border-radius: 6px;
-            font-size: 0.82em;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.15s;
-            white-space: nowrap;
-        }
-
+        .btn-outline-navy { padding: 8px 14px; background: transparent; color: var(--navy-700); border: 1.5px solid var(--navy-200); border-radius: 6px; font-size: 0.82em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
         .btn-outline-navy:hover { background: var(--navy-900); color: white; border-color: var(--navy-900); }
-
-        .search-hint {
-            font-size: 0.78em;
-            color: var(--navy-400);
-            margin-top: 8px;
-        }
-
-        /* ===== RESULTS ===== */
-        #results { margin-top: 0; }
-
-        .score-hero {
-            background: var(--navy-900);
-            border-radius: 12px;
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            margin-bottom: 16px;
-            color: white;
-        }
-
-        .score-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            border: 3px solid var(--navy-700);
-        }
-
+        .search-hint { font-size: 0.78em; color: var(--navy-400); margin-top: 8px; }
+        .score-hero { background: var(--navy-900); border-radius: 12px; padding: 24px; display: flex; align-items: center; gap: 24px; margin-bottom: 16px; color: white; }
+        .score-circle { width: 100px; height: 100px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; border: 3px solid var(--navy-700); }
         .score-circle.high { border-color: var(--green); background: rgba(76,175,125,0.1); }
         .score-circle.medium { border-color: var(--amber); background: rgba(240,165,0,0.1); }
         .score-circle.low { border-color: var(--coral-500); background: rgba(232,80,58,0.1); }
-
-        .score-num {
-            font-family: 'DM Serif Display', serif;
-            font-size: 2.6em;
-            line-height: 1;
-        }
-
+        .score-num { font-family: 'DM Serif Display', serif; font-size: 2.6em; line-height: 1; }
         .score-num.high { color: var(--green); }
         .score-num.medium { color: var(--amber); }
         .score-num.low { color: var(--coral-400); }
         .score-out { font-size: 0.72em; color: var(--navy-400); }
-
-        .score-info h3 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.5em;
-            margin-bottom: 4px;
-        }
-
-        .verdict {
-            font-size: 0.88em;
-            margin-bottom: 10px;
-        }
-
+        .score-info h3 { font-family: 'DM Serif Display', serif; font-size: 1.5em; margin-bottom: 4px; }
+        .verdict { font-size: 0.88em; margin-bottom: 10px; }
         .verdict.high { color: var(--green); }
         .verdict.medium { color: var(--amber); }
         .verdict.low { color: var(--coral-400); }
-
-        .score-summary {
-            font-size: 0.83em;
-            color: var(--navy-400);
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
+        .score-summary { font-size: 0.83em; color: var(--navy-400); line-height: 1.6; margin-bottom: 12px; }
         .score-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-        /* ===== CARDS ===== */
-        .card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 18px;
-            border: 1px solid var(--navy-200);
-            margin-bottom: 14px;
-        }
-
-        .card h4 {
-            font-size: 0.72em;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--navy-400);
-            margin-bottom: 10px;
-        }
-
+        .card { background: var(--white); border-radius: 12px; padding: 18px; border: 1px solid var(--navy-200); margin-bottom: 14px; }
+        .card h4 { font-size: 0.72em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--navy-400); margin-bottom: 10px; }
         .card p { font-size: 0.88em; line-height: 1.7; color: var(--navy-600); }
-
-        .flag-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 8px 12px;
-            background: var(--coral-100);
-            border-radius: 6px;
-            margin-bottom: 6px;
-            font-size: 0.83em;
-            color: var(--navy-800);
-            line-height: 1.5;
-        }
-
-        .flag-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--coral-600);
-            flex-shrink: 0;
-            margin-top: 5px;
-        }
-
-        /* ===== BADGES ===== */
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.74em;
-            font-weight: 600;
-        }
-
+        .flag-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px; background: var(--coral-100); border-radius: 6px; margin-bottom: 6px; font-size: 0.83em; color: var(--navy-800); line-height: 1.5; }
+        .flag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--coral-600); flex-shrink: 0; margin-top: 5px; }
+        .flag-link { color: var(--coral-600); text-decoration: none; font-weight: 600; font-size: 0.85em; margin-left: 6px; }
+        .flag-link:hover { text-decoration: underline; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.74em; font-weight: 600; }
         .badge-low { background: #e6f4ea; color: #1e6e3a; }
         .badge-medium { background: #fff3d6; color: #7a4f00; }
         .badge-high { background: var(--coral-100); color: #8a2020; }
         .badge-severe { background: #2a0a0a; color: #ffb3b3; }
         .badge-unrated { background: var(--navy-100); color: var(--navy-600); }
-
-        /* ===== BIZ ROW ===== */
-        .biz-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            background: var(--gray-100);
-            border-radius: 8px;
-            margin-bottom: 6px;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
+        .biz-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--gray-100); border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: background 0.15s; }
         .biz-row:hover { background: var(--navy-100); }
         .biz-name { font-size: 0.88em; font-weight: 600; color: var(--navy-900); }
         .biz-sub { font-size: 0.76em; color: var(--navy-400); margin-top: 2px; }
-
-        /* ===== DASHBOARD CONTENT ===== */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 10px;
-            margin-bottom: 16px;
-            width: 100%;
-        }
-
-        .stat-card {
-            background: var(--white);
-            border-radius: 10px;
-            padding: 16px;
-            border: 1px solid var(--navy-200);
-            text-align: center;
-        }
-
-        .stat-num {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.8em;
-            color: var(--coral-600);
-            line-height: 1;
-        }
-
+        .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; width: 100%; }
+        .stat-card { background: var(--white); border-radius: 10px; padding: 16px; border: 1px solid var(--navy-200); text-align: center; cursor: pointer; transition: all 0.15s; }
+        .stat-card:hover { border-color: var(--coral-600); background: var(--coral-100); }
+        .stat-num { font-family: 'DM Serif Display', serif; font-size: 1.8em; color: var(--coral-600); line-height: 1; }
         .stat-label { font-size: 0.75em; color: var(--navy-400); margin-top: 4px; }
-
-        .featured-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-            margin-bottom: 16px;
-            width: 100%;
-        }
-
-        .featured-section {
-            background: var(--white);
-            border-radius: 10px;
-            border: 1px solid var(--navy-200);
-            overflow: hidden;
-        }
-
-        .featured-header {
-            padding: 8px 14px;
-            font-size: 0.72em;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
+        .featured-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; width: 100%; }
+        .featured-section { background: var(--white); border-radius: 10px; border: 1px solid var(--navy-200); overflow: hidden; }
+        .featured-header { padding: 8px 14px; font-size: 0.72em; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
         .featured-header.good { background: #e6f4ea; color: #1e6e3a; }
         .featured-header.bad { background: var(--coral-100); color: #8a2020; }
-
-        .featured-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            border-bottom: 1px solid var(--gray-100);
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
+        .featured-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: background 0.15s; }
         .featured-item:hover { background: var(--gray-100); }
         .feat-name { font-size: 0.88em; font-weight: 600; color: var(--navy-900); }
         .feat-sub { font-size: 0.74em; color: var(--navy-400); margin-top: 2px; }
-
-        /* ===== TIPS ===== */
-        .tips-card {
-            background: var(--navy-900);
-            border-radius: 10px;
-            padding: 18px 20px;
-            margin-bottom: 16px;
-            color: white;
-        }
-
-        .tips-header {
-            font-size: 0.68em;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--coral-400);
-            margin-bottom: 8px;
-        }
-
-        .tips-body {
-            font-size: 0.9em;
-            line-height: 1.7;
-            color: var(--navy-200);
-            min-height: 46px;
-        }
-
-        .tips-nav {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .tips-nav button {
-            background: var(--navy-700);
-            color: var(--navy-200);
-            border: none;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.78em;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: background 0.15s;
-        }
-
+        .tips-card { background: var(--navy-900); border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; color: white; }
+        .tips-header { font-size: 0.68em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--coral-400); margin-bottom: 8px; }
+        .tips-body { font-size: 0.9em; line-height: 1.7; color: var(--navy-200); min-height: 46px; }
+        .tips-nav { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+        .tips-nav button { background: var(--navy-700); color: var(--navy-200); border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.78em; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
         .tips-nav button:hover { background: var(--coral-600); color: white; }
         .tips-nav span { font-size: 0.78em; color: var(--navy-600); }
-
-        /* ===== TICKER ===== */
-        .ticker-wrap {
-            background: var(--navy-900);
-            border-radius: 8px;
-            padding: 9px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-            overflow: hidden;
-        }
-
-        .ticker-label {
-            background: var(--coral-600);
-            color: white;
-            font-size: 0.65em;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 3px 8px;
-            border-radius: 4px;
-            flex-shrink: 0;
-        }
-
-        .ticker-track {
-            display: flex;
-            white-space: nowrap;
-            animation: ticker 40s linear infinite;
-        }
-
+        .ticker-wrap { background: var(--navy-900); border-radius: 8px; padding: 9px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; overflow: hidden; }
+        .ticker-label { background: var(--coral-600); color: white; font-size: 0.65em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; flex-shrink: 0; }
+        .ticker-track { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
         .ticker-item { color: var(--navy-400); font-size: 0.8em; padding-right: 50px; }
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        /* ===== SAFETY ITEMS ===== */
-        .safety-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .safety-item {
-            background: var(--white);
-            border-radius: 8px;
-            padding: 14px;
-            border: 1px solid var(--navy-200);
-        }
-
-        .safety-item h5 {
-            font-size: 0.78em;
-            font-weight: 600;
-            color: var(--navy-600);
-            margin-bottom: 5px;
-        }
-
-        .safety-item p {
-            font-size: 0.78em;
-            color: var(--navy-600);
-            line-height: 1.5;
-            margin-bottom: 5px;
-        }
-
-        .advisory {
-            font-size: 0.74em;
-            color: #8a2020;
-            background: var(--coral-100);
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
-        /* ===== BANNERS ===== */
-        .overall-banner {
-            border-radius: 8px;
-            padding: 14px 18px;
-            font-weight: 600;
-            font-size: 0.95em;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
+        .safety-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .safety-item { background: var(--white); border-radius: 8px; padding: 14px; border: 1px solid var(--navy-200); }
+        .safety-item h5 { font-size: 0.78em; font-weight: 600; color: var(--navy-600); margin-bottom: 5px; }
+        .safety-item p { font-size: 0.78em; color: var(--navy-600); line-height: 1.5; margin-bottom: 5px; }
+        .advisory { font-size: 0.74em; color: #8a2020; background: var(--coral-100); padding: 4px 8px; border-radius: 4px; margin-top: 4px; line-height: 1.4; }
+        .overall-banner { border-radius: 8px; padding: 14px 18px; font-weight: 600; font-size: 0.95em; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
         .banner-low { background: #e6f4ea; color: #1e6e3a; }
         .banner-medium { background: #fff3d6; color: #7a4f00; }
         .banner-high { background: var(--coral-100); color: #8a2020; }
-
-        /* ===== SAFETY ALERT ===== */
-        .safety-alert {
-            background: var(--coral-600);
-            color: white;
-            padding: 12px 18px;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            font-size: 0.88em;
-            font-weight: 600;
-            display: none;
-        }
-
+        .safety-alert { background: var(--coral-600); color: white; padding: 12px 18px; border-radius: 8px; margin-bottom: 14px; font-size: 0.88em; font-weight: 600; display: none; }
         .safety-alert.visible { display: block; }
-
-        /* ===== SECTION DIVIDER ===== */
-        .section-divider {
-            font-size: 0.72em;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--navy-400);
-            margin: 18px 0 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--navy-200);
-        }
-
-        /* ===== QUICK STATES ===== */
+        .section-divider { font-size: 0.72em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--navy-400); margin: 18px 0 10px; display: flex; align-items: center; gap: 10px; }
+        .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--navy-200); }
         .quick-states { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
-
-        .state-btn {
-            background: var(--gray-100);
-            border: 1px solid var(--navy-200);
-            color: var(--navy-700);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: 500;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.15s;
-        }
-
+        .state-btn { background: var(--gray-100); border: 1px solid var(--navy-200); color: var(--navy-700); padding: 5px 12px; border-radius: 20px; font-size: 0.8em; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
         .state-btn:hover { background: var(--coral-600); color: white; border-color: var(--coral-600); }
 
-        /* ===== ROUTE ===== */
-        .route-inputs {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--navy-200);
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            max-width: 600px;
-        }
-
+        /* ROUTE */
+        .route-layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+        .route-inputs { background: var(--white); border-radius: 12px; padding: 20px; border: 1px solid var(--navy-200); display: flex; flex-direction: column; gap: 14px; position: sticky; top: 80px; }
         .route-input-group { display: flex; flex-direction: column; gap: 5px; }
-
-        .route-input-group label {
-            font-size: 0.75em;
-            font-weight: 600;
-            color: var(--navy-600);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .route-input-group input {
-            padding: 11px 14px;
-            border: 1.5px solid var(--navy-200);
-            border-radius: 8px;
-            font-size: 0.92em;
-            font-family: 'DM Sans', sans-serif;
-            outline: none;
-            color: var(--navy-900);
-            background: var(--gray-100);
-        }
-
+        .route-input-group label { font-size: 0.75em; font-weight: 600; color: var(--navy-600); text-transform: uppercase; letter-spacing: 0.5px; }
+        .route-input-group input { padding: 11px 14px; border: 1.5px solid var(--navy-200); border-radius: 8px; font-size: 0.92em; font-family: 'DM Sans', sans-serif; outline: none; color: var(--navy-900); background: var(--gray-100); }
         .route-input-group input:focus { border-color: var(--coral-500); background: var(--white); }
-
-        .route-summary {
-            background: var(--navy-900);
-            color: white;
-            border-radius: 12px;
-            padding: 18px 22px;
-            margin-bottom: 16px;
-            display: flex;
-            gap: 28px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
+        .route-summary { background: var(--navy-900); color: white; border-radius: 12px; padding: 18px 22px; margin-bottom: 16px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
         .route-stat { text-align: center; }
         .route-stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6em; color: var(--coral-400); }
         .route-stat-label { font-size: 0.72em; color: var(--navy-400); margin-top: 2px; }
-
-        .route-state {
-            background: var(--white);
-            border-radius: 10px;
-            padding: 14px;
-            border: 1px solid var(--navy-200);
-            margin-bottom: 8px;
-            border-left: 4px solid var(--navy-200);
-        }
-
+        .route-state { background: var(--white); border-radius: 10px; padding: 14px; border: 1px solid var(--navy-200); margin-bottom: 8px; border-left: 4px solid var(--navy-200); }
         .route-state.high-risk { border-left-color: var(--coral-600); }
         .route-state.medium-risk { border-left-color: var(--amber); }
         .route-state.low-risk { border-left-color: var(--green); }
-
-        .route-state-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
+        .route-state-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .route-state-name { font-weight: 600; font-size: 0.95em; color: var(--navy-900); }
         .route-state-ratings { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+        .step-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--gray-100); font-size: 0.83em; color: var(--navy-700); }
+        .step-item.warning { background: var(--coral-100); color: #8a2020; font-weight: 600; border-radius: 6px; margin: 4px 0; border-bottom: none; }
+        .step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--navy-200); color: var(--navy-700); display: flex; align-items: center; justify-content: center; font-size: 0.72em; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
 
-        .step-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 8px 12px;
-            border-bottom: 1px solid var(--gray-100);
-            font-size: 0.83em;
-            color: var(--navy-700);
-        }
+        /* MAP */
+        .map-container { border-radius: 12px; overflow: hidden; border: 1px solid var(--navy-200); margin-bottom: 16px; }
+        .map-container iframe { width: 100%; height: 300px; border: none; display: block; }
 
-        .step-item.warning {
-            background: var(--coral-100);
-            color: #8a2020;
-            font-weight: 600;
-            border-radius: 6px;
-            margin: 4px 0;
-            border-bottom: none;
-        }
-
-        .step-num {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--navy-200);
-            color: var(--navy-700);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.72em;
-            font-weight: 700;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        /* ===== DRAWER ===== */
-        .drawer-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10,22,40,0.4);
-            z-index: 300;
-        }
-
+        /* DRAWER */
+        .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(10,22,40,0.4); z-index: 300; }
         .drawer-overlay.open { display: block; }
-
-        .drawer {
-            position: fixed;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            width: 380px;
-            max-width: 90vw;
-            background: var(--white);
-            z-index: 301;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
+        .drawer { position: fixed; right: 0; top: 0; bottom: 0; width: 400px; max-width: 95vw; background: var(--white); z-index: 301; transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; overflow-y: auto; }
         .drawer.open { transform: translateX(0); }
-
-        .drawer-header {
-            background: var(--navy-900);
-            padding: 20px;
-            color: white;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-
-        .drawer-title {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.3em;
-        }
-
-        .drawer-close {
-            background: none;
-            border: none;
-            color: var(--navy-400);
-            font-size: 1.4em;
-            cursor: pointer;
-            padding: 0 4px;
-            line-height: 1;
-        }
-
+        .drawer-header { background: var(--navy-900); padding: 20px; color: white; display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
+        .drawer-title { font-family: 'DM Serif Display', serif; font-size: 1.3em; }
+        .drawer-close { background: none; border: none; color: var(--navy-400); font-size: 1.4em; cursor: pointer; padding: 0 4px; line-height: 1; }
         .drawer-close:hover { color: white; }
-
-        .drawer-score {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 18px 20px;
-            border-bottom: 1px solid var(--navy-100);
-        }
-
-        .drawer-score-circle {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid var(--navy-200);
-            flex-shrink: 0;
-        }
-
+        .drawer-score { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--navy-100); }
+        .drawer-score-circle { width: 70px; height: 70px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid var(--navy-200); flex-shrink: 0; }
         .drawer-score-circle.high { border-color: var(--green); background: rgba(76,175,125,0.08); }
         .drawer-score-circle.medium { border-color: var(--amber); background: rgba(240,165,0,0.08); }
         .drawer-score-circle.low { border-color: var(--coral-500); background: rgba(232,80,58,0.08); }
-
         .drawer-score-num { font-family: 'DM Serif Display', serif; font-size: 1.8em; line-height: 1; }
         .drawer-score-num.high { color: var(--green); }
         .drawer-score-num.medium { color: var(--amber); }
         .drawer-score-num.low { color: var(--coral-400); }
-
         .drawer-body { padding: 16px 20px; flex: 1; }
+        .drawer-section-title { font-size: 0.7em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--navy-400); margin-bottom: 8px; margin-top: 14px; }
+        .drawer-actions { display: flex; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--navy-100); background: var(--gray-100); flex-shrink: 0; flex-wrap: wrap; }
 
-        .drawer-section-title {
-            font-size: 0.7em;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--navy-400);
-            margin-bottom: 8px;
-            margin-top: 14px;
-        }
+        /* INFO DRAWER */
+        .info-drawer-content { padding: 16px 20px; }
+        .info-item { padding: 10px 0; border-bottom: 1px solid var(--navy-100); font-size: 0.88em; color: var(--navy-700); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .info-item:hover { color: var(--coral-600); }
+        .info-item-name { font-weight: 600; }
+        .info-item-sub { font-size: 0.78em; color: var(--navy-400); margin-top: 2px; }
+        .search-filter { width: 100%; padding: 10px 14px; border: 1.5px solid var(--navy-200); border-radius: 8px; font-size: 0.9em; font-family: 'DM Sans', sans-serif; outline: none; margin-bottom: 12px; background: var(--gray-100); }
+        .search-filter:focus { border-color: var(--coral-500); }
 
-        .drawer-actions {
-            display: flex;
-            gap: 8px;
-            padding: 16px 20px;
-            border-top: 1px solid var(--navy-100);
-            background: var(--gray-100);
-            flex-shrink: 0;
-            flex-wrap: wrap;
-        }
+        /* SUBMISSION FORM */
+        .submit-form { display: flex; flex-direction: column; gap: 12px; }
+        .submit-form input, .submit-form select, .submit-form textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--navy-200); border-radius: 8px; font-size: 0.88em; font-family: 'DM Sans', sans-serif; outline: none; background: var(--gray-100); color: var(--navy-900); }
+        .submit-form input:focus, .submit-form select:focus, .submit-form textarea:focus { border-color: var(--coral-500); }
+        .submit-form textarea { min-height: 80px; resize: vertical; }
+        .submit-form label { font-size: 0.75em; font-weight: 600; color: var(--navy-600); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; display: block; }
 
-        /* ===== TRACKING ===== */
-        .tracking-bar {
-            display: none;
-            background: var(--navy-900);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
+        /* TRACKING */
+        .tracking-bar { display: none; background: var(--navy-900); color: white; padding: 10px 16px; border-radius: 8px; margin-bottom: 14px; align-items: center; justify-content: space-between; gap: 12px; }
         .tracking-bar.active { display: flex; }
         .tracking-status { font-size: 0.85em; }
 
-        /* ===== LOADING / ERROR ===== */
-        .loading {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--navy-400);
-            font-size: 0.92em;
-        }
-
-        .loading-spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid var(--navy-200);
-            border-top-color: var(--coral-600);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 12px;
-        }
-
+        /* LOADING */
+        .loading { text-align: center; padding: 50px 20px; color: var(--navy-400); font-size: 0.92em; }
+        .loading-spinner { width: 32px; height: 32px; border: 3px solid var(--navy-200); border-top-color: var(--coral-600); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .error-msg { background: var(--coral-100); color: #8a2020; padding: 14px; border-radius: 8px; font-size: 0.88em; }
+        .success-msg { background: #e6f4ea; color: #1e6e3a; padding: 14px; border-radius: 8px; font-size: 0.88em; font-weight: 600; }
 
-        .error-msg {
-            background: var(--coral-100);
-            color: #8a2020;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 0.88em;
-        }
-
-        /* ===== ABOUT ===== */
-        .about-hero {
-            background: var(--navy-900);
-            border-radius: 12px;
-            padding: 32px;
-            color: white;
-            margin-bottom: 16px;
-        }
-
-        .about-hero h2 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.8em;
-            margin-bottom: 8px;
-        }
-
+        /* ABOUT */
+        .about-hero { background: var(--navy-900); border-radius: 12px; padding: 32px; color: white; margin-bottom: 16px; }
+        .about-hero h2 { font-family: 'DM Serif Display', serif; font-size: 1.8em; margin-bottom: 8px; }
         .about-hero p { font-size: 0.92em; color: var(--navy-400); line-height: 1.7; }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-            margin-bottom: 16px;
-        }
-
-        .about-card {
-            background: var(--white);
-            border-radius: 10px;
-            padding: 18px;
-            border: 1px solid var(--navy-200);
-        }
-
-        .about-card h4 {
-            font-size: 0.88em;
-            font-weight: 600;
-            color: var(--navy-900);
-            margin-bottom: 6px;
-        }
-
+        .about-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
+        .about-card { background: var(--white); border-radius: 10px; padding: 18px; border: 1px solid var(--navy-200); }
+        .about-card h4 { font-size: 0.88em; font-weight: 600; color: var(--navy-900); margin-bottom: 6px; }
         .about-card p { font-size: 0.82em; color: var(--navy-600); line-height: 1.6; }
+        .source-tag { display: inline-block; background: var(--navy-100); color: var(--navy-700); padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 600; margin: 3px; cursor: pointer; transition: all 0.15s; }
+        .source-tag:hover { background: var(--navy-900); color: white; }
 
-        .source-tag {
-            display: inline-block;
-            background: var(--navy-100);
-            color: var(--navy-700);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75em;
-            font-weight: 600;
-            margin: 3px;
-        }
-
-        /* ===== MOBILE TOP NAV ===== */
-        .mobile-topnav {
-            display: none;
-            background: var(--navy-900);
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 200;
-            padding: 0 12px;
-            align-items: center;
-            height: 52px;
-            gap: 4px;
-        }
-
-        .mobile-logo {
-            font-family: 'DM Serif Display', serif;
-            color: var(--white);
-            font-size: 1em;
-            margin-right: auto;
-            white-space: nowrap;
-        }
-
-        .mobile-nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 6px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: var(--navy-400);
-            font-size: 0.6em;
-            font-weight: 600;
-            gap: 3px;
-            border: none;
-            background: none;
-            font-family: 'DM Sans', sans-serif;
-            transition: all 0.15s;
-        }
-
+        /* MOBILE */
+        .mobile-topnav { display: none; background: var(--navy-900); position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 0 12px; align-items: center; height: 52px; gap: 4px; }
+        .mobile-logo { font-family: 'DM Serif Display', serif; color: var(--white); font-size: 1em; margin-right: auto; white-space: nowrap; }
+        .mobile-nav-btn { display: flex; flex-direction: column; align-items: center; padding: 6px 10px; border-radius: 8px; cursor: pointer; color: var(--navy-400); font-size: 0.6em; font-weight: 600; gap: 3px; border: none; background: none; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
         .mobile-nav-btn svg { width: 18px; height: 18px; }
         .mobile-nav-btn.active { color: var(--coral-400); }
-        .mobile-nav-btn:hover { color: var(--white); }
-
-        /* ===== MOBILE BOTTOM TAB BAR ===== */
-        .bottom-tabs {
-            display: none;
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: var(--navy-900);
-            border-top: 1px solid var(--navy-700);
-            z-index: 200;
-            padding: 6px 0 8px;
-        }
-
-        .bottom-tabs-inner {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .bottom-tab {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            padding: 4px 12px;
-            cursor: pointer;
-            color: var(--navy-400);
-            font-size: 0.6em;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            transition: color 0.15s;
-            border: none;
-            background: none;
-        }
-
+        .bottom-tabs { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--navy-900); border-top: 1px solid var(--navy-700); z-index: 200; padding: 6px 0 8px; }
+        .bottom-tabs-inner { display: flex; justify-content: space-around; }
+        .bottom-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 12px; cursor: pointer; color: var(--navy-400); font-size: 0.6em; font-weight: 600; font-family: 'DM Sans', sans-serif; transition: color 0.15s; border: none; background: none; }
         .bottom-tab svg { width: 20px; height: 20px; }
         .bottom-tab.active { color: var(--coral-400); }
+        .notification { position: fixed; top: 20px; right: 20px; color: white; padding: 14px 18px; border-radius: 10px; font-size: 0.88em; font-weight: 600; z-index: 9999; max-width: 300px; font-family: 'DM Sans', sans-serif; transition: opacity 0.5s; }
 
-        /* ===== NOTIFICATION ===== */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            color: white;
-            padding: 14px 18px;
-            border-radius: 10px;
-            font-size: 0.88em;
-            font-weight: 600;
-            z-index: 9999;
-            max-width: 300px;
-            font-family: 'DM Sans', sans-serif;
-            transition: opacity 0.5s;
-        }
-
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
             .sidebar { display: none; }
             .mobile-topnav { display: flex; }
@@ -1073,7 +253,8 @@
             .score-hero { flex-direction: column; text-align: center; gap: 14px; padding: 20px; }
             .score-actions { justify-content: center; }
             .ticker-wrap { display: none; }
-            .route-summary { gap: 16px; }
+            .route-layout { grid-template-columns: 1fr; }
+            .route-inputs { position: static; }
             .drawer { width: 100%; max-width: 100%; }
         }
 
@@ -1083,7 +264,6 @@
             .content { padding: 12px; }
             .score-circle { width: 80px; height: 80px; }
             .score-num { font-size: 2em; }
-            .route-summary { flex-direction: column; gap: 12px; align-items: flex-start; }
         }
 
         @media (min-width: 901px) {
@@ -1182,7 +362,6 @@
                 </div>
             </div>
 
-            <!-- SEARCH FIRST -->
             <div class="search-section">
                 <h3>Search a Business</h3>
                 <div class="search-bar">
@@ -1194,12 +373,23 @@
 
             <div id="results"></div>
 
-            <!-- DASHBOARD BELOW RESULTS -->
             <div class="stats-row">
-                <div class="stat-card"><div class="stat-num">250+</div><div class="stat-label">Companies Tracked</div></div>
-                <div class="stat-card"><div class="stat-num">51</div><div class="stat-label">States + DC</div></div>
-                <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">Data Sources</div></div>
-                <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Communities</div></div>
+                <div class="stat-card" onclick="openInfoDrawer('companies')">
+                    <div class="stat-num">250+</div>
+                    <div class="stat-label">Companies Tracked</div>
+                </div>
+                <div class="stat-card" onclick="openInfoDrawer('states')">
+                    <div class="stat-num">51</div>
+                    <div class="stat-label">States + DC</div>
+                </div>
+                <div class="stat-card" onclick="openInfoDrawer('sources')">
+                    <div class="stat-num">6</div>
+                    <div class="stat-label">Data Sources</div>
+                </div>
+                <div class="stat-card" onclick="openInfoDrawer('communities')">
+                    <div class="stat-num">5</div>
+                    <div class="stat-label">Communities</div>
+                </div>
             </div>
 
             <div class="featured-grid">
@@ -1250,7 +440,6 @@
         <div class="panel" id="panel-travel">
             <div id="safety-alert" class="safety-alert"></div>
 
-            <!-- SEARCH FIRST -->
             <div class="search-section">
                 <h3>Search a Location</h3>
                 <div class="search-bar">
@@ -1263,7 +452,7 @@
 
             <div class="tracking-bar" id="tracking-bar">
                 <span id="tracking-status" class="tracking-status">Tracking your location...</span>
-                <button onclick="stopTracking()" class="btn-outline" style="border-color:white; color:white;">Stop</button>
+                <button onclick="stopTracking()" class="btn-outline" style="border-color:white; color:white; padding:6px 12px;">Stop</button>
             </div>
 
             <button onclick="startTracking()" id="tracking-btn" class="btn-secondary" style="margin-bottom:16px; width:100%; max-width:600px;">
@@ -1272,7 +461,6 @@
 
             <div id="travel-results"></div>
 
-            <!-- DASHBOARD BELOW -->
             <div class="stats-row" style="margin-top:20px;">
                 <div class="stat-card"><div class="stat-num">51</div><div class="stat-label">States + DC</div></div>
                 <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Communities</div></div>
@@ -1352,21 +540,24 @@
 
         <!-- ROUTE PANEL -->
         <div class="panel" id="panel-route">
-            <div class="route-inputs">
-                <div class="route-input-group">
-                    <label>Starting Point</label>
-                    <input type="text" id="routeOrigin" placeholder="e.g. Atlanta, GA" />
-                </div>
-                <div class="route-input-group">
-                    <label>Destination</label>
-                    <input type="text" id="routeDestination" placeholder="e.g. New Orleans, LA" />
-                </div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <div class="route-layout">
+                <div class="route-inputs">
+                    <div class="route-input-group">
+                        <label>Starting Point</label>
+                        <input type="text" id="routeOrigin" placeholder="e.g. Atlanta, GA" />
+                    </div>
+                    <div class="route-input-group">
+                        <label>Destination</label>
+                        <input type="text" id="routeDestination" placeholder="e.g. New Orleans, LA" />
+                    </div>
                     <button onclick="planRoute(false)" class="btn-primary">Plan Safe Route</button>
                     <button onclick="planRoute(true)" class="btn-secondary">Plan with Directions</button>
+                    <div id="map-container" class="map-container" style="display:none;">
+                        <iframe id="map-iframe" src="" allowfullscreen></iframe>
+                    </div>
                 </div>
+                <div id="route-results"></div>
             </div>
-            <div id="route-results"></div>
         </div>
 
         <!-- ABOUT PANEL -->
@@ -1398,17 +589,21 @@
             <div class="card">
                 <h4>Data Sources</h4>
                 <div style="margin-top:8px;">
-                    <span class="source-tag">Federal Election Commission</span>
-                    <span class="source-tag">NewsAPI</span>
-                    <span class="source-tag">CourtListener</span>
-                    <span class="source-tag">Mapping Police Violence</span>
-                    <span class="source-tag">HRC Corporate Equality Index</span>
-                    <span class="source-tag">NAACP Travel Advisories</span>
-                    <span class="source-tag">Sustainalytics ESG</span>
-                    <span class="source-tag">Business & Human Rights Resource Centre</span>
-                    <span class="source-tag">Google Places</span>
-                    <span class="source-tag">KnowTheChain Benchmark</span>
+                    <span class="source-tag" onclick="openInfoDrawer('source-fec')">Federal Election Commission</span>
+                    <span class="source-tag" onclick="openInfoDrawer('source-news')">NewsAPI</span>
+                    <span class="source-tag" onclick="openInfoDrawer('source-court')">CourtListener</span>
+                    <span class="source-tag" onclick="openInfoDrawer('source-mpv')">Mapping Police Violence</span>
+                    <span class="source-tag" onclick="openInfoDrawer('source-hrc')">HRC Corporate Equality Index</span>
+                    <span class="source-tag" onclick="openInfoDrawer('source-naacp')">NAACP Travel Advisories</span>
+                    <span class="source-tag" onclick="openInfoDrawer('source-esg')">Sustainalytics ESG</span>
+                    <span class="source-tag" onclick="openInfoDrawer('source-bhr')">Business & Human Rights Resource Centre</span>
                 </div>
+            </div>
+
+            <div class="card">
+                <h4>Submit a Company for Review</h4>
+                <p style="margin-bottom:14px;">Don't see a company in our database? Submit it for review and we'll add it to our tracking list.</p>
+                <button class="btn-primary" onclick="openInfoDrawer('submit')">Submit a Company</button>
             </div>
 
             <div class="card">
@@ -1420,7 +615,7 @@
     </div>
 </main>
 
-<!-- BOTTOM TAB BAR (mobile) -->
+<!-- BOTTOM TAB BAR -->
 <nav class="bottom-tabs">
     <div class="bottom-tabs-inner">
         <button class="bottom-tab active" id="tab-business" onclick="switchPanel('business')">
@@ -1447,14 +642,14 @@
 <div class="drawer" id="drawer">
     <div class="drawer-header">
         <div>
-            <div class="drawer-title" id="drawerTitle">Business Name</div>
-            <div style="font-size:0.78em; color:var(--navy-400); margin-top:3px;" id="drawerVerdict">Loading...</div>
+            <div class="drawer-title" id="drawerTitle">Detail</div>
+            <div style="font-size:0.78em; color:var(--navy-400); margin-top:3px;" id="drawerVerdict"></div>
         </div>
         <button class="drawer-close" onclick="closeDrawer()">✕</button>
     </div>
-    <div class="drawer-score" id="drawerScore"></div>
+    <div id="drawerScoreSection"></div>
     <div class="drawer-body" id="drawerBody">
-        <div class="loading"><div class="loading-spinner"></div>Loading details...</div>
+        <div class="loading"><div class="loading-spinner"></div>Loading...</div>
     </div>
     <div class="drawer-actions" id="drawerActions"></div>
 </div>
@@ -1469,23 +664,93 @@ const TITLES = {
 
 const HIGH_RISK_STATES = ['Alabama','Arkansas','Florida','Georgia','Idaho','Indiana','Iowa','Kansas','Kentucky','Louisiana','Mississippi','Missouri','Montana','Nebraska','North Dakota','Ohio','Oklahoma','South Carolina','South Dakota','Tennessee','Texas','Utah','West Virginia','Wyoming'];
 
+const ALL_COMPANIES = [
+    'Walmart','Amazon','Target','Costco','Home Depot','Lowes','Kroger','Walgreens','CVS','Dollar General','Dollar Tree','Shein','Fashion Nova','TJ Maxx','Marshalls','Ross','Macys','Nordstrom','Gap','Old Navy','H&M','Zara','Forever 21','Nike','Adidas','Under Armour','Best Buy','Ebay','Etsy','Wayfair','IKEA','Sephora','Ulta','Bath and Body Works','Victoria\'s Secret','Ralph Lauren',
+    'McDonald\'s','Starbucks','Chick-fil-A','Burger King','Taco Bell','Wendy\'s','Subway','Domino\'s','Pizza Hut','Chipotle','Dunkin','Popeyes','KFC','Sonic','Dairy Queen','Five Guys','In-N-Out','Shake Shack','Panda Express','Olive Garden','Applebee\'s','IHOP','Denny\'s','Red Lobster','Panera','Papa John\'s','Little Caesars',
+    'Apple','Google','Microsoft','Meta','Twitter/X','Netflix','Uber','Lyft','Airbnb','TikTok','Snap','Spotify','Adobe','Salesforce','Oracle','IBM','Intel','Nvidia','AMD','Qualcomm','Cisco','Dell','HP','Samsung','Sony','PayPal','Shopify','Zoom','Discord',
+    'JPMorgan','Bank of America','Wells Fargo','Citibank','Goldman Sachs','Morgan Stanley','American Express','Visa','Mastercard','Discover','Capital One','Chase','US Bank','Charles Schwab','Fidelity','Vanguard','BlackRock','Coinbase','Robinhood',
+    'Exxon','Chevron','Shell','BP','ConocoPhillips','Halliburton','Duke Energy','NextEra Energy','Tesla Energy','First Solar',
+    'Johnson & Johnson','Pfizer','Moderna','Merck','AbbVie','Eli Lilly','Novartis','Roche','Bayer','Purdue Pharma',
+    'Coca-Cola','Pepsi','Nestlé','Unilever','Kraft Heinz','General Mills','Kellogg\'s','Tyson Foods','Smithfield','Beyond Meat',
+    'State Farm','Allstate','Geico','Progressive','Liberty Mutual','USAA','Nationwide','AIG','Aflac',
+    'AT&T','Verizon','T-Mobile','Xfinity','Spectrum','Cox',
+    'Tesla','Ford','General Motors','Toyota','Honda','Volkswagen','BMW','Mercedes','Volvo','Subaru','Rivian','Carvana',
+    'Marriott','Hilton','Delta Airlines','United Airlines','American Airlines','Southwest Airlines','Carnival Cruise','Royal Caribbean',
+    'University of Phoenix','DeVry University','Khan Academy','Coursera','Udemy','Chegg','Pearson','Duolingo'
+];
+
+const DATA_SOURCES = {
+    'source-fec': {
+        title: 'Federal Election Commission',
+        description: 'The FEC tracks all political donations by corporations and PACs. We use this data to identify companies with significant political spending, particularly in ways that may conflict with consumer interests.',
+        url: 'https://www.fec.gov',
+        impact: 'Up to 40 points deducted based on committee count and donation patterns.'
+    },
+    'source-news': {
+        title: 'NewsAPI',
+        description: 'We scan recent news headlines for negative coverage including lawsuits, fraud, violations, penalties, and controversies. Only verified news sources are included.',
+        url: 'https://newsapi.org',
+        impact: 'Up to 30 points deducted based on negative headline count.'
+    },
+    'source-court': {
+        title: 'CourtListener / RECAP Archive',
+        description: 'Free Law Project\'s CourtListener provides access to federal court records. We search for cases involving each company and factor in the volume of litigation.',
+        url: 'https://www.courtlistener.com',
+        impact: 'Up to 30 points deducted based on federal case count.'
+    },
+    'source-mpv': {
+        title: 'Mapping Police Violence',
+        description: 'A comprehensive database tracking all known police killings in the US, maintained by researchers and updated regularly. Used for both travel safety ratings and law enforcement agency scoring.',
+        url: 'https://mappingpoliceviolence.us',
+        impact: 'Used for travel safety ratings and law enforcement agency business scores.'
+    },
+    'source-hrc': {
+        title: 'HRC Corporate Equality Index',
+        description: 'The Human Rights Campaign\'s annual rating of major employers on LGBTQ+ workplace policies. We use this alongside our static ESG dataset for company scoring.',
+        url: 'https://www.hrc.org',
+        impact: 'Informs state-level LGBTQ+ safety ratings and travel advisories.'
+    },
+    'source-naacp': {
+        title: 'NAACP Travel Advisories',
+        description: 'The NAACP issues travel advisories for states with documented threats to Black Americans and other communities of color. These inform our state-level racial safety ratings.',
+        url: 'https://naacp.org',
+        impact: 'Directly informs state racial safety ratings.'
+    },
+    'source-esg': {
+        title: 'Sustainalytics ESG Data',
+        description: 'ESG (Environmental, Social, Governance) risk scores based on Sustainalytics methodology. Higher scores indicate greater ESG risk. Our dataset covers 250+ companies.',
+        url: 'https://www.sustainalytics.com',
+        impact: 'Up to 25 points deducted based on ESG risk rating.'
+    },
+    'source-bhr': {
+        title: 'Business & Human Rights Resource Centre',
+        description: 'Tracks human rights impacts of business globally, including labor rights, supply chain abuses, and community impacts. Combined with KnowTheChain benchmark data.',
+        url: 'https://www.business-humanrights.org',
+        impact: 'Up to 25 points deducted based on human rights risk rating.'
+    }
+};
+
+const COMMUNITIES_INFO = {
+    lgbtq: { label: 'LGBTQ+ Community', description: 'We track state nondiscrimination laws, conversion therapy bans, same-sex adoption protections, anti-trans legislation, and active HRC travel advisories.' },
+    racial: { label: 'Racial & Ethnic Minorities', description: 'We track NAACP travel advisories, voting rights restrictions, racial disparities in criminal justice, and documented racial profiling concerns.' },
+    religious: { label: 'Religious Minorities', description: 'We track accommodations for non-Christian travelers, RFRA laws that may permit discrimination, and local religious diversity.' },
+    disability: { label: 'People with Disabilities', description: 'We track ADA compliance, accessible transportation availability, and terrain accessibility for each state.' },
+    women: { label: 'Women', description: 'We track reproductive healthcare access, abortion restrictions, and women\'s legal protections in each state.' }
+};
+
 function switchPanel(panel) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     ['business','travel','route','about'].forEach(id => {
-        const nav = document.getElementById('nav-' + id);
-        const mob = document.getElementById('mob-' + id);
-        const tab = document.getElementById('tab-' + id);
-        if (nav) nav.classList.remove('active');
-        if (mob) mob.classList.remove('active');
-        if (tab) tab.classList.remove('active');
+        ['nav-','mob-','tab-'].forEach(prefix => {
+            const el = document.getElementById(prefix + id);
+            if (el) el.classList.remove('active');
+        });
     });
     document.getElementById('panel-' + panel).classList.add('active');
-    const nav = document.getElementById('nav-' + panel);
-    const mob = document.getElementById('mob-' + panel);
-    const tab = document.getElementById('tab-' + panel);
-    if (nav) nav.classList.add('active');
-    if (mob) mob.classList.add('active');
-    if (tab) tab.classList.add('active');
+    ['nav-','mob-','tab-'].forEach(prefix => {
+        const el = document.getElementById(prefix + panel);
+        if (el) el.classList.add('active');
+    });
     if (document.getElementById('topbar-title')) {
         document.getElementById('topbar-title').textContent = TITLES[panel][0];
         document.getElementById('topbar-sub').textContent = TITLES[panel][1];
@@ -1493,30 +758,184 @@ function switchPanel(panel) {
     window.scrollTo(0, 0);
 }
 
-// ===== DRAWER =====
-function openDrawer(businessName, data) {
+// ===== INFO DRAWER =====
+function openInfoDrawer(type) {
+    document.getElementById('drawerScoreSection').innerHTML = '';
+    document.getElementById('drawerActions').innerHTML = '';
+
+    if (type === 'companies') {
+        document.getElementById('drawerTitle').textContent = 'Companies Tracked';
+        document.getElementById('drawerVerdict').textContent = `${ALL_COMPANIES.length} companies in our database`;
+        document.getElementById('drawerBody').innerHTML = `
+            <input class="search-filter" id="companyFilter" placeholder="Search companies..." oninput="filterCompanies()" />
+            <div id="companyList">
+                ${ALL_COMPANIES.map(c => `
+                    <div class="info-item" onclick="closeDrawer(); quickBusinessSearch('${c}')">
+                        <div>
+                            <div class="info-item-name">${c}</div>
+                        </div>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </div>`).join('')}
+            </div>
+            <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--navy-100);">
+                <p style="font-size:0.82em; color:var(--navy-400); margin-bottom:10px;">Don't see your company? Submit it for review.</p>
+                <button class="btn-outline" onclick="openInfoDrawer('submit')">Submit a Company</button>
+            </div>
+        `;
+    } else if (type === 'states') {
+        document.getElementById('drawerTitle').textContent = 'States Covered';
+        document.getElementById('drawerVerdict').textContent = 'All 50 states + Washington DC';
+        const states = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','Washington DC'];
+        document.getElementById('drawerBody').innerHTML = `
+            <input class="search-filter" id="stateFilter" placeholder="Search states..." oninput="filterStates()" />
+            <div id="stateList">
+                ${states.map(s => `
+                    <div class="info-item" onclick="closeDrawer(); switchPanel('travel'); quickSearch('${s}')">
+                        <div class="info-item-name">${s}</div>
+                        <span class="badge ${HIGH_RISK_STATES.includes(s) ? 'badge-high' : 'badge-low'}">${HIGH_RISK_STATES.includes(s) ? 'High Risk' : 'Low Risk'}</span>
+                    </div>`).join('')}
+            </div>
+        `;
+    } else if (type === 'sources') {
+        document.getElementById('drawerTitle').textContent = 'Data Sources';
+        document.getElementById('drawerVerdict').textContent = '8 independent data sources';
+        document.getElementById('drawerBody').innerHTML = Object.entries(DATA_SOURCES).map(([key, source]) => `
+            <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--navy-100);">
+                <div style="font-weight:600; font-size:0.92em; color:var(--navy-900); margin-bottom:4px;">${source.title}</div>
+                <div style="font-size:0.82em; color:var(--navy-600); line-height:1.6; margin-bottom:6px;">${source.description}</div>
+                <div style="font-size:0.78em; color:var(--coral-600); font-weight:600;">${source.impact}</div>
+                <a href="${source.url}" target="_blank" style="font-size:0.78em; color:var(--navy-400); display:inline-block; margin-top:4px;">${source.url} →</a>
+            </div>`).join('');
+    } else if (type === 'communities') {
+        document.getElementById('drawerTitle').textContent = 'Communities Protected';
+        document.getElementById('drawerVerdict').textContent = '5 marginalized communities tracked';
+        document.getElementById('drawerBody').innerHTML = Object.values(COMMUNITIES_INFO).map(c => `
+            <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--navy-100);">
+                <div style="font-weight:600; font-size:0.92em; color:var(--navy-900); margin-bottom:6px;">${c.label}</div>
+                <div style="font-size:0.82em; color:var(--navy-600); line-height:1.6;">${c.description}</div>
+            </div>`).join('');
+    } else if (type === 'submit') {
+        document.getElementById('drawerTitle').textContent = 'Submit a Company';
+        document.getElementById('drawerVerdict').textContent = 'Help us expand our database';
+        document.getElementById('drawerBody').innerHTML = `
+            <p style="font-size:0.85em; color:var(--navy-600); margin-bottom:16px; line-height:1.6;">
+                Submit a company for review and we'll research and add it to our transparency database. We typically review submissions within 2-4 weeks.
+            </p>
+            <div class="submit-form">
+                <div><label>Company Name *</label><input type="text" id="submitName" placeholder="e.g. Trader Joe's" /></div>
+                <div><label>Category *</label>
+                    <select id="submitCategory">
+                        <option value="">Select a category...</option>
+                        <option>Retail / Shopping</option>
+                        <option>Fast Food / Restaurant</option>
+                        <option>Technology</option>
+                        <option>Banking / Finance</option>
+                        <option>Healthcare / Pharma</option>
+                        <option>Energy / Oil</option>
+                        <option>Food & Beverage</option>
+                        <option>Insurance</option>
+                        <option>Telecom</option>
+                        <option>Automotive</option>
+                        <option>Travel / Hospitality</option>
+                        <option>Education</option>
+                        <option>Law Enforcement</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div><label>Company Website</label><input type="text" id="submitWebsite" placeholder="e.g. https://traderjoes.com" /></div>
+                <div><label>Additional Notes</label><textarea id="submitNotes" placeholder="Any known ESG concerns, labor practices, or other relevant information..."></textarea></div>
+                <button class="btn-primary" onclick="submitCompany()">Submit for Review</button>
+                <div id="submitResult"></div>
+            </div>
+        `;
+    } else if (type.startsWith('source-')) {
+        const source = DATA_SOURCES[type];
+        if (source) {
+            document.getElementById('drawerTitle').textContent = source.title;
+            document.getElementById('drawerVerdict').textContent = 'Data Source Methodology';
+            document.getElementById('drawerBody').innerHTML = `
+                <div style="font-size:0.9em; color:var(--navy-700); line-height:1.7; margin-bottom:14px;">${source.description}</div>
+                <div style="background:var(--coral-100); padding:12px; border-radius:8px; margin-bottom:14px;">
+                    <div style="font-size:0.75em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#8a2020; margin-bottom:4px;">Score Impact</div>
+                    <div style="font-size:0.88em; color:#8a2020;">${source.impact}</div>
+                </div>
+                <a href="${source.url}" target="_blank" style="display:inline-block; padding:10px 18px; background:var(--navy-900); color:white; border-radius:8px; font-size:0.88em; font-weight:600; text-decoration:none;">Visit ${source.title} →</a>
+            `;
+        }
+    }
+
+    document.getElementById('drawerOverlay').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
+}
+
+function filterCompanies() {
+    const filter = document.getElementById('companyFilter').value.toLowerCase();
+    const items = document.querySelectorAll('#companyList .info-item');
+    items.forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(filter) ? 'flex' : 'none';
+    });
+}
+
+function filterStates() {
+    const filter = document.getElementById('stateFilter').value.toLowerCase();
+    const items = document.querySelectorAll('#stateList .info-item');
+    items.forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(filter) ? 'flex' : 'none';
+    });
+}
+
+async function submitCompany() {
+    const name = document.getElementById('submitName').value.trim();
+    const category = document.getElementById('submitCategory').value;
+    const website = document.getElementById('submitWebsite').value.trim();
+    const notes = document.getElementById('submitNotes').value.trim();
+    const resultDiv = document.getElementById('submitResult');
+
+    if (!name || !category) {
+        resultDiv.innerHTML = `<div class="error-msg" style="margin-top:10px;">Please enter a company name and select a category.</div>`;
+        return;
+    }
+
+    try {
+        const response = await fetch(`/submit_company?company_name=${encodeURIComponent(name)}&category=${encodeURIComponent(category)}&website=${encodeURIComponent(website)}&notes=${encodeURIComponent(notes)}`, { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+            resultDiv.innerHTML = `<div class="success-msg" style="margin-top:10px;">${data.message}</div>`;
+            document.getElementById('submitName').value = '';
+            document.getElementById('submitCategory').value = '';
+            document.getElementById('submitWebsite').value = '';
+            document.getElementById('submitNotes').value = '';
+        } else {
+            resultDiv.innerHTML = `<div class="error-msg" style="margin-top:10px;">${data.message}</div>`;
+        }
+    } catch (e) {
+        resultDiv.innerHTML = `<div class="error-msg" style="margin-top:10px;">Could not submit. Please try again.</div>`;
+    }
+}
+
+// ===== BUSINESS DRAWER =====
+function openBusinessDrawer(businessName, data) {
     const sc = getScoreClass(data.score);
     document.getElementById('drawerTitle').textContent = data.business;
     document.getElementById('drawerVerdict').textContent = getVerdict(data.score);
 
-    document.getElementById('drawerScore').innerHTML = `
-        <div class="drawer-score-circle ${sc}">
-            <div class="drawer-score-num ${sc}">${data.score}</div>
-            <div class="score-out">/100</div>
-        </div>
-        <div>
+    document.getElementById('drawerScoreSection').innerHTML = `
+        <div class="drawer-score">
+            <div class="drawer-score-circle ${sc}">
+                <div class="drawer-score-num ${sc}">${data.score}</div>
+                <div class="score-out">/100</div>
+            </div>
             <div style="font-size:0.85em; color:var(--navy-600); line-height:1.6;">${data.summary}</div>
-        </div>
-    `;
+        </div>`;
 
     const flagsHtml = data.flags && data.flags.length > 0
-        ? data.flags.map(f => `<div class="flag-item"><div class="flag-dot"></div>${f}</div>`).join('')
+        ? data.flags.map(f => renderFlag(f)).join('')
         : '<p style="color:var(--navy-400); font-size:0.85em;">No major flags detected.</p>';
 
     const altHtml = data.alternatives && data.alternatives.length > 0
         ? `<div class="drawer-section-title">Ethical Alternatives</div>
            ${data.alternatives.map(a => `
-            <div class="biz-row" onclick="quickBusinessSearch('${a.name}')">
+            <div class="biz-row" onclick="closeDrawer(); quickBusinessSearch('${a.name}')">
                 <div><div class="biz-name">${a.name}</div><div class="biz-sub">ESG: ${a.esg_rating}</div></div>
                 <span class="badge badge-low">${a.score}/100</span>
             </div>`).join('')}`
@@ -1529,13 +948,70 @@ function openDrawer(businessName, data) {
     `;
 
     document.getElementById('drawerActions').innerHTML = `
-        <button class="btn-primary" onclick="prefillRoute('${businessName}')">Plan Route There</button>
+        <button class="btn-primary" onclick="findNearestAndRoute('${businessName}')">Find Nearest Location</button>
         <button class="btn-secondary" onclick="checkAreaSafety('${businessName}')">Check Area Safety</button>
-        <a href="https://www.google.com/maps/search/${encodeURIComponent(businessName)}" target="_blank" class="btn-outline-navy">Google Maps</a>
+        <button class="btn-outline-navy" onclick="openGoogleMaps('${businessName}')">Google Maps</button>
     `;
 
     document.getElementById('drawerOverlay').classList.add('open');
     document.getElementById('drawer').classList.add('open');
+}
+
+function renderFlag(flag) {
+    if (flag.startsWith('HEADLINE|')) {
+        const parts = flag.split('|');
+        const title = parts[1] || '';
+        const url = parts[2] || '';
+        const source = parts[3] || '';
+        return `<div class="flag-item">
+            <div class="flag-dot"></div>
+            <div>
+                ${title}
+                ${url ? `<a href="${url}" target="_blank" class="flag-link">${source || 'Read More'} →</a>` : ''}
+            </div>
+        </div>`;
+    }
+    return `<div class="flag-item"><div class="flag-dot"></div>${flag}</div>`;
+}
+
+function openGoogleMaps(businessName) {
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(businessName)}`, '_blank');
+}
+
+async function findNearestAndRoute(businessName) {
+    if (!navigator.geolocation) {
+        closeDrawer();
+        switchPanel('route');
+        document.getElementById('routeDestination').value = businessName;
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async position => {
+        const { latitude: lat, longitude: lon } = position.coords;
+        try {
+            const response = await fetch(
+                `/nearest_location?business_name=${encodeURIComponent(businessName)}&lat=${lat}&lon=${lon}`,
+                { method: 'POST' }
+            );
+            const data = await response.json();
+            closeDrawer();
+            switchPanel('route');
+            if (data.found) {
+                document.getElementById('routeDestination').value = `${data.name}, ${data.address}`;
+            } else {
+                document.getElementById('routeDestination').value = businessName;
+            }
+            document.getElementById('routeOrigin').focus();
+        } catch (e) {
+            closeDrawer();
+            switchPanel('route');
+            document.getElementById('routeDestination').value = businessName;
+        }
+    }, () => {
+        closeDrawer();
+        switchPanel('route');
+        document.getElementById('routeDestination').value = businessName;
+    });
 }
 
 function closeDrawer() {
@@ -1555,6 +1031,12 @@ function checkAreaSafety(businessName) {
     switchPanel('travel');
     document.getElementById('travelInput').value = businessName;
     searchTravel();
+}
+
+function prefillRouteToLocation(location) {
+    switchPanel('route');
+    document.getElementById('routeDestination').value = location;
+    document.getElementById('routeOrigin').focus();
 }
 
 // ===== HELPERS =====
@@ -1591,8 +1073,7 @@ function getVerdict(score) {
 function checkSafetyAlert(location) {
     const alertDiv = document.getElementById('safety-alert');
     if (!alertDiv) return;
-    const locationUpper = location.toUpperCase();
-    const matched = HIGH_RISK_STATES.find(state => locationUpper.includes(state.toUpperCase()));
+    const matched = HIGH_RISK_STATES.find(state => location.toUpperCase().includes(state.toUpperCase()));
     if (matched) {
         alertDiv.textContent = `Safety Advisory: ${matched} has active travel advisories for marginalized communities. Review the safety ratings below carefully.`;
         alertDiv.classList.add('visible');
@@ -1602,7 +1083,8 @@ function checkSafetyAlert(location) {
 }
 
 function showLoadingSpinner(divId) {
-    document.getElementById(divId).innerHTML = `<div class="loading"><div class="loading-spinner"></div>Searching...</div>`;
+    const el = document.getElementById(divId);
+    if (el) el.innerHTML = `<div class="loading"><div class="loading-spinner"></div>Searching...</div>`;
 }
 
 // ===== BUSINESS SEARCH =====
@@ -1632,7 +1114,7 @@ function quickBusinessSearch(name) {
 function displayResults(data) {
     const sc = getScoreClass(data.score);
     const flagsHtml = data.flags && data.flags.length > 0
-        ? data.flags.map(f => `<div class="flag-item"><div class="flag-dot"></div>${f}</div>`).join('')
+        ? data.flags.map(f => renderFlag(f)).join('')
         : '<p style="color:var(--navy-400); font-size:0.85em;">No major flags detected.</p>';
 
     const altHtml = data.alternatives && data.alternatives.length > 0
@@ -1657,8 +1139,8 @@ function displayResults(data) {
                 <div class="verdict ${sc}">${getVerdict(data.score)}</div>
                 <div class="score-summary">${data.summary}</div>
                 <div class="score-actions">
-                    <button class="btn-outline" onclick="openDrawer('${data.business}', lastBusinessData)">Full Details</button>
-                    <button class="btn-outline" onclick="prefillRoute('${data.business}')">Plan Route</button>
+                    <button class="btn-outline" onclick="openBusinessDrawer('${data.business}', lastBusinessData)">Full Details</button>
+                    <button class="btn-outline" onclick="findNearestAndRoute('${data.business}')">Find & Route</button>
                     <button class="btn-outline" onclick="checkAreaSafety('${data.business}')">Area Safety</button>
                 </div>
             </div>
@@ -1706,12 +1188,11 @@ function renderSafetyItem(label, data) {
     const advisories = data.advisories && data.advisories.length > 0
         ? data.advisories.map(a => `<div class="advisory">${a}</div>`).join('')
         : '';
-    return `
-        <div class="safety-item">
-            <h5>${label} <span class="badge ${getBadgeClass(data.rating)}">${data.rating}</span></h5>
-            <p>${data.notes}</p>
-            ${advisories}
-        </div>`;
+    return `<div class="safety-item">
+        <h5>${label} <span class="badge ${getBadgeClass(data.rating)}">${data.rating}</span></h5>
+        <p>${data.notes}</p>
+        ${advisories}
+    </div>`;
 }
 
 function renderPoliceViolence(policeData) {
@@ -1779,15 +1260,13 @@ function displayTravelResults(data, localData) {
             </div>`).join('')
         : '';
 
-    const planRouteBtn = `<button class="btn-outline" onclick="prefillRouteToLocation('${data.location}')" style="margin-top:10px;">Plan Safe Route Here</button>`;
-
     resultsDiv.innerHTML = `
         <div class="${getBannerClass(data.overall_rating)} overall-banner">
             <span>${data.location}</span>
             <span>Overall: ${data.overall_rating}</span>
         </div>
-        ${planRouteBtn}
-        <div class="safety-grid" style="margin-top:12px;">
+        <button class="btn-outline" onclick="prefillRouteToLocation('${data.location}')" style="margin-bottom:12px;">Plan Safe Route Here</button>
+        <div class="safety-grid">
             ${renderSafetyItem('LGBTQ+ Safety', data.lgbtq)}
             ${renderSafetyItem('Racial Safety', data.racial)}
             ${renderSafetyItem('Religious Minority', data.religious_minority)}
@@ -1800,12 +1279,6 @@ function displayTravelResults(data, localData) {
         ${unratedHtml ? `<div class="section-divider">Other Nearby (Unrated)</div>${unratedHtml}` : ''}
         ${altHtml ? `<div class="section-divider">Ethical Alternatives</div>${altHtml}` : ''}
     `;
-}
-
-function prefillRouteToLocation(location) {
-    switchPanel('route');
-    document.getElementById('routeDestination').value = location;
-    document.getElementById('routeOrigin').focus();
 }
 
 document.getElementById('travelInput').addEventListener('keypress', e => {
@@ -1848,7 +1321,7 @@ async function reverseGeocode(lat, lon) {
     }
 }
 
-// ===== REAL-TIME TRACKING =====
+// ===== TRACKING =====
 let trackingInterval = null;
 let lastTrackedState = null;
 
@@ -1895,10 +1368,7 @@ function checkCurrentLocation() {
         } catch (e) {
             document.getElementById('tracking-status').textContent = 'Could not update location.';
         }
-    }, () => {
-        document.getElementById('tracking-status').textContent = 'Location access denied.';
-        stopTracking();
-    });
+    }, () => { stopTracking(); });
 }
 
 function showTrackingNotification(message, isHighRisk) {
@@ -1916,6 +1386,14 @@ async function planRoute(withDirections) {
     const destination = document.getElementById('routeDestination').value.trim();
     if (!origin || !destination) return;
     showLoadingSpinner('route-results');
+
+    // Show embedded map
+    const mapContainer = document.getElementById('map-container');
+    const mapIframe = document.getElementById('map-iframe');
+    const GOOGLE_KEY = 'AIzaSyBalxLq35w_7SCawNXOq-xpzpd06cWUpyM';
+    mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${GOOGLE_KEY}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&mode=driving`;
+    mapContainer.style.display = 'block';
+
     try {
         const response = await fetch(
             `/route_safety?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`,
@@ -1926,13 +1404,6 @@ async function planRoute(withDirections) {
     } catch (e) {
         document.getElementById('route-results').innerHTML = `<div class="error-msg">Could not plan route. Please try again.</div>`;
     }
-}
-
-function prefillRoute(businessName) {
-    closeDrawer();
-    switchPanel('route');
-    document.getElementById('routeDestination').value = businessName;
-    document.getElementById('routeOrigin').focus();
 }
 
 function getRouteStateClass(overall) {
@@ -1971,17 +1442,21 @@ function displayRouteResults(data, withDirections) {
 
     let directionsHtml = '';
     if (withDirections && data.directions && data.directions.length > 0) {
+        let stepCount = 0;
         directionsHtml = `
             <div class="section-divider">Turn-by-Turn Directions</div>
             <div class="card" style="padding:0; overflow:hidden;">
-                ${data.directions.map((step, i) =>
-                    step.type === 'warning'
-                        ? `<div class="step-item warning">⚠️ ${step.text}</div>`
-                        : `<div class="step-item">
-                            <div class="step-num">${i + 1}</div>
+                ${data.directions.map(step => {
+                    if (step.type === 'warning') {
+                        return `<div class="step-item warning">⚠️ ${step.text}</div>`;
+                    } else {
+                        stepCount++;
+                        return `<div class="step-item">
+                            <div class="step-num">${stepCount}</div>
                             <div>${step.text}${step.distance ? ` <span style="color:var(--navy-400); font-size:0.9em;">(${step.distance})</span>` : ''}</div>
-                           </div>`
-                ).join('')}
+                        </div>`;
+                    }
+                }).join('')}
             </div>`;
     }
 
@@ -2025,7 +1500,6 @@ function showTip() {
     document.getElementById('tips-body').textContent = TIPS[currentTip];
     document.getElementById('tips-counter').textContent = `${currentTip + 1} / ${TIPS.length}`;
 }
-
 function nextTip() { currentTip = (currentTip + 1) % TIPS.length; showTip(); }
 function prevTip() { currentTip = (currentTip - 1 + TIPS.length) % TIPS.length; showTip(); }
 
@@ -2033,7 +1507,6 @@ function showTravelTip() {
     document.getElementById('travel-tips-body').textContent = TRAVEL_TIPS[currentTravelTip];
     document.getElementById('travel-tips-counter').textContent = `${currentTravelTip + 1} / ${TRAVEL_TIPS.length}`;
 }
-
 function nextTravelTip() { currentTravelTip = (currentTravelTip + 1) % TRAVEL_TIPS.length; showTravelTip(); }
 function prevTravelTip() { currentTravelTip = (currentTravelTip - 1 + TRAVEL_TIPS.length) % TRAVEL_TIPS.length; showTravelTip(); }
 
