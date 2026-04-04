@@ -12,210 +12,1110 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --slate-900: #1a1f2e;
-            --slate-800: #252b3b;
-            --slate-700: #323848;
-            --slate-600: #4a5166;
-            --slate-400: #8892a4;
-            --slate-200: #d8dce6;
-            --slate-100: #f0f2f7;
+            --navy-900: #0a1628;
+            --navy-800: #0f2040;
+            --navy-700: #1a3058;
+            --navy-600: #254070;
+            --navy-400: #6b82a8;
+            --navy-200: #c8d4e8;
+            --navy-100: #eef2f8;
             --coral-600: #e8503a;
             --coral-500: #f06248;
             --coral-400: #f47d6a;
             --coral-100: #fde8e4;
-            --cream: #fdfcf9;
+            --green: #4caf7d;
+            --amber: #f0a500;
             --white: #ffffff;
+            --gray-100: #f4f6fa;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--slate-100); color: var(--slate-900); min-height: 100vh; display: flex; flex-direction: row; overflow-x: hidden; }
-        .sidebar { width: 260px; min-height: 100vh; background: var(--slate-900); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 100; }
-        .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid var(--slate-700); }
-        .sidebar-logo h1 { font-family: 'DM Serif Display', serif; font-size: 1.4em; color: var(--white); line-height: 1.2; }
-        .sidebar-logo p { font-size: 0.75em; color: var(--slate-400); margin-top: 4px; line-height: 1.4; }
-        .sidebar-nav { padding: 20px 12px; flex: 1; }
-        .nav-label { font-size: 0.7em; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--slate-600); padding: 0 12px; margin-bottom: 8px; margin-top: 16px; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; color: var(--slate-400); font-size: 0.9em; font-weight: 500; transition: all 0.15s; margin-bottom: 2px; }
-        .nav-item:hover { background: var(--slate-800); color: var(--white); }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gray-100);
+            color: var(--navy-900);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: var(--navy-900);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            z-index: 200;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px 16px;
+            border-bottom: 1px solid var(--navy-700);
+        }
+
+        .sidebar-logo h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.3em;
+            color: var(--white);
+            line-height: 1.2;
+        }
+
+        .sidebar-logo p {
+            font-size: 0.72em;
+            color: var(--navy-400);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .sidebar-nav { padding: 16px 10px; flex: 1; }
+
+        .nav-label {
+            font-size: 0.65em;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--navy-600);
+            padding: 0 10px;
+            margin-bottom: 6px;
+            margin-top: 14px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--navy-400);
+            font-size: 0.88em;
+            font-weight: 500;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover { background: var(--navy-800); color: var(--white); }
         .nav-item.active { background: var(--coral-600); color: var(--white); }
-        .nav-icon { width: 18px; height: 18px; flex-shrink: 0; }
-        .sidebar-footer { padding: 16px 24px; border-top: 1px solid var(--slate-700); font-size: 0.75em; color: var(--slate-600); line-height: 1.6; }
-        .main { margin-left: 260px; flex: 1; min-height: 100vh; min-width: 0; overflow-x: hidden; width: calc(100% - 260px); }
-        .topbar { background: var(--white); border-bottom: 1px solid var(--slate-200); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
-        .topbar h2 { font-family: 'DM Serif Display', serif; font-size: 1.3em; color: var(--slate-900); }
-        .topbar p { font-size: 0.85em; color: var(--slate-400); margin-top: 2px; }
-        .content { padding: 32px; box-sizing: border-box; width: 100%; }
-        .search-bar { display: flex; flex-wrap: wrap; gap: 8px; max-width: 600px; margin-bottom: 8px; }
-        .search-bar input { flex: 1; min-width: 200px; padding: 14px 18px; font-size: 0.95em; border: 1.5px solid var(--slate-200); border-radius: 10px; outline: none; background: var(--white); color: var(--slate-900); font-family: 'DM Sans', sans-serif; transition: border-color 0.15s; }
-        .search-bar input:focus { border-color: var(--coral-500); }
-        .search-bar button { padding: 14px 24px; background: var(--coral-600); color: white; border: none; border-radius: 10px; font-size: 0.95em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; white-space: nowrap; }
-        .search-bar button:hover { background: var(--slate-900); }
-        .location-btn { padding: 14px 18px; background: var(--slate-700); color: white; border: none; border-radius: 10px; font-size: 0.95em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; white-space: nowrap; }
-        .location-btn:hover { background: var(--coral-600); }
-        .search-hint { font-size: 0.8em; color: var(--slate-400); margin-bottom: 28px; }
+
+        .nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+        .sidebar-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--navy-700);
+            font-size: 0.72em;
+            color: var(--navy-600);
+            line-height: 1.6;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            min-height: 100vh;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--navy-200);
+            padding: 14px 28px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topbar-left h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.2em;
+            color: var(--navy-900);
+        }
+
+        .topbar-left p {
+            font-size: 0.8em;
+            color: var(--navy-400);
+            margin-top: 1px;
+        }
+
+        .content { padding: 24px 28px; flex: 1; }
+
+        /* ===== PANELS ===== */
         .panel { display: none; }
         .panel.active { display: block; }
-        .score-hero { background: var(--slate-900); border-radius: 16px; padding: 32px; display: flex; align-items: center; gap: 32px; margin-bottom: 20px; color: white; }
-        .score-circle { width: 110px; height: 110px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; border: 3px solid var(--slate-700); }
-        .score-circle.high { border-color: #4caf7d; background: rgba(76,175,125,0.1); }
-        .score-circle.medium { border-color: #f0a500; background: rgba(240,165,0,0.1); }
-        .score-circle.low { border-color: var(--coral-500); background: rgba(240,98,72,0.1); }
-        .score-num { font-family: 'DM Serif Display', serif; font-size: 2.8em; line-height: 1; }
-        .score-num.high { color: #4caf7d; }
-        .score-num.medium { color: #f0a500; }
+
+        /* ===== SEARCH BAR ===== */
+        .search-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--navy-200);
+            margin-bottom: 20px;
+        }
+
+        .search-section h3 {
+            font-size: 0.75em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--navy-400);
+            margin-bottom: 10px;
+        }
+
+        .search-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px 16px;
+            font-size: 0.95em;
+            border: 1.5px solid var(--navy-200);
+            border-radius: 8px;
+            outline: none;
+            background: var(--gray-100);
+            color: var(--navy-900);
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.15s;
+        }
+
+        .search-bar input:focus { border-color: var(--coral-500); background: var(--white); }
+
+        .btn-primary {
+            padding: 12px 22px;
+            background: var(--coral-600);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.92em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover { background: var(--navy-900); }
+
+        .btn-secondary {
+            padding: 12px 18px;
+            background: var(--navy-700);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.92em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-secondary:hover { background: var(--coral-600); }
+
+        .btn-outline {
+            padding: 8px 14px;
+            background: transparent;
+            color: var(--coral-600);
+            border: 1.5px solid var(--coral-600);
+            border-radius: 6px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-outline:hover { background: var(--coral-600); color: white; }
+
+        .btn-outline-navy {
+            padding: 8px 14px;
+            background: transparent;
+            color: var(--navy-700);
+            border: 1.5px solid var(--navy-200);
+            border-radius: 6px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-outline-navy:hover { background: var(--navy-900); color: white; border-color: var(--navy-900); }
+
+        .search-hint {
+            font-size: 0.78em;
+            color: var(--navy-400);
+            margin-top: 8px;
+        }
+
+        /* ===== RESULTS ===== */
+        #results { margin-top: 0; }
+
+        .score-hero {
+            background: var(--navy-900);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 3px solid var(--navy-700);
+        }
+
+        .score-circle.high { border-color: var(--green); background: rgba(76,175,125,0.1); }
+        .score-circle.medium { border-color: var(--amber); background: rgba(240,165,0,0.1); }
+        .score-circle.low { border-color: var(--coral-500); background: rgba(232,80,58,0.1); }
+
+        .score-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.6em;
+            line-height: 1;
+        }
+
+        .score-num.high { color: var(--green); }
+        .score-num.medium { color: var(--amber); }
         .score-num.low { color: var(--coral-400); }
-        .score-out { font-size: 0.75em; color: var(--slate-400); }
-        .score-info h3 { font-family: 'DM Serif Display', serif; font-size: 1.6em; margin-bottom: 4px; }
-        .score-info .verdict { font-size: 0.9em; color: var(--slate-400); margin-bottom: 12px; }
-        .score-info .verdict.high { color: #4caf7d; }
-        .score-info .verdict.medium { color: #f0a500; }
-        .score-info .verdict.low { color: var(--coral-400); }
-        .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-        .card { background: var(--white); border-radius: 12px; padding: 20px; border: 1px solid var(--slate-200); }
-        .card.full { grid-column: 1 / -1; }
-        .card h4 { font-size: 0.75em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--slate-400); margin-bottom: 12px; }
-        .card p { font-size: 0.9em; line-height: 1.7; color: var(--slate-600); }
-        .flag-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px; background: var(--coral-100); border-radius: 6px; margin-bottom: 6px; font-size: 0.85em; color: var(--slate-800); line-height: 1.5; }
-        .flag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--coral-600); flex-shrink: 0; margin-top: 5px; }
-        .safety-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-        .safety-item { background: var(--white); border-radius: 10px; padding: 16px; border: 1px solid var(--slate-200); }
-        .safety-item h5 { font-size: 0.8em; font-weight: 600; color: var(--slate-600); margin-bottom: 6px; }
-        .safety-item p { font-size: 0.82em; color: var(--slate-600); line-height: 1.5; margin-bottom: 6px; }
-        .advisory { font-size: 0.78em; color: #8a2020; background: var(--coral-100); padding: 4px 8px; border-radius: 4px; margin-top: 4px; line-height: 1.4; }
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 600; }
+        .score-out { font-size: 0.72em; color: var(--navy-400); }
+
+        .score-info h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5em;
+            margin-bottom: 4px;
+        }
+
+        .verdict {
+            font-size: 0.88em;
+            margin-bottom: 10px;
+        }
+
+        .verdict.high { color: var(--green); }
+        .verdict.medium { color: var(--amber); }
+        .verdict.low { color: var(--coral-400); }
+
+        .score-summary {
+            font-size: 0.83em;
+            color: var(--navy-400);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .score-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid var(--navy-200);
+            margin-bottom: 14px;
+        }
+
+        .card h4 {
+            font-size: 0.72em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--navy-400);
+            margin-bottom: 10px;
+        }
+
+        .card p { font-size: 0.88em; line-height: 1.7; color: var(--navy-600); }
+
+        .flag-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--coral-100);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 0.83em;
+            color: var(--navy-800);
+            line-height: 1.5;
+        }
+
+        .flag-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--coral-600);
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.74em;
+            font-weight: 600;
+        }
+
         .badge-low { background: #e6f4ea; color: #1e6e3a; }
         .badge-medium { background: #fff3d6; color: #7a4f00; }
         .badge-high { background: var(--coral-100); color: #8a2020; }
-        .badge-severe { background: #3a0a0a; color: #ffb3b3; }
-        .badge-unrated { background: var(--slate-200); color: var(--slate-600); }
-        .overall-banner { border-radius: 10px; padding: 16px 20px; font-weight: 600; font-size: 1em; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+        .badge-severe { background: #2a0a0a; color: #ffb3b3; }
+        .badge-unrated { background: var(--navy-100); color: var(--navy-600); }
+
+        /* ===== BIZ ROW ===== */
+        .biz-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--gray-100);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .biz-row:hover { background: var(--navy-100); }
+        .biz-name { font-size: 0.88em; font-weight: 600; color: var(--navy-900); }
+        .biz-sub { font-size: 0.76em; color: var(--navy-400); margin-top: 2px; }
+
+        /* ===== DASHBOARD CONTENT ===== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid var(--navy-200);
+            text-align: center;
+        }
+
+        .stat-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8em;
+            color: var(--coral-600);
+            line-height: 1;
+        }
+
+        .stat-label { font-size: 0.75em; color: var(--navy-400); margin-top: 4px; }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .featured-section {
+            background: var(--white);
+            border-radius: 10px;
+            border: 1px solid var(--navy-200);
+            overflow: hidden;
+        }
+
+        .featured-header {
+            padding: 8px 14px;
+            font-size: 0.72em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .featured-header.good { background: #e6f4ea; color: #1e6e3a; }
+        .featured-header.bad { background: var(--coral-100); color: #8a2020; }
+
+        .featured-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .featured-item:hover { background: var(--gray-100); }
+        .feat-name { font-size: 0.88em; font-weight: 600; color: var(--navy-900); }
+        .feat-sub { font-size: 0.74em; color: var(--navy-400); margin-top: 2px; }
+
+        /* ===== TIPS ===== */
+        .tips-card {
+            background: var(--navy-900);
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .tips-header {
+            font-size: 0.68em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--coral-400);
+            margin-bottom: 8px;
+        }
+
+        .tips-body {
+            font-size: 0.9em;
+            line-height: 1.7;
+            color: var(--navy-200);
+            min-height: 46px;
+        }
+
+        .tips-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .tips-nav button {
+            background: var(--navy-700);
+            color: var(--navy-200);
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.78em;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
+        }
+
+        .tips-nav button:hover { background: var(--coral-600); color: white; }
+        .tips-nav span { font-size: 0.78em; color: var(--navy-600); }
+
+        /* ===== TICKER ===== */
+        .ticker-wrap {
+            background: var(--navy-900);
+            border-radius: 8px;
+            padding: 9px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .ticker-label {
+            background: var(--coral-600);
+            color: white;
+            font-size: 0.65em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .ticker-track {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker 40s linear infinite;
+        }
+
+        .ticker-item { color: var(--navy-400); font-size: 0.8em; padding-right: 50px; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* ===== SAFETY ITEMS ===== */
+        .safety-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .safety-item {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid var(--navy-200);
+        }
+
+        .safety-item h5 {
+            font-size: 0.78em;
+            font-weight: 600;
+            color: var(--navy-600);
+            margin-bottom: 5px;
+        }
+
+        .safety-item p {
+            font-size: 0.78em;
+            color: var(--navy-600);
+            line-height: 1.5;
+            margin-bottom: 5px;
+        }
+
+        .advisory {
+            font-size: 0.74em;
+            color: #8a2020;
+            background: var(--coral-100);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* ===== BANNERS ===== */
+        .overall-banner {
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-weight: 600;
+            font-size: 0.95em;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         .banner-low { background: #e6f4ea; color: #1e6e3a; }
         .banner-medium { background: #fff3d6; color: #7a4f00; }
         .banner-high { background: var(--coral-100); color: #8a2020; }
-        .biz-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--slate-100); border-radius: 8px; margin-bottom: 6px; }
-        .biz-name { font-size: 0.9em; font-weight: 600; color: var(--slate-900); }
-        .biz-sub { font-size: 0.78em; color: var(--slate-400); margin-top: 1px; }
-        .loading { text-align: center; padding: 60px 20px; color: var(--slate-400); font-size: 0.95em; }
-        .error-msg { background: var(--coral-100); color: #8a2020; padding: 16px; border-radius: 10px; font-size: 0.9em; }
-        .section-divider { font-size: 0.75em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--slate-400); margin: 20px 0 10px; display: flex; align-items: center; gap: 10px; }
-        .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--slate-200); }
-        .ticker-wrap { background: var(--slate-900); border-radius: 10px; padding: 10px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 24px; overflow: hidden; }
-        .ticker-label { background: var(--coral-600); color: white; font-size: 0.7em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; flex-shrink: 0; }
-        .ticker-track { display: flex; gap: 0; white-space: nowrap; animation: ticker 40s linear infinite; }
-        .ticker-item { color: var(--slate-400); font-size: 0.82em; padding-right: 60px; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; width: 100%; }
-        .stat-card { background: var(--white); border-radius: 12px; padding: 20px; border: 1px solid var(--slate-200); text-align: center; }
-        .stat-num { font-family: 'DM Serif Display', serif; font-size: 2em; color: var(--coral-600); line-height: 1; }
-        .stat-label { font-size: 0.78em; color: var(--slate-400); margin-top: 6px; }
-        .featured-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; width: 100%; }
-        .featured-section { background: var(--white); border-radius: 12px; border: 1px solid var(--slate-200); overflow: hidden; }
-        .featured-header { padding: 10px 16px; font-size: 0.78em; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
-        .featured-header.good { background: #e6f4ea; color: #1e6e3a; }
-        .featured-header.bad { background: var(--coral-100); color: #8a2020; }
-        .featured-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--slate-100); }
-        .feat-name { font-size: 0.9em; font-weight: 600; color: var(--slate-900); }
-        .feat-sub { font-size: 0.78em; color: var(--slate-400); margin-top: 2px; }
-        .tips-card { background: var(--slate-900); border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; color: white; }
-        .tips-header { font-size: 0.72em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--coral-400); margin-bottom: 10px; }
-        .tips-body { font-size: 0.95em; line-height: 1.7; color: var(--slate-200); min-height: 50px; }
-        .tips-nav { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
-        .tips-nav button { background: var(--slate-700); color: var(--slate-200); border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.8em; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
-        .tips-nav button:hover { background: var(--coral-600); color: white; }
-        .tips-nav span { font-size: 0.8em; color: var(--slate-600); }
-        .quick-states { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-        .state-btn { background: var(--slate-100); border: 1px solid var(--slate-200); color: var(--slate-700); padding: 6px 14px; border-radius: 20px; font-size: 0.82em; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
-        .state-btn:hover { background: var(--coral-600); color: white; border-color: var(--coral-600); }
-        .safety-alert { background: var(--coral-600); color: white; padding: 14px 20px; border-radius: 10px; margin-bottom: 16px; font-size: 0.9em; font-weight: 600; display: none; }
-        .safety-alert.visible { display: block; }
 
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .stats-row { grid-template-columns: repeat(2, 1fr); }
-            .featured-grid { grid-template-columns: 1fr; }
-            .safety-grid { grid-template-columns: 1fr; }
-            .cards-grid { grid-template-columns: 1fr; }
+        /* ===== SAFETY ALERT ===== */
+        .safety-alert {
+            background: var(--coral-600);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 0.88em;
+            font-weight: 600;
+            display: none;
         }
 
-        @media (max-width: 768px) {
-            .sidebar { width: 100%; min-height: auto; position: relative; flex-direction: row; align-items: center; flex-wrap: nowrap; padding: 8px 0; }
-            .sidebar-logo { padding: 8px 16px; border-bottom: none; border-right: 1px solid var(--slate-700); flex-shrink: 0; width: auto; }
-            .sidebar-logo h1 { font-size: 1em; white-space: nowrap; }
-            .sidebar-logo p { display: none; }
-            .sidebar-nav { display: flex; flex-direction: row; padding: 0 8px; flex: 1; overflow-x: auto; }
-            .nav-label { display: none; }
-            .nav-item { padding: 8px 10px; font-size: 0.78em; white-space: nowrap; margin-bottom: 0; }
-            .sidebar-footer { display: none; }
-            .main { margin-left: 0; margin-top: 0; }
-            body { flex-direction: column; }
-            .topbar { padding: 12px 16px; }
+        .safety-alert.visible { display: block; }
+
+        /* ===== SECTION DIVIDER ===== */
+        .section-divider {
+            font-size: 0.72em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--navy-400);
+            margin: 18px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--navy-200);
+        }
+
+        /* ===== QUICK STATES ===== */
+        .quick-states { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+
+        .state-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--navy-200);
+            color: var(--navy-700);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .state-btn:hover { background: var(--coral-600); color: white; border-color: var(--coral-600); }
+
+        /* ===== ROUTE ===== */
+        .route-inputs {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--navy-200);
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-width: 600px;
+        }
+
+        .route-input-group { display: flex; flex-direction: column; gap: 5px; }
+
+        .route-input-group label {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: var(--navy-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .route-input-group input {
+            padding: 11px 14px;
+            border: 1.5px solid var(--navy-200);
+            border-radius: 8px;
+            font-size: 0.92em;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            color: var(--navy-900);
+            background: var(--gray-100);
+        }
+
+        .route-input-group input:focus { border-color: var(--coral-500); background: var(--white); }
+
+        .route-summary {
+            background: var(--navy-900);
+            color: white;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .route-stat { text-align: center; }
+        .route-stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6em; color: var(--coral-400); }
+        .route-stat-label { font-size: 0.72em; color: var(--navy-400); margin-top: 2px; }
+
+        .route-state {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid var(--navy-200);
+            margin-bottom: 8px;
+            border-left: 4px solid var(--navy-200);
+        }
+
+        .route-state.high-risk { border-left-color: var(--coral-600); }
+        .route-state.medium-risk { border-left-color: var(--amber); }
+        .route-state.low-risk { border-left-color: var(--green); }
+
+        .route-state-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .route-state-name { font-weight: 600; font-size: 0.95em; color: var(--navy-900); }
+        .route-state-ratings { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.83em;
+            color: var(--navy-700);
+        }
+
+        .step-item.warning {
+            background: var(--coral-100);
+            color: #8a2020;
+            font-weight: 600;
+            border-radius: 6px;
+            margin: 4px 0;
+            border-bottom: none;
+        }
+
+        .step-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--navy-200);
+            color: var(--navy-700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72em;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ===== DRAWER ===== */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10,22,40,0.4);
+            z-index: 300;
+        }
+
+        .drawer-overlay.open { display: block; }
+
+        .drawer {
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 380px;
+            max-width: 90vw;
+            background: var(--white);
+            z-index: 301;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .drawer.open { transform: translateX(0); }
+
+        .drawer-header {
+            background: var(--navy-900);
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .drawer-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.3em;
+        }
+
+        .drawer-close {
+            background: none;
+            border: none;
+            color: var(--navy-400);
+            font-size: 1.4em;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        .drawer-close:hover { color: white; }
+
+        .drawer-score {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--navy-100);
+        }
+
+        .drawer-score-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--navy-200);
+            flex-shrink: 0;
+        }
+
+        .drawer-score-circle.high { border-color: var(--green); background: rgba(76,175,125,0.08); }
+        .drawer-score-circle.medium { border-color: var(--amber); background: rgba(240,165,0,0.08); }
+        .drawer-score-circle.low { border-color: var(--coral-500); background: rgba(232,80,58,0.08); }
+
+        .drawer-score-num { font-family: 'DM Serif Display', serif; font-size: 1.8em; line-height: 1; }
+        .drawer-score-num.high { color: var(--green); }
+        .drawer-score-num.medium { color: var(--amber); }
+        .drawer-score-num.low { color: var(--coral-400); }
+
+        .drawer-body { padding: 16px 20px; flex: 1; }
+
+        .drawer-section-title {
+            font-size: 0.7em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--navy-400);
+            margin-bottom: 8px;
+            margin-top: 14px;
+        }
+
+        .drawer-actions {
+            display: flex;
+            gap: 8px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--navy-100);
+            background: var(--gray-100);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        /* ===== TRACKING ===== */
+        .tracking-bar {
+            display: none;
+            background: var(--navy-900);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .tracking-bar.active { display: flex; }
+        .tracking-status { font-size: 0.85em; }
+
+        /* ===== LOADING / ERROR ===== */
+        .loading {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--navy-400);
+            font-size: 0.92em;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--navy-200);
+            border-top-color: var(--coral-600);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-msg {
+            background: var(--coral-100);
+            color: #8a2020;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 0.88em;
+        }
+
+        /* ===== ABOUT ===== */
+        .about-hero {
+            background: var(--navy-900);
+            border-radius: 12px;
+            padding: 32px;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .about-hero h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+
+        .about-hero p { font-size: 0.92em; color: var(--navy-400); line-height: 1.7; }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .about-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid var(--navy-200);
+        }
+
+        .about-card h4 {
+            font-size: 0.88em;
+            font-weight: 600;
+            color: var(--navy-900);
+            margin-bottom: 6px;
+        }
+
+        .about-card p { font-size: 0.82em; color: var(--navy-600); line-height: 1.6; }
+
+        .source-tag {
+            display: inline-block;
+            background: var(--navy-100);
+            color: var(--navy-700);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin: 3px;
+        }
+
+        /* ===== MOBILE TOP NAV ===== */
+        .mobile-topnav {
+            display: none;
+            background: var(--navy-900);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 200;
+            padding: 0 12px;
+            align-items: center;
+            height: 52px;
+            gap: 4px;
+        }
+
+        .mobile-logo {
+            font-family: 'DM Serif Display', serif;
+            color: var(--white);
+            font-size: 1em;
+            margin-right: auto;
+            white-space: nowrap;
+        }
+
+        .mobile-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--navy-400);
+            font-size: 0.6em;
+            font-weight: 600;
+            gap: 3px;
+            border: none;
+            background: none;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .mobile-nav-btn svg { width: 18px; height: 18px; }
+        .mobile-nav-btn.active { color: var(--coral-400); }
+        .mobile-nav-btn:hover { color: var(--white); }
+
+        /* ===== MOBILE BOTTOM TAB BAR ===== */
+        .bottom-tabs {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--navy-900);
+            border-top: 1px solid var(--navy-700);
+            z-index: 200;
+            padding: 6px 0 8px;
+        }
+
+        .bottom-tabs-inner {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .bottom-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 4px 12px;
+            cursor: pointer;
+            color: var(--navy-400);
+            font-size: 0.6em;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: color 0.15s;
+            border: none;
+            background: none;
+        }
+
+        .bottom-tab svg { width: 20px; height: 20px; }
+        .bottom-tab.active { color: var(--coral-400); }
+
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: white;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 0.88em;
+            font-weight: 600;
+            z-index: 9999;
+            max-width: 300px;
+            font-family: 'DM Sans', sans-serif;
+            transition: opacity 0.5s;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .mobile-topnav { display: flex; }
+            .bottom-tabs { display: block; }
+            .main { margin-left: 0; padding-top: 52px; padding-bottom: 70px; }
+            .topbar { display: none; }
             .content { padding: 16px; }
-            .stats-row { grid-template-columns: repeat(2, 1fr); }
-            .score-hero { flex-direction: column; text-align: center; gap: 16px; padding: 24px 20px; }
-            .ticker-wrap { display: none; }
-            .quick-states { gap: 6px; }
-            .state-btn { font-size: 0.78em; padding: 5px 10px; }
-            .safety-grid { grid-template-columns: 1fr; }
-            .cards-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .featured-grid { grid-template-columns: 1fr; }
+            .safety-grid { grid-template-columns: 1fr; }
+            .about-grid { grid-template-columns: 1fr; }
+            .score-hero { flex-direction: column; text-align: center; gap: 14px; padding: 20px; }
+            .score-actions { justify-content: center; }
+            .ticker-wrap { display: none; }
+            .route-summary { gap: 16px; }
+            .drawer { width: 100%; max-width: 100%; }
         }
 
         @media (max-width: 480px) {
-            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .stat-num { font-size: 1.6em; }
-            .sidebar-logo h1 { font-size: 1.1em; }
-            .featured-grid { grid-template-columns: 1fr; }
+            .stats-row { gap: 8px; }
+            .stat-num { font-size: 1.5em; }
             .content { padding: 12px; }
-            .score-circle { width: 90px; height: 90px; }
-            .score-num { font-size: 2.2em; }
-        }
-
-        @media (max-height: 500px) and (orientation: landscape) {
-            .sidebar { width: 100%; min-height: auto; position: relative; flex-direction: row; align-items: center; padding: 4px 0; }
-            .sidebar-logo { padding: 6px 12px; border-bottom: none; border-right: 1px solid var(--slate-700); flex-shrink: 0; }
-            .sidebar-logo h1 { font-size: 0.9em; white-space: nowrap; }
-            .sidebar-logo p { display: none; }
-            .sidebar-nav { display: flex; flex-direction: row; padding: 0 8px; flex: 1; overflow-x: auto; }
-            .nav-label { display: none; }
-            .nav-item { padding: 6px 10px; font-size: 0.78em; white-space: nowrap; margin-bottom: 0; }
-            .sidebar-footer { display: none; }
-            body { flex-direction: column; }
-            .main { margin-left: 0; }
-            .topbar { padding: 8px 16px; }
-            .topbar h2 { font-size: 1em; }
-            .topbar p { display: none; }
-            .content { padding: 12px; }
-            .stats-row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
-            .stat-card { padding: 10px; }
-            .stat-num { font-size: 1.4em; }
-            .ticker-wrap { display: none; }
-            .featured-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .tips-card { padding: 14px; margin-bottom: 12px; }
-            .score-hero { padding: 16px; gap: 16px; }
             .score-circle { width: 80px; height: 80px; }
             .score-num { font-size: 2em; }
+            .route-summary { flex-direction: column; gap: 12px; align-items: flex-start; }
         }
-        .route-inputs { background: var(--white); border-radius: 12px; padding: 24px; border: 1px solid var(--slate-200); margin-bottom: 24px; display: flex; flex-direction: column; gap: 16px; max-width: 600px; }
-        .route-input-group { display: flex; flex-direction: column; gap: 6px; }
-        .route-input-group label { font-size: 0.8em; font-weight: 600; color: var(--slate-600); text-transform: uppercase; letter-spacing: 0.5px; }
-        .route-input-group input { padding: 12px 16px; border: 1.5px solid var(--slate-200); border-radius: 8px; font-size: 0.95em; font-family: 'DM Sans', sans-serif; outline: none; color: var(--slate-900); background: var(--white); }
-        .route-input-group input:focus { border-color: var(--coral-500); }
-        .route-btn { padding: 14px 24px; background: var(--coral-600); color: white; border: none; border-radius: 10px; font-size: 0.95em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
-        .route-btn:hover { background: var(--slate-900); }
-        .route-summary { background: var(--slate-900); color: white; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; display: flex; gap: 32px; align-items: center; }
-        .route-stat { text-align: center; }
-        .route-stat-num { font-family: 'DM Serif Display', serif; font-size: 1.8em; color: var(--coral-400); }
-        .route-stat-label { font-size: 0.75em; color: var(--slate-400); margin-top: 4px; }
-        .route-state { background: var(--white); border-radius: 10px; padding: 16px; border: 1px solid var(--slate-200); margin-bottom: 10px; }
-        .route-state.high-risk { border-left: 4px solid var(--coral-600); }
-        .route-state.low-risk { border-left: 4px solid #4caf7d; }
-        .route-state.medium-risk { border-left: 4px solid #f0a500; }
-        .route-state-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .route-state-name { font-weight: 600; font-size: 1em; color: var(--slate-900); }
-        .route-state-ratings { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+
+        @media (min-width: 901px) {
+            .mobile-topnav { display: none; }
+            .bottom-tabs { display: none; }
+        }
     </style>
 </head>
 <body>
 
+<!-- MOBILE TOP NAV -->
+<nav class="mobile-topnav">
+    <span class="mobile-logo">Conscious Consumer</span>
+    <button class="mobile-nav-btn active" id="mob-business" onclick="switchPanel('business')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search
+    </button>
+    <button class="mobile-nav-btn" id="mob-travel" onclick="switchPanel('travel')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        Travel
+    </button>
+    <button class="mobile-nav-btn" id="mob-route" onclick="switchPanel('route')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/></svg>
+        Route
+    </button>
+    <button class="mobile-nav-btn" id="mob-about" onclick="switchPanel('about')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        About
+    </button>
+</nav>
+
+<!-- DESKTOP SIDEBAR -->
 <aside class="sidebar">
     <div class="sidebar-logo">
         <h1>Conscious Consumer</h1>
@@ -247,9 +1147,10 @@
     </div>
 </aside>
 
+<!-- MAIN -->
 <main class="main">
     <div class="topbar">
-        <div>
+        <div class="topbar-left">
             <h2 id="topbar-title">Business Transparency</h2>
             <p id="topbar-sub">Search any business, brand, or law enforcement agency</p>
         </div>
@@ -281,40 +1182,53 @@
                 </div>
             </div>
 
+            <!-- SEARCH FIRST -->
+            <div class="search-section">
+                <h3>Search a Business</h3>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="e.g. Walmart, Exxon, Minneapolis Police Department..." />
+                    <button class="btn-primary" onclick="searchBusiness()">Search</button>
+                </div>
+                <p class="search-hint">Try: Wells Fargo, Tyson Foods, Shell, Purdue Pharma</p>
+            </div>
+
+            <div id="results"></div>
+
+            <!-- DASHBOARD BELOW RESULTS -->
             <div class="stats-row">
                 <div class="stat-card"><div class="stat-num">250+</div><div class="stat-label">Companies Tracked</div></div>
-                <div class="stat-card"><div class="stat-num">51</div><div class="stat-label">States + DC Covered</div></div>
+                <div class="stat-card"><div class="stat-num">51</div><div class="stat-label">States + DC</div></div>
                 <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">Data Sources</div></div>
-                <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Communities Protected</div></div>
+                <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Communities</div></div>
             </div>
 
             <div class="featured-grid">
                 <div class="featured-section">
                     <div class="featured-header good">Recommended This Week</div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickBusinessSearch('Costco')">
                         <div><div class="feat-name">Costco</div><div class="feat-sub">Strong worker benefits, low ESG risk</div></div>
                         <span class="badge badge-low">95/100</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickBusinessSearch('Etsy')">
                         <div><div class="feat-name">Etsy</div><div class="feat-sub">Supports small businesses, good practices</div></div>
                         <span class="badge badge-low">95/100</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickBusinessSearch('Patagonia')">
                         <div><div class="feat-name">Patagonia</div><div class="feat-sub">Environmental leader, ethical supply chain</div></div>
                         <span class="badge badge-low">92/100</span>
                     </div>
                 </div>
                 <div class="featured-section">
                     <div class="featured-header bad">Flagged This Week</div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickBusinessSearch('Purdue Pharma')">
                         <div><div class="feat-name">Purdue Pharma</div><div class="feat-sub">Opioid crisis, severe human rights record</div></div>
                         <span class="badge badge-severe">12/100</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickBusinessSearch('Shein')">
                         <div><div class="feat-name">Shein</div><div class="feat-sub">Forced labor supply chain concerns</div></div>
                         <span class="badge badge-high">20/100</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickBusinessSearch('Volkswagen')">
                         <div><div class="feat-name">Volkswagen</div><div class="feat-sub">Dieselgate fraud, severe ESG violations</div></div>
                         <span class="badge badge-high">25/100</span>
                     </div>
@@ -330,69 +1244,84 @@
                     <button onclick="nextTip()">Next</button>
                 </div>
             </div>
-
-            <div class="section-divider">Search a Business</div>
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="e.g. Walmart, Exxon, NYPD..." />
-                <button onclick="searchBusiness()">Search</button>
-            </div>
-            <p class="search-hint">Try: Wells Fargo, Tyson Foods, Minneapolis Police Department</p>
-            <div id="results"></div>
         </div>
 
         <!-- TRAVEL PANEL -->
         <div class="panel" id="panel-travel">
             <div id="safety-alert" class="safety-alert"></div>
 
-            <div class="stats-row">
+            <!-- SEARCH FIRST -->
+            <div class="search-section">
+                <h3>Search a Location</h3>
+                <div class="search-bar">
+                    <input type="text" id="travelInput" placeholder="e.g. Florida, Atlanta GA, 123 Main St Miami FL..." />
+                    <button class="btn-primary" onclick="searchTravel()">Search</button>
+                    <button class="btn-secondary" onclick="getLocation()">Use My Location</button>
+                </div>
+                <p id="location-status" class="search-hint">Enter a state, city, or full address — or click "Use My Location"</p>
+            </div>
+
+            <div class="tracking-bar" id="tracking-bar">
+                <span id="tracking-status" class="tracking-status">Tracking your location...</span>
+                <button onclick="stopTracking()" class="btn-outline" style="border-color:white; color:white;">Stop</button>
+            </div>
+
+            <button onclick="startTracking()" id="tracking-btn" class="btn-secondary" style="margin-bottom:16px; width:100%; max-width:600px;">
+                Enable Real-Time Safety Tracking
+            </button>
+
+            <div id="travel-results"></div>
+
+            <!-- DASHBOARD BELOW -->
+            <div class="stats-row" style="margin-top:20px;">
                 <div class="stat-card"><div class="stat-num">51</div><div class="stat-label">States + DC</div></div>
                 <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Communities</div></div>
                 <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Active Advisories</div></div>
-                <div class="stat-card"><div class="stat-num">28k+</div><div class="stat-label">Police Incidents Tracked</div></div>
+                <div class="stat-card"><div class="stat-num">28k+</div><div class="stat-label">Incidents Tracked</div></div>
             </div>
 
             <div class="featured-grid">
                 <div class="featured-section">
                     <div class="featured-header good">Most Welcoming States</div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickSearch('Massachusetts')">
                         <div><div class="feat-name">Massachusetts</div><div class="feat-sub">First state to legalize same-sex marriage</div></div>
                         <span class="badge badge-low">Low Risk</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickSearch('New York')">
                         <div><div class="feat-name">New York</div><div class="feat-sub">Comprehensive protections for all communities</div></div>
                         <span class="badge badge-low">Low Risk</span>
                     </div>
-                    <div class="featured-item">
-                        <div><div class="feat-name">Vermont</div><div class="feat-sub">Abortion rights in constitution, strong LGBTQ+ laws</div></div>
+                    <div class="featured-item" onclick="quickSearch('Vermont')">
+                        <div><div class="feat-name">Vermont</div><div class="feat-sub">Abortion rights in constitution</div></div>
                         <span class="badge badge-low">Low Risk</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickSearch('Hawaii')">
                         <div><div class="feat-name">Hawaii</div><div class="feat-sub">Most diverse state, excellent protections</div></div>
                         <span class="badge badge-low">Low Risk</span>
                     </div>
                 </div>
                 <div class="featured-section">
                     <div class="featured-header bad">Active Travel Advisories</div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickSearch('Florida')">
                         <div><div class="feat-name">Florida</div><div class="feat-sub">NAACP + HRC advisories active</div></div>
                         <span class="badge badge-high">High Risk</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickSearch('Mississippi')">
                         <div><div class="feat-name">Mississippi</div><div class="feat-sub">NAACP advisory, broad discrimination permitted</div></div>
                         <span class="badge badge-severe">High Risk</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickSearch('Texas')">
                         <div><div class="feat-name">Texas</div><div class="feat-sub">Total abortion ban, anti-trans healthcare laws</div></div>
                         <span class="badge badge-high">High Risk</span>
                     </div>
-                    <div class="featured-item">
+                    <div class="featured-item" onclick="quickSearch('Tennessee')">
                         <div><div class="feat-name">Tennessee</div><div class="feat-sub">Anti-drag laws, near-total abortion ban</div></div>
                         <span class="badge badge-high">High Risk</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card full" style="margin-bottom:24px;">
+            <div class="card">
                 <h4>Quick State Lookup</h4>
                 <div class="quick-states">
                     <button class="state-btn" onclick="quickSearch('California')">California</button>
@@ -410,7 +1339,7 @@
                 </div>
             </div>
 
-            <div class="tips-card" style="margin-bottom:24px;">
+            <div class="tips-card">
                 <div class="tips-header">Travel Safety Tip</div>
                 <div class="tips-body" id="travel-tips-body">Loading tip...</div>
                 <div class="tips-nav">
@@ -419,23 +1348,9 @@
                     <button onclick="nextTravelTip()">Next</button>
                 </div>
             </div>
-
-            <div class="section-divider">Search a Location</div>
-            <div class="search-bar">
-                <input type="text" id="travelInput" placeholder="e.g. Florida, 123 Main St Atlanta GA..." />
-                <button onclick="searchTravel()">Search</button>
-                <button class="location-btn" onclick="getLocation()">Use My Location</button>
-            </div>
-            <p id="location-status" class="search-hint">Or click "Use My Location" to auto-detect your location.</p>
-            <div id="tracking-bar" style="display:none; background:var(--slate-900); color:white; padding:12px 16px; border-radius:10px; margin-bottom:16px; display:none; align-items:center; justify-content:space-between;">
-                <span id="tracking-status">Tracking your location...</span>
-                <button onclick="stopTracking()" style="background:var(--coral-600); color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.85em;">Stop Tracking</button>
-            </div>
-            <button onclick="startTracking()" id="tracking-btn" class="location-btn" style="margin-bottom:16px; width:100%; max-width:600px;">Enable Real-Time Safety Tracking</button>
-            <div id="travel-results"></div>
         </div>
 
-<!-- ROUTE PANEL -->
+        <!-- ROUTE PANEL -->
         <div class="panel" id="panel-route">
             <div class="route-inputs">
                 <div class="route-input-group">
@@ -446,23 +1361,103 @@
                     <label>Destination</label>
                     <input type="text" id="routeDestination" placeholder="e.g. New Orleans, LA" />
                 </div>
-                <button onclick="planRoute()" class="route-btn">Plan Safe Route</button>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button onclick="planRoute(false)" class="btn-primary">Plan Safe Route</button>
+                    <button onclick="planRoute(true)" class="btn-secondary">Plan with Directions</button>
+                </div>
             </div>
             <div id="route-results"></div>
         </div>
 
         <!-- ABOUT PANEL -->
         <div class="panel" id="panel-about">
-            <div class="card full">
-                <h4>About Conscious Consumer</h4>
-                <p style="margin-bottom:12px;">Conscious Consumer is a civic transparency platform inspired by the historic Green Book, which guided Black travelers to safe businesses during the Jim Crow era.</p>
-                <p style="margin-bottom:12px;">This app helps LGBTQ+ travelers, people of color, religious minorities, people with disabilities, and women make informed decisions about where they spend their money and where they travel.</p>
-                <p><strong style="color:var(--slate-900);">Data Sources:</strong> Federal Election Commission (FEC) · NewsAPI · CourtListener · Mapping Police Violence · HRC Corporate Equality Index · NAACP Travel Advisories · Sustainalytics ESG Data · Business & Human Rights Resource Centre</p>
+            <div class="about-hero">
+                <h2>About Conscious Consumer</h2>
+                <p>A civic transparency platform inspired by the historic Green Book, which guided Black travelers to safe businesses during the Jim Crow era. We help LGBTQ+ travelers, people of color, religious minorities, people with disabilities, and women make informed decisions about where they spend their money and where they travel.</p>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <h4>Our Mission</h4>
+                    <p>To democratize access to corporate transparency data and travel safety information for marginalized communities — putting the power of information in the hands of consumers.</p>
+                </div>
+                <div class="about-card">
+                    <h4>How Scores Work</h4>
+                    <p>Businesses start at 100 and lose points based on political donations, negative news coverage, federal court cases, ESG ratings, human rights records, and police violence data.</p>
+                </div>
+                <div class="about-card">
+                    <h4>Travel Safety</h4>
+                    <p>State safety ratings draw from NAACP travel advisories, HRC Corporate Equality Index, ACLU legislative tracking, Movement Advancement Project data, and ADA compliance records.</p>
+                </div>
+                <div class="about-card">
+                    <h4>Police Violence Data</h4>
+                    <p>Incident data comes from Mapping Police Violence, which tracks all known police killings in the US. Accountability rates reflect criminal charges filed against officers.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4>Data Sources</h4>
+                <div style="margin-top:8px;">
+                    <span class="source-tag">Federal Election Commission</span>
+                    <span class="source-tag">NewsAPI</span>
+                    <span class="source-tag">CourtListener</span>
+                    <span class="source-tag">Mapping Police Violence</span>
+                    <span class="source-tag">HRC Corporate Equality Index</span>
+                    <span class="source-tag">NAACP Travel Advisories</span>
+                    <span class="source-tag">Sustainalytics ESG</span>
+                    <span class="source-tag">Business & Human Rights Resource Centre</span>
+                    <span class="source-tag">Google Places</span>
+                    <span class="source-tag">KnowTheChain Benchmark</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4>Disclaimer</h4>
+                <p>Conscious Consumer provides informational analysis only. Business scores represent aggregate data from public sources and should not be considered legal or financial advice. Travel safety ratings reflect legislative and reported conditions and may not capture all local nuances. Always verify current conditions before travel.</p>
             </div>
         </div>
 
     </div>
 </main>
+
+<!-- BOTTOM TAB BAR (mobile) -->
+<nav class="bottom-tabs">
+    <div class="bottom-tabs-inner">
+        <button class="bottom-tab active" id="tab-business" onclick="switchPanel('business')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Business
+        </button>
+        <button class="bottom-tab" id="tab-travel" onclick="switchPanel('travel')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Travel
+        </button>
+        <button class="bottom-tab" id="tab-route" onclick="switchPanel('route')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/></svg>
+            Route
+        </button>
+        <button class="bottom-tab" id="tab-about" onclick="switchPanel('about')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            About
+        </button>
+    </div>
+</nav>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+    <div class="drawer-header">
+        <div>
+            <div class="drawer-title" id="drawerTitle">Business Name</div>
+            <div style="font-size:0.78em; color:var(--navy-400); margin-top:3px;" id="drawerVerdict">Loading...</div>
+        </div>
+        <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="drawer-score" id="drawerScore"></div>
+    <div class="drawer-body" id="drawerBody">
+        <div class="loading"><div class="loading-spinner"></div>Loading details...</div>
+    </div>
+    <div class="drawer-actions" id="drawerActions"></div>
+</div>
 
 <script>
 const TITLES = {
@@ -472,76 +1467,97 @@ const TITLES = {
     about: ['About & Sources', 'Learn about Conscious Consumer and our data sources']
 };
 
-const HIGH_RISK_STATES = ['Alabama', 'Arkansas', 'Florida', 'Georgia', 'Idaho', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'North Dakota', 'Ohio', 'Oklahoma', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'West Virginia', 'Wyoming'];
+const HIGH_RISK_STATES = ['Alabama','Arkansas','Florida','Georgia','Idaho','Indiana','Iowa','Kansas','Kentucky','Louisiana','Mississippi','Missouri','Montana','Nebraska','North Dakota','Ohio','Oklahoma','South Carolina','South Dakota','Tennessee','Texas','Utah','West Virginia','Wyoming'];
 
 function switchPanel(panel) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    ['business','travel','route','about'].forEach(id => {
+        const nav = document.getElementById('nav-' + id);
+        const mob = document.getElementById('mob-' + id);
+        const tab = document.getElementById('tab-' + id);
+        if (nav) nav.classList.remove('active');
+        if (mob) mob.classList.remove('active');
+        if (tab) tab.classList.remove('active');
+    });
     document.getElementById('panel-' + panel).classList.add('active');
-    if (document.getElementById('nav-' + panel)) {
-        document.getElementById('nav-' + panel).classList.add('active');
+    const nav = document.getElementById('nav-' + panel);
+    const mob = document.getElementById('mob-' + panel);
+    const tab = document.getElementById('tab-' + panel);
+    if (nav) nav.classList.add('active');
+    if (mob) mob.classList.add('active');
+    if (tab) tab.classList.add('active');
+    if (document.getElementById('topbar-title')) {
+        document.getElementById('topbar-title').textContent = TITLES[panel][0];
+        document.getElementById('topbar-sub').textContent = TITLES[panel][1];
     }
-    document.getElementById('topbar-title').textContent = TITLES[panel][0];
-    document.getElementById('topbar-sub').textContent = TITLES[panel][1];
+    window.scrollTo(0, 0);
 }
 
-function getLocation() {
-    if (!navigator.geolocation) {
-        document.getElementById('location-status').textContent = 'Geolocation not supported by your browser.';
-        return;
-    }
-    document.getElementById('location-status').textContent = 'Detecting your location...';
-    navigator.geolocation.getCurrentPosition(
-        position => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            reverseGeocode(lat, lon);
-        },
-        error => {
-            document.getElementById('location-status').textContent = 'Location access denied. Please search manually.';
-        }
-    );
+// ===== DRAWER =====
+function openDrawer(businessName, data) {
+    const sc = getScoreClass(data.score);
+    document.getElementById('drawerTitle').textContent = data.business;
+    document.getElementById('drawerVerdict').textContent = getVerdict(data.score);
+
+    document.getElementById('drawerScore').innerHTML = `
+        <div class="drawer-score-circle ${sc}">
+            <div class="drawer-score-num ${sc}">${data.score}</div>
+            <div class="score-out">/100</div>
+        </div>
+        <div>
+            <div style="font-size:0.85em; color:var(--navy-600); line-height:1.6;">${data.summary}</div>
+        </div>
+    `;
+
+    const flagsHtml = data.flags && data.flags.length > 0
+        ? data.flags.map(f => `<div class="flag-item"><div class="flag-dot"></div>${f}</div>`).join('')
+        : '<p style="color:var(--navy-400); font-size:0.85em;">No major flags detected.</p>';
+
+    const altHtml = data.alternatives && data.alternatives.length > 0
+        ? `<div class="drawer-section-title">Ethical Alternatives</div>
+           ${data.alternatives.map(a => `
+            <div class="biz-row" onclick="quickBusinessSearch('${a.name}')">
+                <div><div class="biz-name">${a.name}</div><div class="biz-sub">ESG: ${a.esg_rating}</div></div>
+                <span class="badge badge-low">${a.score}/100</span>
+            </div>`).join('')}`
+        : '';
+
+    document.getElementById('drawerBody').innerHTML = `
+        <div class="drawer-section-title">Flags & Concerns</div>
+        ${flagsHtml}
+        ${altHtml}
+    `;
+
+    document.getElementById('drawerActions').innerHTML = `
+        <button class="btn-primary" onclick="prefillRoute('${businessName}')">Plan Route There</button>
+        <button class="btn-secondary" onclick="checkAreaSafety('${businessName}')">Check Area Safety</button>
+        <a href="https://www.google.com/maps/search/${encodeURIComponent(businessName)}" target="_blank" class="btn-outline-navy">Google Maps</a>
+    `;
+
+    document.getElementById('drawerOverlay').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
 }
 
-async function reverseGeocode(lat, lon) {
-    try {
-        document.getElementById('location-status').textContent = 'Finding your location...';
-        const resultsDiv = document.getElementById('travel-results');
-        resultsDiv.innerHTML = "<div class='loading'>Looking up safety data...</div>";
-
-        const [travelRes, localRes] = await Promise.all([
-            fetch(`/travel_by_address?address=${encodeURIComponent(lat + ',' + lon)}`, { method: 'POST' }),
-            fetch(`/local_by_coords?lat=${lat}&lon=${lon}`, { method: 'POST' })
-        ]);
-        const travelData = await travelRes.json();
-        const localData = await localRes.json();
-
-        if (travelData.found) {
-            document.getElementById('travelInput').value = travelData.location;
-            document.getElementById('location-status').textContent = `Location detected: ${travelData.location}`;
-            checkSafetyAlert(travelData.location);
-        } else {
-            document.getElementById('location-status').textContent = 'Could not determine location. Please search manually.';
-        }
-
-        displayTravelResults(travelData, localData);
-    } catch (e) {
-        document.getElementById('location-status').textContent = 'Could not detect location. Please search manually.';
-    }
+function closeDrawer() {
+    document.getElementById('drawerOverlay').classList.remove('open');
+    document.getElementById('drawer').classList.remove('open');
 }
 
-function checkSafetyAlert(location) {
-    const alertDiv = document.getElementById('safety-alert');
-    const locationUpper = location.toUpperCase();
-    const matched = HIGH_RISK_STATES.find(state => locationUpper.includes(state.toUpperCase()));
-    if (matched) {
-        alertDiv.textContent = `Safety Advisory: ${matched} has active travel advisories for marginalized communities. Review the safety ratings below carefully.`;
-        alertDiv.classList.add('visible');
-    } else {
-        alertDiv.classList.remove('visible');
-    }
+function prefillRoute(businessName) {
+    closeDrawer();
+    switchPanel('route');
+    document.getElementById('routeDestination').value = businessName;
+    document.getElementById('routeOrigin').focus();
 }
 
+function checkAreaSafety(businessName) {
+    closeDrawer();
+    switchPanel('travel');
+    document.getElementById('travelInput').value = businessName;
+    searchTravel();
+}
+
+// ===== HELPERS =====
 function getBadgeClass(rating) {
     if (!rating) return '';
     const r = rating.toLowerCase();
@@ -572,39 +1588,63 @@ function getVerdict(score) {
     return 'Poor Transparency';
 }
 
+function checkSafetyAlert(location) {
+    const alertDiv = document.getElementById('safety-alert');
+    if (!alertDiv) return;
+    const locationUpper = location.toUpperCase();
+    const matched = HIGH_RISK_STATES.find(state => locationUpper.includes(state.toUpperCase()));
+    if (matched) {
+        alertDiv.textContent = `Safety Advisory: ${matched} has active travel advisories for marginalized communities. Review the safety ratings below carefully.`;
+        alertDiv.classList.add('visible');
+    } else {
+        alertDiv.classList.remove('visible');
+    }
+}
+
+function showLoadingSpinner(divId) {
+    document.getElementById(divId).innerHTML = `<div class="loading"><div class="loading-spinner"></div>Searching...</div>`;
+}
+
+// ===== BUSINESS SEARCH =====
+let lastBusinessData = null;
+
 async function searchBusiness() {
     const name = document.getElementById('searchInput').value.trim();
     if (!name) return;
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = "<div class='loading'>Searching records...</div>";
+    showLoadingSpinner('results');
     try {
         const response = await fetch(`/search?business_name=${encodeURIComponent(name)}`, { method: 'POST' });
         const data = await response.json();
+        lastBusinessData = data;
         displayResults(data);
     } catch (e) {
-        resultsDiv.innerHTML = "<div class='error-msg'>Could not connect to the API.</div>";
+        document.getElementById('results').innerHTML = `<div class="error-msg">Could not connect to the API.</div>`;
     }
+}
+
+function quickBusinessSearch(name) {
+    document.getElementById('searchInput').value = name;
+    switchPanel('business');
+    window.scrollTo(0, 0);
+    searchBusiness();
 }
 
 function displayResults(data) {
     const sc = getScoreClass(data.score);
     const flagsHtml = data.flags && data.flags.length > 0
         ? data.flags.map(f => `<div class="flag-item"><div class="flag-dot"></div>${f}</div>`).join('')
-        : '<p style="color:var(--slate-400); font-size:0.85em;">No major flags detected.</p>';
+        : '<p style="color:var(--navy-400); font-size:0.85em;">No major flags detected.</p>';
 
-    const alternativesHtml = data.alternatives && data.alternatives.length > 0 ? `
-        <div class="card full" style="margin-top:16px;">
+    const altHtml = data.alternatives && data.alternatives.length > 0
+        ? `<div class="card">
             <h4>Ethical Alternatives in Same Category</h4>
             ${data.alternatives.map(a => `
-                <div class="biz-row">
-                    <div>
-                        <div class="biz-name">${a.name}</div>
-                        <div class="biz-sub">ESG: ${a.esg_rating}</div>
-                    </div>
+                <div class="biz-row" onclick="quickBusinessSearch('${a.name}')">
+                    <div><div class="biz-name">${a.name}</div><div class="biz-sub">ESG: ${a.esg_rating}</div></div>
                     <span class="badge badge-low">${a.score}/100</span>
-                </div>
-            `).join('')}
-        </div>` : '';
+                </div>`).join('')}
+           </div>`
+        : '';
 
     document.getElementById('results').innerHTML = `
         <div class="score-hero">
@@ -615,16 +1655,19 @@ function displayResults(data) {
             <div class="score-info">
                 <h3>${data.business}</h3>
                 <div class="verdict ${sc}">${getVerdict(data.score)}</div>
-                <p style="font-size:0.85em; color:var(--slate-400); line-height:1.6;">${data.summary}</p>
+                <div class="score-summary">${data.summary}</div>
+                <div class="score-actions">
+                    <button class="btn-outline" onclick="openDrawer('${data.business}', lastBusinessData)">Full Details</button>
+                    <button class="btn-outline" onclick="prefillRoute('${data.business}')">Plan Route</button>
+                    <button class="btn-outline" onclick="checkAreaSafety('${data.business}')">Area Safety</button>
+                </div>
             </div>
         </div>
-        <div class="cards-grid">
-            <div class="card full">
-                <h4>Flags & Concerns</h4>
-                ${flagsHtml}
-            </div>
+        <div class="card">
+            <h4>Flags & Concerns</h4>
+            ${flagsHtml}
         </div>
-        ${alternativesHtml}
+        ${altHtml}
     `;
 }
 
@@ -632,12 +1675,12 @@ document.getElementById('searchInput').addEventListener('keypress', e => {
     if (e.key === 'Enter') searchBusiness();
 });
 
+// ===== TRAVEL SEARCH =====
 async function searchTravel() {
     const location = document.getElementById('travelInput').value.trim();
     if (!location) return;
     checkSafetyAlert(location);
-    const resultsDiv = document.getElementById('travel-results');
-    resultsDiv.innerHTML = "<div class='loading'>Looking up safety data...</div>";
+    showLoadingSpinner('travel-results');
     try {
         const [travelRes, localRes] = await Promise.all([
             fetch(`/travel_by_address?address=${encodeURIComponent(location)}`, { method: 'POST' }),
@@ -646,9 +1689,16 @@ async function searchTravel() {
         const travelData = await travelRes.json();
         const localData = await localRes.json();
         displayTravelResults(travelData, localData);
+        window.scrollTo(0, 0);
     } catch (e) {
-        resultsDiv.innerHTML = "<div class='error-msg'>Could not connect to the API.</div>";
+        document.getElementById('travel-results').innerHTML = `<div class="error-msg">Could not connect to the API.</div>`;
     }
+}
+
+function quickSearch(state) {
+    document.getElementById('travelInput').value = state;
+    checkSafetyAlert(state);
+    searchTravel();
 }
 
 function renderSafetyItem(label, data) {
@@ -661,8 +1711,7 @@ function renderSafetyItem(label, data) {
             <h5>${label} <span class="badge ${getBadgeClass(data.rating)}">${data.rating}</span></h5>
             <p>${data.notes}</p>
             ${advisories}
-        </div>
-    `;
+        </div>`;
 }
 
 function renderPoliceViolence(policeData) {
@@ -675,23 +1724,19 @@ function renderPoliceViolence(policeData) {
         const breakdown = city.racial_breakdown
             ? Object.entries(city.racial_breakdown).map(([r, c]) => `<div class="advisory">${r}: ${c} incidents</div>`).join('')
             : '';
-        html += `
-            <div class="safety-item">
-                <h5>City Level <span class="badge ${getBadgeClass(city.risk_level)}">${city.risk_level}</span></h5>
-                <p>Total incidents: ${city.total_incidents} · Accountability: ${city.accountability_rate} · Unarmed: ${city.unarmed_rate}</p>
-                ${breakdown}
-            </div>`;
+        html += `<div class="safety-item">
+            <h5>City Level <span class="badge ${getBadgeClass(city.risk_level)}">${city.risk_level}</span></h5>
+            <p>Total: ${city.total_incidents} · Accountability: ${city.accountability_rate} · Unarmed: ${city.unarmed_rate}</p>
+            ${breakdown}</div>`;
     }
     if (state && state.found) {
         const breakdown = state.racial_breakdown
             ? Object.entries(state.racial_breakdown).slice(0,5).map(([r, c]) => `<div class="advisory">${r}: ${c} incidents</div>`).join('')
             : '';
-        html += `
-            <div class="safety-item">
-                <h5>State Level <span class="badge ${getBadgeClass(state.risk_level)}">${state.risk_level}</span></h5>
-                <p>Total incidents: ${state.total_incidents} · Accountability: ${state.accountability_rate} · Unarmed: ${state.unarmed_rate} · Body cam: ${state.body_camera_rate}</p>
-                ${breakdown}
-            </div>`;
+        html += `<div class="safety-item">
+            <h5>State Level <span class="badge ${getBadgeClass(state.risk_level)}">${state.risk_level}</span></h5>
+            <p>Total: ${state.total_incidents} · Accountability: ${state.accountability_rate} · Unarmed: ${state.unarmed_rate} · Body cam: ${state.body_camera_rate}</p>
+            ${breakdown}</div>`;
     }
     return html;
 }
@@ -705,23 +1750,22 @@ function displayTravelResults(data, localData) {
 
     const nearbyHtml = localData && localData.found && localData.nearby_scored && localData.nearby_scored.length > 0
         ? localData.nearby_scored.map(b => `
-            <div class="biz-row">
+            <div class="biz-row" onclick="quickBusinessSearch('${b.name}')">
                 <div>
                     <div class="biz-name">${b.name}</div>
                     <div class="biz-sub">${b.address || ''}</div>
-                    <div class="biz-sub">${b.distance_miles !== null && b.distance_miles !== undefined ? b.distance_miles + ' miles away · ' : ''}ESG: ${b.esg_rating} · Human Rights: ${b.hr_rating}</div>
+                    <div class="biz-sub">${b.distance_miles != null ? b.distance_miles + ' mi · ' : ''}ESG: ${b.esg_rating} · HR: ${b.hr_rating}</div>
                 </div>
                 <span class="badge ${getBadgeClass(b.score >= 75 ? 'low' : b.score >= 50 ? 'medium' : 'high')}">${b.score}/100</span>
             </div>`).join('')
-        : '<p style="color:var(--slate-400); font-size:0.85em;">No scored businesses found nearby.</p>';
+        : '<p style="color:var(--navy-400); font-size:0.85em;">No scored businesses found nearby.</p>';
 
     const unratedHtml = localData && localData.found && localData.nearby_unrated && localData.nearby_unrated.length > 0
         ? localData.nearby_unrated.map(b => `
             <div class="biz-row">
                 <div>
                     <div class="biz-name">${b.name}</div>
-                    <div class="biz-sub">${b.address || ''}</div>
-                    <div class="biz-sub">${b.distance_miles !== null && b.distance_miles !== undefined ? b.distance_miles + ' miles away' : ''}</div>
+                    <div class="biz-sub">${b.address || ''}${b.distance_miles != null ? ' · ' + b.distance_miles + ' mi' : ''}</div>
                 </div>
                 <span class="badge badge-unrated">Unrated</span>
             </div>`).join('')
@@ -729,21 +1773,21 @@ function displayTravelResults(data, localData) {
 
     const altHtml = localData && localData.found && localData.ethical_alternatives && localData.ethical_alternatives.length > 0
         ? localData.ethical_alternatives.map(b => `
-            <div class="biz-row">
-                <div>
-                    <div class="biz-name">${b.name}</div>
-                    <div class="biz-sub">ESG: ${b.esg_rating}</div>
-                </div>
+            <div class="biz-row" onclick="quickBusinessSearch('${b.name}')">
+                <div><div class="biz-name">${b.name}</div><div class="biz-sub">ESG: ${b.esg_rating}</div></div>
                 <span class="badge badge-low">${b.score}/100</span>
             </div>`).join('')
         : '';
+
+    const planRouteBtn = `<button class="btn-outline" onclick="prefillRouteToLocation('${data.location}')" style="margin-top:10px;">Plan Safe Route Here</button>`;
 
     resultsDiv.innerHTML = `
         <div class="${getBannerClass(data.overall_rating)} overall-banner">
             <span>${data.location}</span>
             <span>Overall: ${data.overall_rating}</span>
         </div>
-        <div class="safety-grid">
+        ${planRouteBtn}
+        <div class="safety-grid" style="margin-top:12px;">
             ${renderSafetyItem('LGBTQ+ Safety', data.lgbtq)}
             ${renderSafetyItem('Racial Safety', data.racial)}
             ${renderSafetyItem('Religious Minority', data.religious_minority)}
@@ -758,170 +1802,137 @@ function displayTravelResults(data, localData) {
     `;
 }
 
+function prefillRouteToLocation(location) {
+    switchPanel('route');
+    document.getElementById('routeDestination').value = location;
+    document.getElementById('routeOrigin').focus();
+}
+
 document.getElementById('travelInput').addEventListener('keypress', e => {
     if (e.key === 'Enter') searchTravel();
 });
 
-function quickSearch(state) {
-    document.getElementById('travelInput').value = state;
-    checkSafetyAlert(state);
-    searchTravel();
+// ===== GPS =====
+function getLocation() {
+    if (!navigator.geolocation) {
+        document.getElementById('location-status').textContent = 'Geolocation not supported.';
+        return;
+    }
+    document.getElementById('location-status').textContent = 'Detecting your location...';
+    navigator.geolocation.getCurrentPosition(
+        position => reverseGeocode(position.coords.latitude, position.coords.longitude),
+        () => { document.getElementById('location-status').textContent = 'Location access denied. Please search manually.'; }
+    );
 }
 
-const TIPS = [
-    "Before buying from a large retailer, check their ESG score and human rights record. Companies with poor labor practices often score below 50 on our transparency scale.",
-    "When traveling, search your destination state before you go. States with active NAACP or HRC travel advisories may require extra precautions.",
-    "Credit unions and community banks typically score higher than major banks like Wells Fargo or Citibank, which have histories of predatory lending.",
-    "Fast fashion brands like Shein and Fashion Nova have some of the worst supply chain human rights records. Consider thrift stores or brands with transparent supply chains.",
-    "Police violence data shows accountability rates are often below 5%. When traveling to a new city, check local enforcement records in the Safe Travel Guide.",
-    "Small local businesses are rarely in our database — which often means they haven't been flagged for major violations. Supporting local is often the most conscious choice."
-];
+async function reverseGeocode(lat, lon) {
+    try {
+        document.getElementById('location-status').textContent = 'Finding your location...';
+        showLoadingSpinner('travel-results');
+        const [travelRes, localRes] = await Promise.all([
+            fetch(`/travel_by_address?address=${encodeURIComponent(lat + ',' + lon)}`, { method: 'POST' }),
+            fetch(`/local_by_coords?lat=${lat}&lon=${lon}`, { method: 'POST' })
+        ]);
+        const travelData = await travelRes.json();
+        const localData = await localRes.json();
+        if (travelData.found) {
+            document.getElementById('travelInput').value = travelData.location;
+            document.getElementById('location-status').textContent = `Location detected: ${travelData.location}`;
+            checkSafetyAlert(travelData.location);
+        } else {
+            document.getElementById('location-status').textContent = 'Could not determine location. Please search manually.';
+        }
+        displayTravelResults(travelData, localData);
+    } catch (e) {
+        document.getElementById('location-status').textContent = 'Could not detect location. Please search manually.';
+    }
+}
 
-const TRAVEL_TIPS = [
-    "Always check the Safe Travel Guide before visiting a new state. NAACP and HRC advisories are updated regularly and reflect current legislative and social conditions.",
-    "Even in high-risk states, major cities like Atlanta, Nashville, and Houston often have stronger local protections than the rest of the state. Search the city specifically.",
-    "If you are transgender and require medical care while traveling, check the state's healthcare laws first. Several states have enacted laws restricting gender-affirming care.",
-    "The police violence data in this app shows real incident records. States with accountability rates below 5% have historically offered little recourse for victims of police violence.",
-    "Religious minority travelers — including Muslim, Jewish, Sikh, and Hindu travelers — may find rural areas of certain states less accommodating. Urban areas are generally safer.",
-    "Disability accessibility varies widely even within states. Always call ahead to verify accessibility at specific venues, especially in rural areas and older buildings."
-];
-
-let currentTip = 0;
-let currentTravelTip = 0;
-
-// REAL-TIME GPS TRACKING
+// ===== REAL-TIME TRACKING =====
 let trackingInterval = null;
 let lastTrackedState = null;
 
 function startTracking() {
-    if (!navigator.geolocation) {
-        alert('Geolocation not supported by your browser.');
-        return;
-    }
-
+    if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
     document.getElementById('tracking-btn').style.display = 'none';
-    document.getElementById('tracking-bar').style.display = 'flex';
+    document.getElementById('tracking-bar').classList.add('active');
     document.getElementById('tracking-status').textContent = 'Getting your location...';
-
-    // Switch to travel panel
     switchPanel('travel');
-
-    // Initial check
     checkCurrentLocation();
-
-    // Poll every 30 seconds
     trackingInterval = setInterval(checkCurrentLocation, 30000);
 }
 
 function stopTracking() {
-    if (trackingInterval) {
-        clearInterval(trackingInterval);
-        trackingInterval = null;
-    }
+    if (trackingInterval) { clearInterval(trackingInterval); trackingInterval = null; }
     lastTrackedState = null;
     document.getElementById('tracking-btn').style.display = 'block';
-    document.getElementById('tracking-bar').style.display = 'none';
-    document.getElementById('tracking-status').textContent = 'Tracking stopped.';
+    document.getElementById('tracking-bar').classList.remove('active');
 }
 
 function checkCurrentLocation() {
-    navigator.geolocation.getCurrentPosition(
-        async position => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-
-            try {
-                const response = await fetch(
-                    `/travel_by_address?address=${encodeURIComponent(lat + ',' + lon)}`,
-                    { method: 'POST' }
-                );
-                const data = await response.json();
-
-                if (data.found) {
-                    // Extract state from location
-                    const parts = data.location.split(',');
-                    const currentState = parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim();
-
-                    document.getElementById('tracking-status').textContent = `Tracking: ${data.location}`;
-
-                    // Only update if state changed
-                    if (currentState !== lastTrackedState) {
-                        lastTrackedState = currentState;
-                        checkSafetyAlert(data.location);
-
-                        // Show state change notification
-                        const alertDiv = document.getElementById('safety-alert');
-                        const isHighRisk = HIGH_RISK_STATES.some(s => data.location.toUpperCase().includes(s.toUpperCase()));
-
-                        if (isHighRisk) {
-                            showTrackingNotification(`You have entered ${currentState} — High Risk state. Review safety ratings.`, true);
-                        } else {
-                            showTrackingNotification(`You have entered ${currentState}.`, false);
-                        }
-
-                        // Update travel results
-                        const localRes = await fetch(`/local_by_coords?lat=${lat}&lon=${lon}`, { method: 'POST' });
-                        const localData = await localRes.json();
-                        displayTravelResults(data, localData);
-                    }
+    navigator.geolocation.getCurrentPosition(async position => {
+        const { latitude: lat, longitude: lon } = position.coords;
+        try {
+            const response = await fetch(`/travel_by_address?address=${encodeURIComponent(lat + ',' + lon)}`, { method: 'POST' });
+            const data = await response.json();
+            if (data.found) {
+                const parts = data.location.split(',');
+                const currentState = parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim();
+                document.getElementById('tracking-status').textContent = `Tracking: ${data.location}`;
+                if (currentState !== lastTrackedState) {
+                    lastTrackedState = currentState;
+                    checkSafetyAlert(data.location);
+                    const isHighRisk = HIGH_RISK_STATES.some(s => data.location.toUpperCase().includes(s.toUpperCase()));
+                    showTrackingNotification(
+                        isHighRisk ? `Entered ${currentState} — High Risk state. Review safety ratings.` : `Entered ${currentState}.`,
+                        isHighRisk
+                    );
+                    const localRes = await fetch(`/local_by_coords?lat=${lat}&lon=${lon}`, { method: 'POST' });
+                    const localData = await localRes.json();
+                    displayTravelResults(data, localData);
                 }
-            } catch (e) {
-                document.getElementById('tracking-status').textContent = 'Could not update location.';
             }
-        },
-        error => {
-            document.getElementById('tracking-status').textContent = 'Location access denied.';
-            stopTracking();
+        } catch (e) {
+            document.getElementById('tracking-status').textContent = 'Could not update location.';
         }
-    );
+    }, () => {
+        document.getElementById('tracking-status').textContent = 'Location access denied.';
+        stopTracking();
+    });
 }
 
 function showTrackingNotification(message, isHighRisk) {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${isHighRisk ? 'var(--coral-600)' : '#4caf7d'};
-        color: white;
-        padding: 16px 20px;
-        border-radius: 10px;
-        font-size: 0.9em;
-        font-weight: 600;
-        z-index: 9999;
-        max-width: 300px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        font-family: 'DM Sans', sans-serif;
-    `;
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    // Auto dismiss after 5 seconds
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transition = 'opacity 0.5s';
-        setTimeout(() => notification.remove(), 500);
-    }, 5000);
+    const n = document.createElement('div');
+    n.className = 'notification';
+    n.style.background = isHighRisk ? 'var(--coral-600)' : 'var(--green)';
+    n.textContent = message;
+    document.body.appendChild(n);
+    setTimeout(() => { n.style.opacity = '0'; setTimeout(() => n.remove(), 500); }, 5000);
 }
 
-async function planRoute() {
+// ===== ROUTE PLANNER =====
+async function planRoute(withDirections) {
     const origin = document.getElementById('routeOrigin').value.trim();
     const destination = document.getElementById('routeDestination').value.trim();
     if (!origin || !destination) return;
-
-    const resultsDiv = document.getElementById('route-results');
-    resultsDiv.innerHTML = "<div class='loading'>Planning your route and checking safety...</div>";
-
+    showLoadingSpinner('route-results');
     try {
         const response = await fetch(
             `/route_safety?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`,
             { method: 'POST' }
         );
         const data = await response.json();
-        displayRouteResults(data);
+        displayRouteResults(data, withDirections);
     } catch (e) {
-        resultsDiv.innerHTML = "<div class='error-msg'>Could not plan route. Please try again.</div>";
+        document.getElementById('route-results').innerHTML = `<div class="error-msg">Could not plan route. Please try again.</div>`;
     }
+}
+
+function prefillRoute(businessName) {
+    closeDrawer();
+    switchPanel('route');
+    document.getElementById('routeDestination').value = businessName;
+    document.getElementById('routeOrigin').focus();
 }
 
 function getRouteStateClass(overall) {
@@ -932,61 +1943,89 @@ function getRouteStateClass(overall) {
     return 'high-risk';
 }
 
-function displayRouteResults(data) {
+function displayRouteResults(data, withDirections) {
     const resultsDiv = document.getElementById('route-results');
     if (!data.found) {
         resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`;
         return;
     }
 
-    const highRiskColor = data.high_risk_states > 0 ? 'var(--coral-400)' : '#4caf7d';
+    const highRiskColor = data.high_risk_states > 0 ? 'var(--coral-400)' : 'var(--green)';
+
+    const statesHtml = data.states_on_route.map(state => `
+        <div class="route-state ${getRouteStateClass(state.overall)}">
+            <div class="route-state-header">
+                <div class="route-state-name">${state.state}</div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <span class="badge ${getBadgeClass(state.overall)}">${state.overall}</span>
+                    <button class="btn-outline-navy" style="padding:4px 8px; font-size:0.72em;" onclick="quickSearch('${state.state}')">Details</button>
+                </div>
+            </div>
+            <div class="route-state-ratings">
+                <span class="badge ${getBadgeClass(state.lgbtq)}" style="font-size:0.7em;">LGBTQ+: ${state.lgbtq}</span>
+                <span class="badge ${getBadgeClass(state.racial)}" style="font-size:0.7em;">Racial: ${state.racial}</span>
+                <span class="badge ${getBadgeClass(state.women)}" style="font-size:0.7em;">Women: ${state.women}</span>
+            </div>
+            ${state.advisories && state.advisories.length > 0 ? `<div class="advisory" style="margin-top:8px;">${state.advisories[0]}</div>` : ''}
+        </div>`).join('');
+
+    let directionsHtml = '';
+    if (withDirections && data.directions && data.directions.length > 0) {
+        directionsHtml = `
+            <div class="section-divider">Turn-by-Turn Directions</div>
+            <div class="card" style="padding:0; overflow:hidden;">
+                ${data.directions.map((step, i) =>
+                    step.type === 'warning'
+                        ? `<div class="step-item warning">⚠️ ${step.text}</div>`
+                        : `<div class="step-item">
+                            <div class="step-num">${i + 1}</div>
+                            <div>${step.text}${step.distance ? ` <span style="color:var(--navy-400); font-size:0.9em;">(${step.distance})</span>` : ''}</div>
+                           </div>`
+                ).join('')}
+            </div>`;
+    }
 
     resultsDiv.innerHTML = `
         <div class="route-summary">
-            <div class="route-stat">
-                <div class="route-stat-num">${data.distance_miles}</div>
-                <div class="route-stat-label">Miles</div>
-            </div>
-            <div class="route-stat">
-                <div class="route-stat-num">${data.duration_hours}</div>
-                <div class="route-stat-label">Hours</div>
-            </div>
-            <div class="route-stat">
-                <div class="route-stat-num">${data.states_on_route.length}</div>
-                <div class="route-stat-label">States</div>
-            </div>
-            <div class="route-stat">
-                <div class="route-stat-num" style="color:${highRiskColor}">${data.high_risk_states}</div>
-                <div class="route-stat-label">High Risk States</div>
-            </div>
+            <div class="route-stat"><div class="route-stat-num">${data.distance_miles}</div><div class="route-stat-label">Miles</div></div>
+            <div class="route-stat"><div class="route-stat-num">${data.duration_hours}</div><div class="route-stat-label">Hours</div></div>
+            <div class="route-stat"><div class="route-stat-num">${data.states_on_route.length}</div><div class="route-stat-label">States</div></div>
+            <div class="route-stat"><div class="route-stat-num" style="color:${highRiskColor}">${data.high_risk_states}</div><div class="route-stat-label">High Risk</div></div>
         </div>
-        <p style="font-size:0.85em; color:var(--slate-400); margin-bottom:16px;">
-            ${data.origin} → ${data.destination} via ${data.route_summary}
-        </p>
+        <p style="font-size:0.82em; color:var(--navy-400); margin-bottom:14px;">${data.origin} → ${data.destination} via ${data.route_summary}</p>
         <div class="section-divider">States Along Your Route</div>
-        ${data.states_on_route.map(state => `
-            <div class="route-state ${getRouteStateClass(state.overall)}">
-                <div class="route-state-header">
-                    <div class="route-state-name">${state.state}</div>
-                    <span class="badge ${getBadgeClass(state.overall)}">${state.overall}</span>
-                </div>
-                <div class="route-state-ratings">
-                    <span class="badge ${getBadgeClass(state.lgbtq)}" style="font-size:0.7em;">LGBTQ+: ${state.lgbtq}</span>
-                    <span class="badge ${getBadgeClass(state.racial)}" style="font-size:0.7em;">Racial: ${state.racial}</span>
-                    <span class="badge ${getBadgeClass(state.women)}" style="font-size:0.7em;">Women: ${state.women}</span>
-                </div>
-                ${state.advisories && state.advisories.length > 0 ? `
-                    <div class="advisory" style="margin-top:8px;">${state.advisories[0]}</div>
-                ` : ''}
-            </div>
-        `).join('')}
+        ${statesHtml}
+        ${directionsHtml}
     `;
 }
+
+// ===== TIPS =====
+const TIPS = [
+    "Before buying from a large retailer, check their ESG score and human rights record. Companies with poor labor practices often score below 50.",
+    "When traveling, search your destination state before you go. States with active NAACP or HRC travel advisories may require extra precautions.",
+    "Credit unions and community banks typically score higher than major banks like Wells Fargo or Citibank, which have histories of predatory lending.",
+    "Fast fashion brands like Shein and Fashion Nova have some of the worst supply chain human rights records. Consider thrift stores or ethical brands.",
+    "Police violence data shows accountability rates are often below 5%. When traveling to a new city, check local enforcement records in the Safe Travel Guide.",
+    "Small local businesses are rarely in our database — which often means they haven't been flagged for major violations. Supporting local is often the most conscious choice."
+];
+
+const TRAVEL_TIPS = [
+    "Always check the Safe Travel Guide before visiting a new state. NAACP and HRC advisories are updated regularly.",
+    "Even in high-risk states, major cities like Atlanta, Nashville, and Houston often have stronger local protections. Search the city specifically.",
+    "If you are transgender and require medical care while traveling, check the state's healthcare laws first. Several states restrict gender-affirming care.",
+    "The police violence data shows real incident records. States with accountability rates below 5% have historically offered little recourse for victims.",
+    "Religious minority travelers may find rural areas of certain states less accommodating. Urban areas are generally safer.",
+    "Disability accessibility varies widely even within states. Always call ahead to verify accessibility at specific venues."
+];
+
+let currentTip = 0;
+let currentTravelTip = 0;
 
 function showTip() {
     document.getElementById('tips-body').textContent = TIPS[currentTip];
     document.getElementById('tips-counter').textContent = `${currentTip + 1} / ${TIPS.length}`;
 }
+
 function nextTip() { currentTip = (currentTip + 1) % TIPS.length; showTip(); }
 function prevTip() { currentTip = (currentTip - 1 + TIPS.length) % TIPS.length; showTip(); }
 
@@ -994,6 +2033,7 @@ function showTravelTip() {
     document.getElementById('travel-tips-body').textContent = TRAVEL_TIPS[currentTravelTip];
     document.getElementById('travel-tips-counter').textContent = `${currentTravelTip + 1} / ${TRAVEL_TIPS.length}`;
 }
+
 function nextTravelTip() { currentTravelTip = (currentTravelTip + 1) % TRAVEL_TIPS.length; showTravelTip(); }
 function prevTravelTip() { currentTravelTip = (currentTravelTip - 1 + TRAVEL_TIPS.length) % TRAVEL_TIPS.length; showTravelTip(); }
 
@@ -1003,8 +2043,8 @@ showTravelTip();
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service_worker.js')
-            .then(reg => console.log('Service worker registered'))
-            .catch(err => console.log('Service worker error:', err));
+            .then(() => console.log('SW registered'))
+            .catch(err => console.log('SW error:', err));
     });
 }
 </script>
