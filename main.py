@@ -145,11 +145,13 @@ def local_by_coords(lat: float, lon: float):
     data = get_local_awareness_by_coords(lat, lon)
     return data
     
+@app.post("/local")
+def local_awareness(location: str):
+    data = get_local_awareness(location)
+    return data    
+    
 @app.post("/travel_by_address")
 def travel_by_address(address: str):
-    import requests as req
-    import os
-    
     GOOGLE_KEY = os.getenv("GOOGLE_API_KEY", "")
     
     # Geocode the address to get coordinates and state
