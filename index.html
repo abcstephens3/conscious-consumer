@@ -488,17 +488,38 @@ function getLocation() {
 
 async function reverseGeocode(lat, lon) {
     try {
-        const response = await fetch(
+        document.getElementById('location-status').textContent = 'Finding nearby businesses...';
+        
+        // Get state name for safety ratings
+        const geoResponse = await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=AIzaSyBalxLq35w_7SCawNXOq-xpzpd06cWUpyM`
         );
-        const data = await response.json();
-        if (data.results && data.results.length > 0) {
-            const address = data.results[0].formatted_address;
-            document.getElementById('travelInput').value = address;
-            document.getElementById('location-status').textContent = `Location detected: ${address}`;
-            checkSafetyAlert(address);
-            searchTravel();
+        const geoData = await geoResponse.json();
+        
+        let stateName = '';
+        if (geoData.results && geoData.results.length > 0) {
+            const components = geoData.results[0].address_components;
+            const stateComp = components.find(c => c.types.includes('administrative_area_level_1'));
+            const cityComp = components.find(c => c.types.includes('locality'));
+            const city = cityComp ? cityComp.long_name : '';
+            const state = stateComp ? stateComp.long_name : '';
+            stateName = city ? `${city}, ${state}` : state;
         }
+
+        document.getElementById('travelInput').value = stateName || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+        document.getElementById('location-status').textContent = `Location detected: ${stateName}`;
+        checkSafetyAlert(stateName);
+
+        // Get safety ratings by state name
+        const travelRes = await fetch(`/travel?location=${encodeURIComponent(stateName)}`, { method: 'POST' });
+        const travelData = await travelRes.json();
+
+        // Get nearby businesses by exact coordinates
+        const localRes = await fetch(`/local_by_coords?lat=${lat}&lon=${lon}`, { method: 'POST' });
+        const localData = await localRes.json();
+
+        displayTravelResults(travelData, localData);
+
     } catch (e) {
         document.getElementById('location-status').textContent = 'Could not detect location. Please search manually.';
     }

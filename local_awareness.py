@@ -106,17 +106,10 @@ def get_ethical_alternatives(scored_businesses):
     alternatives.sort(key=lambda x: x["score"], reverse=True)
     return alternatives[:8]
 
-def get_local_awareness(location):
-    """Main function - get local business awareness for a location"""
+def get_local_awareness_by_coords(lat, lon):
+    """Get local business awareness using exact coordinates"""
     try:
-        coords = geocode_location(location)
-        if not coords:
-            return {
-                "found": False,
-                "message": f"Could not find location: {location}"
-            }
-
-        businesses = search_nearby_businesses(coords["lat"], coords["lon"])
+        businesses = search_nearby_businesses(lat, lon)
 
         seen_names = set()
         scored_businesses = []
@@ -145,8 +138,8 @@ def get_local_awareness(location):
 
         return {
             "found": True,
-            "location": coords["display_name"],
-            "coordinates": {"lat": coords["lat"], "lon": coords["lon"]},
+            "location": f"{lat}, {lon}",
+            "coordinates": {"lat": lat, "lon": lon},
             "nearby_scored": scored_businesses[:10],
             "nearby_unrated": unrated_businesses[:5],
             "ethical_alternatives": alternatives,

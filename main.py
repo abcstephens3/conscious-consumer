@@ -139,7 +139,8 @@ def travel_safety(location: str):
         }
     }
 
-@app.post("/local")
-def local_awareness(location: str):
-    data = get_local_awareness(location)
+@app.post("/local_by_coords")
+def local_by_coords(lat: float, lon: float):
+    from local_awareness import get_local_awareness_by_coords
+    data = get_local_awareness_by_coords(lat, lon)
     return data
