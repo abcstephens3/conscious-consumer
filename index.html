@@ -4,243 +4,1265 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conscious Consumer</title>
-    <link rel="icon" type="image/png" href="/static/favicon.png">
-    <link rel="shortcut icon" href="/favicon.ico">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#e8503a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Conscious Consumer">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --navy-900: #0a1628;
-            --navy-800: #0f2040;
-            --navy-700: #1a3058;
-            --navy-600: #254070;
-            --navy-400: #6b82a8;
-            --navy-200: #c8d4e8;
-            --navy-100: #eef2f8;
+            --blue: #2c3e55;
+            --blue-dark: #243348;
+            --blue-light: #3a5068;
+            --blue-muted: #8899aa;
+            --blue-faint: #4a6580;
             --coral-600: #e8503a;
             --coral-500: #f06248;
             --coral-400: #f47d6a;
             --coral-100: #fde8e4;
+            --teal: #0f9e78;
+            --teal-light: #4ecfaa;
+            --teal-faint: #e0f5ee;
+            --sage: #e8f0e8;
+            --sage-border: #c8d8c8;
+            --sage-text: #3a5a3a;
             --green: #4caf7d;
             --amber: #f0a500;
             --white: #ffffff;
-            --gray-100: #f4f6fa;
+            --gray-100: #f7f9ff;
+            --navy-200: #c8d4e8;
+            --navy-100: #eef2fb;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: var(--navy-900); min-height: 100vh; display: flex; overflow-x: hidden; }
-        .sidebar { width: 260px; min-height: 100vh; background: var(--navy-900); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 200; overflow-y: auto; }
-        .sidebar-logo { padding: 24px 20px 16px; border-bottom: 1px solid var(--navy-700); }
-        .sidebar-logo h1 { font-family: 'DM Serif Display', serif; font-size: 1.3em; color: var(--white); line-height: 1.2; }
-        .sidebar-logo p { font-size: 0.72em; color: var(--navy-400); margin-top: 4px; line-height: 1.4; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--gray-100);
+            color: #0a1628;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: var(--blue);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            z-index: 200;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px 16px;
+            border-bottom: 1px solid var(--blue-light);
+        }
+
+        .sidebar-logo h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.3em;
+            color: var(--white);
+            line-height: 1.2;
+        }
+
+        .sidebar-logo p {
+            font-size: 0.72em;
+            color: var(--blue-muted);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
         .sidebar-nav { padding: 16px 10px; flex: 1; }
-        .nav-label { font-size: 0.65em; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--navy-600); padding: 0 10px; margin-bottom: 6px; margin-top: 14px; }
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; color: var(--navy-400); font-size: 0.88em; font-weight: 500; transition: all 0.15s; margin-bottom: 2px; }
-        .nav-item:hover { background: var(--navy-800); color: var(--white); }
+
+        .nav-label {
+            font-size: 0.65em;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--blue-faint);
+            padding: 0 10px;
+            margin-bottom: 6px;
+            margin-top: 14px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--blue-muted);
+            font-size: 0.88em;
+            font-weight: 500;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover { background: var(--blue-dark); color: var(--white); }
         .nav-item.active { background: var(--coral-600); color: var(--white); }
         .nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
-        .sidebar-footer { padding: 14px 20px; border-top: 1px solid var(--navy-700); font-size: 0.72em; color: var(--navy-600); line-height: 1.6; }
-        .main { margin-left: 260px; flex: 1; min-height: 100vh; min-width: 0; display: flex; flex-direction: column; }
-        .topbar { background: var(--white); border-bottom: 1px solid var(--navy-200); padding: 14px 28px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
-        .topbar-left h2 { font-family: 'DM Serif Display', serif; font-size: 1.2em; color: var(--navy-900); }
-        .topbar-left p { font-size: 0.8em; color: var(--navy-400); margin-top: 1px; }
+
+        .sidebar-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--blue-light);
+            font-size: 0.72em;
+            color: var(--blue-faint);
+            line-height: 1.6;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            margin-left: 260px;
+            flex: 1;
+            min-height: 100vh;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--navy-200);
+            padding: 14px 28px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+
+        .topbar h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.2em;
+            color: #0a1628;
+        }
+
+        .topbar p { font-size: 0.8em; color: var(--blue-muted); margin-top: 1px; }
+
         .content { padding: 24px 28px; flex: 1; }
+
+        /* ===== PANELS ===== */
         .panel { display: none; }
         .panel.active { display: block; }
-        .search-section { background: var(--white); border-radius: 12px; padding: 20px; border: 1px solid var(--navy-200); margin-bottom: 20px; }
-        .search-section h3 { font-size: 0.75em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--navy-400); margin-bottom: 10px; }
+
+        /* ===== HERO (landing + tool heroes) ===== */
+        .hero-section {
+            background: var(--blue);
+            border-radius: 12px;
+            padding: 28px 28px 24px;
+            margin-bottom: 0;
+        }
+
+        .hero-tag {
+            font-size: 0.68em;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--teal-light);
+            margin-bottom: 10px;
+        }
+
+        .hero-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.7em;
+            color: var(--white);
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .hero-title .accent-teal { color: var(--teal-light); }
+        .hero-title .accent-coral { color: var(--coral-400); }
+
+        .hero-sub {
+            font-size: 0.88em;
+            color: var(--blue-muted);
+            line-height: 1.7;
+        }
+
+        /* ===== STATS STRIP ===== */
+        .stats-strip {
+            background: var(--sage);
+            border-top: 3px solid var(--coral-600);
+            border-bottom: 3px solid var(--coral-600);
+            padding: 14px 28px;
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .stats-strip.rounded {
+            border-radius: 0 0 12px 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            border-right: 1px solid var(--sage-border);
+        }
+
+        .stat-item:last-child { border-right: none; }
+
+        .stat-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.6em;
+            color: var(--blue);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.72em;
+            color: var(--sage-text);
+            margin-top: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* ===== LANDING TOOL CARDS ===== */
+        .tool-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+
+        .tool-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--navy-100);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tool-card:hover { border-color: var(--coral-600); transform: translateX(2px); }
+
+        .tool-card-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tool-card-icon.business { background: var(--coral-100); }
+        .tool-card-icon.travel { background: var(--teal-faint); }
+        .tool-card-icon.route { background: var(--navy-100); }
+        .tool-card-icon svg { width: 20px; height: 20px; }
+
+        .tool-card-name {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #0a1628;
+            margin-bottom: 3px;
+        }
+
+        .tool-card-desc { font-size: 0.8em; color: var(--blue-muted); line-height: 1.4; }
+
+        .tool-card-arrow {
+            margin-left: auto;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            border: 1px solid var(--navy-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue-muted);
+            font-size: 1.1em;
+            flex-shrink: 0;
+            transition: all 0.15s;
+        }
+
+        .tool-card:hover .tool-card-arrow {
+            background: var(--coral-600);
+            color: white;
+            border-color: var(--coral-600);
+        }
+
+        /* ===== COMMUNITY PILLS ===== */
+        .community-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-bottom: 20px;
+        }
+
+        .community-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--white);
+            border: 1px solid var(--navy-100);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.82em;
+            color: #0a1628;
+            font-weight: 500;
+        }
+
+        .pill-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--teal-light);
+        }
+
+        /* ===== HISTORY CARD ===== */
+        .history-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--navy-100);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .history-card-header {
+            background: var(--blue);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-card-title {
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--teal-light);
+        }
+
+        .history-card-body { padding: 14px 16px; }
+
+        .history-card-headline {
+            font-size: 0.92em;
+            font-weight: 600;
+            color: #0a1628;
+            margin-bottom: 6px;
+        }
+
+        .history-card-text {
+            font-size: 0.82em;
+            color: var(--blue-muted);
+            line-height: 1.7;
+        }
+
+        .history-year {
+            display: inline-block;
+            font-size: 0.75em;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 8px;
+            background: var(--coral-100);
+            color: var(--coral-600);
+        }
+
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--navy-200);
+            margin-bottom: 20px;
+        }
+
+        .search-section h3 {
+            font-size: 0.75em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--blue-muted);
+            margin-bottom: 10px;
+        }
+
         .search-bar { display: flex; flex-wrap: wrap; gap: 8px; }
-        .search-bar input { flex: 1; min-width: 180px; padding: 12px 16px; font-size: 0.95em; border: 1.5px solid var(--navy-200); border-radius: 8px; outline: none; background: var(--gray-100); color: var(--navy-900); font-family: 'DM Sans', sans-serif; transition: border-color 0.15s; }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px 16px;
+            font-size: 0.95em;
+            border: 1.5px solid var(--navy-200);
+            border-radius: 8px;
+            outline: none;
+            background: var(--gray-100);
+            color: #0a1628;
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.15s;
+        }
+
         .search-bar input:focus { border-color: var(--coral-500); background: var(--white); }
-        .btn-primary { padding: 12px 22px; background: var(--coral-600); color: white; border: none; border-radius: 8px; font-size: 0.92em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; white-space: nowrap; }
-        .btn-primary:hover { background: var(--navy-900); }
-        .btn-secondary { padding: 12px 18px; background: var(--navy-700); color: white; border: none; border-radius: 8px; font-size: 0.92em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; white-space: nowrap; }
+
+        .btn-primary {
+            padding: 12px 22px;
+            background: var(--coral-600);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.92em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover { background: var(--blue); }
+
+        .btn-secondary {
+            padding: 12px 18px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.92em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
         .btn-secondary:hover { background: var(--coral-600); }
-        .btn-outline { padding: 8px 14px; background: transparent; color: var(--coral-600); border: 1.5px solid var(--coral-600); border-radius: 6px; font-size: 0.82em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
+
+        .btn-outline {
+            padding: 8px 14px;
+            background: transparent;
+            color: var(--coral-600);
+            border: 1.5px solid var(--coral-600);
+            border-radius: 6px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
         .btn-outline:hover { background: var(--coral-600); color: white; }
-        .btn-outline-navy { padding: 8px 14px; background: transparent; color: var(--navy-700); border: 1.5px solid var(--navy-200); border-radius: 6px; font-size: 0.82em; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; }
-        .btn-outline-navy:hover { background: var(--navy-900); color: white; border-color: var(--navy-900); }
-        .search-hint { font-size: 0.78em; color: var(--navy-400); margin-top: 8px; }
-        .score-hero { background: var(--navy-900); border-radius: 12px; padding: 24px; display: flex; align-items: center; gap: 24px; margin-bottom: 16px; color: white; }
-        .score-circle { width: 100px; height: 100px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; border: 3px solid var(--navy-700); }
-        .score-circle.high { border-color: var(--green); background: rgba(76,175,125,0.1); }
-        .score-circle.medium { border-color: var(--amber); background: rgba(240,165,0,0.1); }
-        .score-circle.low { border-color: var(--coral-500); background: rgba(232,80,58,0.1); }
-        .score-num { font-family: 'DM Serif Display', serif; font-size: 2.6em; line-height: 1; }
-        .score-num.high { color: var(--green); }
-        .score-num.medium { color: var(--amber); }
-        .score-num.low { color: var(--coral-400); }
-        .score-out { font-size: 0.72em; color: var(--navy-400); }
-        .score-info h3 { font-family: 'DM Serif Display', serif; font-size: 1.5em; margin-bottom: 4px; }
-        .verdict { font-size: 0.88em; margin-bottom: 10px; }
+
+        .btn-outline-navy {
+            padding: 8px 14px;
+            background: transparent;
+            color: var(--blue);
+            border: 1.5px solid var(--navy-200);
+            border-radius: 6px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-outline-navy:hover { background: var(--blue); color: white; border-color: var(--blue); }
+
+        .search-hint { font-size: 0.78em; color: var(--blue-muted); margin-top: 8px; }
+
+        /* ===== SCORE RING ===== */
+        .score-hero {
+            background: var(--blue);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 14px;
+            color: white;
+        }
+
+        .ring-wrap {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+        }
+
+        .ring-wrap svg {
+            width: 100px;
+            height: 100px;
+            transform: rotate(-90deg);
+        }
+
+        .ring-track { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8; }
+        .ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dasharray 1s ease; }
+        .ring-fill.high { stroke: var(--green); }
+        .ring-fill.medium { stroke: var(--amber); }
+        .ring-fill.low { stroke: var(--coral-400); }
+
+        .ring-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ring-score {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2em;
+            line-height: 1;
+        }
+
+        .ring-score.high { color: var(--green); }
+        .ring-score.medium { color: var(--amber); }
+        .ring-score.low { color: var(--coral-400); }
+        .ring-out { font-size: 0.7em; color: var(--blue-muted); }
+
+        .score-info h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4em;
+            margin-bottom: 4px;
+        }
+
+        .verdict { font-size: 0.86em; margin-bottom: 8px; }
         .verdict.high { color: var(--green); }
         .verdict.medium { color: var(--amber); }
         .verdict.low { color: var(--coral-400); }
-        .score-summary { font-size: 0.83em; color: var(--navy-400); line-height: 1.6; margin-bottom: 12px; }
+
+        .score-summary {
+            font-size: 0.82em;
+            color: var(--blue-muted);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
         .score-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .card { background: var(--white); border-radius: 12px; padding: 18px; border: 1px solid var(--navy-200); margin-bottom: 14px; }
-        .card h4 { font-size: 0.72em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--navy-400); margin-bottom: 10px; }
-        .card p { font-size: 0.88em; line-height: 1.7; color: var(--navy-600); }
-        .flag-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px; background: var(--coral-100); border-radius: 6px; margin-bottom: 6px; font-size: 0.83em; color: var(--navy-800); line-height: 1.5; }
-        .flag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--coral-600); flex-shrink: 0; margin-top: 5px; }
-        .flag-link { color: var(--coral-600); text-decoration: none; font-weight: 600; font-size: 0.85em; margin-left: 6px; }
+
+        /* ===== METRIC CARDS ===== */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .metric-card {
+            background: var(--white);
+            border-radius: 10px;
+            border: 1px solid var(--navy-100);
+            padding: 14px;
+            text-align: center;
+        }
+
+        .metric-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5em;
+            color: var(--coral-600);
+            line-height: 1;
+        }
+
+        .metric-num.ok { color: var(--teal); }
+
+        .metric-label {
+            font-size: 0.7em;
+            color: var(--blue-muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* ===== COMMUNITY FLAGS ===== */
+        .community-flags-title {
+            font-size: 0.7em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--blue-muted);
+            margin-bottom: 8px;
+        }
+
+        .community-flags-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .comm-flag {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+
+        .comm-flag:hover { opacity: 0.85; }
+
+        .comm-flag.warn { background: #fff5f3; border-color: #fdd8d3; }
+        .comm-flag.ok { background: var(--teal-faint); border-color: #b8e8d8; }
+        .comm-flag.neutral { background: var(--gray-100); border-color: var(--navy-100); }
+
+        .comm-flag-label {
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .comm-flag.warn .comm-flag-label { color: #c0392b; }
+        .comm-flag.ok .comm-flag-label { color: #0f6e56; }
+        .comm-flag.neutral .comm-flag-label { color: var(--blue-muted); }
+
+        .comm-flag-text { font-size: 0.78em; line-height: 1.4; }
+        .comm-flag.warn .comm-flag-text { color: #8a2020; }
+        .comm-flag.ok .comm-flag-text { color: #0f6e56; }
+        .comm-flag.neutral .comm-flag-text { color: var(--blue-muted); }
+
+        .comm-flag-link {
+            font-size: 0.72em;
+            font-weight: 600;
+            color: var(--coral-600);
+            margin-top: 4px;
+            display: block;
+            text-decoration: none;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid var(--navy-200);
+            margin-bottom: 14px;
+        }
+
+        .card h4 {
+            font-size: 0.72em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--blue-muted);
+            margin-bottom: 10px;
+        }
+
+        .card p { font-size: 0.88em; line-height: 1.7; color: #4a5166; }
+
+        .flag-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--coral-100);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 0.83em;
+            color: #0a1628;
+            line-height: 1.5;
+        }
+
+        .flag-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--coral-600);
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .flag-link {
+            color: var(--coral-600);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85em;
+            margin-left: 6px;
+        }
+
         .flag-link:hover { text-decoration: underline; }
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.74em; font-weight: 600; }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.74em;
+            font-weight: 600;
+        }
+
         .badge-low { background: #e6f4ea; color: #1e6e3a; }
         .badge-medium { background: #fff3d6; color: #7a4f00; }
         .badge-high { background: var(--coral-100); color: #8a2020; }
         .badge-severe { background: #2a0a0a; color: #ffb3b3; }
-        .badge-unrated { background: var(--navy-100); color: var(--navy-600); }
-        .biz-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--gray-100); border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: background 0.15s; }
+        .badge-unrated { background: var(--navy-100); color: #4a5166; }
+
+        /* ===== BIZ ROW ===== */
+        .biz-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--gray-100);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
         .biz-row:hover { background: var(--navy-100); }
-        .biz-name { font-size: 0.88em; font-weight: 600; color: var(--navy-900); }
-        .biz-sub { font-size: 0.76em; color: var(--navy-400); margin-top: 2px; }
-        .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; width: 100%; }
-        .stat-card { background: var(--white); border-radius: 10px; padding: 16px; border: 1px solid var(--navy-200); text-align: center; cursor: pointer; transition: all 0.15s; }
-        .stat-card:hover { border-color: var(--coral-600); background: var(--coral-100); }
-        .stat-num { font-family: 'DM Serif Display', serif; font-size: 1.8em; color: var(--coral-600); line-height: 1; }
-        .stat-label { font-size: 0.75em; color: var(--navy-400); margin-top: 4px; }
-        .featured-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; width: 100%; }
-        .featured-section { background: var(--white); border-radius: 10px; border: 1px solid var(--navy-200); overflow: hidden; }
-        .featured-header { padding: 8px 14px; font-size: 0.72em; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .biz-name { font-size: 0.88em; font-weight: 600; color: #0a1628; }
+        .biz-sub { font-size: 0.76em; color: var(--blue-muted); margin-top: 2px; }
+
+        /* ===== FEATURED ===== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid var(--navy-200);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .stat-card:hover { border-color: var(--coral-600); }
+
+        .stat-card-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8em;
+            color: var(--coral-600);
+            line-height: 1;
+        }
+
+        .stat-card-label { font-size: 0.75em; color: var(--blue-muted); margin-top: 4px; }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .featured-section {
+            background: var(--white);
+            border-radius: 10px;
+            border: 1px solid var(--navy-200);
+            overflow: hidden;
+        }
+
+        .featured-header {
+            padding: 8px 14px;
+            font-size: 0.72em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
         .featured-header.good { background: #e6f4ea; color: #1e6e3a; }
         .featured-header.bad { background: var(--coral-100); color: #8a2020; }
-        .featured-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: background 0.15s; }
+
+        .featured-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
         .featured-item:hover { background: var(--gray-100); }
-        .feat-name { font-size: 0.88em; font-weight: 600; color: var(--navy-900); }
-        .feat-sub { font-size: 0.74em; color: var(--navy-400); margin-top: 2px; }
-        .tips-card { background: var(--navy-900); border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; color: white; }
-        .tips-header { font-size: 0.68em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--coral-400); margin-bottom: 8px; }
-        .tips-body { font-size: 0.9em; line-height: 1.7; color: var(--navy-200); min-height: 46px; }
+        .feat-name { font-size: 0.88em; font-weight: 600; color: #0a1628; }
+        .feat-sub { font-size: 0.74em; color: var(--blue-muted); margin-top: 2px; }
+
+        /* ===== TIPS ===== */
+        .tips-card {
+            background: var(--blue);
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .tips-header {
+            font-size: 0.68em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--teal-light);
+            margin-bottom: 8px;
+        }
+
+        .tips-body {
+            font-size: 0.9em;
+            line-height: 1.7;
+            color: var(--blue-muted);
+            min-height: 46px;
+        }
+
         .tips-nav { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-        .tips-nav button { background: var(--navy-700); color: var(--navy-200); border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.78em; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+
+        .tips-nav button {
+            background: var(--blue-dark);
+            color: var(--blue-muted);
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.78em;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
+        }
+
         .tips-nav button:hover { background: var(--coral-600); color: white; }
-        .tips-nav span { font-size: 0.78em; color: var(--navy-600); }
-        .ticker-wrap { background: var(--navy-900); border-radius: 8px; padding: 9px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; overflow: hidden; }
-        .ticker-label { background: var(--coral-600); color: white; font-size: 0.65em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; flex-shrink: 0; }
-        .ticker-track { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
-        .ticker-item { color: var(--navy-400); font-size: 0.8em; padding-right: 50px; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .safety-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .safety-item { background: var(--white); border-radius: 8px; padding: 14px; border: 1px solid var(--navy-200); }
-        .safety-item h5 { font-size: 0.78em; font-weight: 600; color: var(--navy-600); margin-bottom: 5px; }
-        .safety-item p { font-size: 0.78em; color: var(--navy-600); line-height: 1.5; margin-bottom: 5px; }
-        .advisory { font-size: 0.74em; color: #8a2020; background: var(--coral-100); padding: 4px 8px; border-radius: 4px; margin-top: 4px; line-height: 1.4; }
-        .overall-banner { border-radius: 8px; padding: 14px 18px; font-weight: 600; font-size: 0.95em; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; }
+        .tips-nav span { font-size: 0.78em; color: var(--blue-faint); }
+
+        /* ===== SAFETY ===== */
+        .safety-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .safety-item {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid var(--navy-200);
+        }
+
+        .safety-item h5 { font-size: 0.78em; font-weight: 600; color: #4a5166; margin-bottom: 5px; }
+        .safety-item p { font-size: 0.78em; color: #4a5166; line-height: 1.5; margin-bottom: 5px; }
+
+        .advisory {
+            font-size: 0.74em;
+            color: #8a2020;
+            background: var(--coral-100);
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .overall-banner {
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-weight: 600;
+            font-size: 0.95em;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         .banner-low { background: #e6f4ea; color: #1e6e3a; }
         .banner-medium { background: #fff3d6; color: #7a4f00; }
         .banner-high { background: var(--coral-100); color: #8a2020; }
-        .safety-alert { background: var(--coral-600); color: white; padding: 12px 18px; border-radius: 8px; margin-bottom: 14px; font-size: 0.88em; font-weight: 600; display: none; }
+
+        .safety-alert {
+            background: var(--coral-600);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            font-size: 0.88em;
+            font-weight: 600;
+            display: none;
+        }
+
         .safety-alert.visible { display: block; }
-        .section-divider { font-size: 0.72em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--navy-400); margin: 18px 0 10px; display: flex; align-items: center; gap: 10px; }
+
+        .section-divider {
+            font-size: 0.72em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--blue-muted);
+            margin: 18px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--navy-200); }
+
         .quick-states { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
-        .state-btn { background: var(--gray-100); border: 1px solid var(--navy-200); color: var(--navy-700); padding: 5px 12px; border-radius: 20px; font-size: 0.8em; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+
+        .state-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--navy-200);
+            color: #254070;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+
         .state-btn:hover { background: var(--coral-600); color: white; border-color: var(--coral-600); }
 
-        /* ROUTE */
-        .route-layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
-        .route-inputs { background: var(--white); border-radius: 12px; padding: 20px; border: 1px solid var(--navy-200); display: flex; flex-direction: column; gap: 14px; position: sticky; top: 80px; max-width: 100%; }
+        /* ===== ROUTE ===== */
+        .route-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .route-inputs {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--navy-200);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: sticky;
+            top: 80px;
+        }
+
         .route-input-group { display: flex; flex-direction: column; gap: 5px; }
-        .route-input-group label { font-size: 0.75em; font-weight: 600; color: var(--navy-600); text-transform: uppercase; letter-spacing: 0.5px; }
-        .route-input-group input { padding: 11px 14px; border: 1.5px solid var(--navy-200); border-radius: 8px; font-size: 0.92em; font-family: 'DM Sans', sans-serif; outline: none; color: var(--navy-900); background: var(--gray-100); }
+
+        .route-input-group label {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #4a5166;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .route-input-group input {
+            padding: 11px 14px;
+            border: 1.5px solid var(--navy-200);
+            border-radius: 8px;
+            font-size: 0.92em;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            color: #0a1628;
+            background: var(--gray-100);
+        }
+
         .route-input-group input:focus { border-color: var(--coral-500); background: var(--white); }
-        .route-summary { background: var(--navy-900); color: white; border-radius: 12px; padding: 18px 22px; margin-bottom: 16px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+
+        .route-summary {
+            background: var(--blue);
+            color: white;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .route-stat { text-align: center; }
         .route-stat-num { font-family: 'DM Serif Display', serif; font-size: 1.6em; color: var(--coral-400); }
-        .route-stat-label { font-size: 0.72em; color: var(--navy-400); margin-top: 2px; }
-        .route-state { background: var(--white); border-radius: 10px; padding: 14px; border: 1px solid var(--navy-200); margin-bottom: 8px; border-left: 4px solid var(--navy-200); }
+        .route-stat-label { font-size: 0.72em; color: var(--blue-muted); margin-top: 2px; }
+
+        .route-state {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid var(--navy-200);
+            margin-bottom: 8px;
+            border-left: 4px solid var(--navy-200);
+        }
+
         .route-state.high-risk { border-left-color: var(--coral-600); }
         .route-state.medium-risk { border-left-color: var(--amber); }
         .route-state.low-risk { border-left-color: var(--green); }
-        .route-state-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .route-state-name { font-weight: 600; font-size: 0.95em; color: var(--navy-900); }
-        .route-state-ratings { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
-        .step-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--gray-100); font-size: 0.83em; color: var(--navy-700); }
-        .step-item.warning { background: var(--coral-100); color: #8a2020; font-weight: 600; border-radius: 6px; margin: 4px 0; border-bottom: none; }
-        .step-num { width: 20px; height: 20px; border-radius: 50%; background: var(--navy-200); color: var(--navy-700); display: flex; align-items: center; justify-content: center; font-size: 0.72em; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
 
-        /* MAP */
+        .route-state-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .route-state-name { font-weight: 600; font-size: 0.95em; color: #0a1628; }
+        .route-state-ratings { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.83em;
+            color: #254070;
+        }
+
+        .step-item.warning {
+            background: var(--coral-100);
+            color: #8a2020;
+            font-weight: 600;
+            border-radius: 6px;
+            margin: 4px 0;
+            border-bottom: none;
+        }
+
+        .step-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--navy-200);
+            color: #254070;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72em;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
         .map-container { border-radius: 12px; overflow: hidden; border: 1px solid var(--navy-200); margin-bottom: 16px; }
         .map-container iframe { width: 100%; height: 300px; border: none; display: block; }
 
-        /* DRAWER */
+        /* ===== DRAWER ===== */
         .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(10,22,40,0.4); z-index: 300; }
         .drawer-overlay.open { display: block; }
-        .drawer { position: fixed; right: 0; top: 0; bottom: 0; width: 400px; max-width: 95vw; background: var(--white); z-index: 301; transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; overflow-y: auto; }
+
+        .drawer {
+            position: fixed;
+            right: 0; top: 0; bottom: 0;
+            width: 400px;
+            max-width: 95vw;
+            background: var(--white);
+            z-index: 301;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
         .drawer.open { transform: translateX(0); }
-        .drawer-header { background: var(--navy-900); padding: 20px; color: white; display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
+
+        .drawer-header {
+            background: var(--blue);
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
         .drawer-title { font-family: 'DM Serif Display', serif; font-size: 1.3em; }
-        .drawer-close { background: none; border: none; color: var(--navy-400); font-size: 1.4em; cursor: pointer; padding: 0 4px; line-height: 1; }
+        .drawer-close { background: none; border: none; color: var(--blue-muted); font-size: 1.4em; cursor: pointer; padding: 0 4px; line-height: 1; }
         .drawer-close:hover { color: white; }
-        .drawer-score { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--navy-100); }
-        .drawer-score-circle { width: 70px; height: 70px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid var(--navy-200); flex-shrink: 0; }
+
+        .drawer-score {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--navy-100);
+        }
+
+        .drawer-score-circle {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--navy-200);
+            flex-shrink: 0;
+        }
+
         .drawer-score-circle.high { border-color: var(--green); background: rgba(76,175,125,0.08); }
         .drawer-score-circle.medium { border-color: var(--amber); background: rgba(240,165,0,0.08); }
         .drawer-score-circle.low { border-color: var(--coral-500); background: rgba(232,80,58,0.08); }
+
         .drawer-score-num { font-family: 'DM Serif Display', serif; font-size: 1.8em; line-height: 1; }
         .drawer-score-num.high { color: var(--green); }
         .drawer-score-num.medium { color: var(--amber); }
         .drawer-score-num.low { color: var(--coral-400); }
-        .drawer-body { padding: 16px 20px; flex: 1; }
-        .drawer-section-title { font-size: 0.7em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--navy-400); margin-bottom: 8px; margin-top: 14px; }
-        .drawer-actions { display: flex; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--navy-100); background: var(--gray-100); flex-shrink: 0; flex-wrap: wrap; }
 
-        /* INFO DRAWER */
-        .info-drawer-content { padding: 16px 20px; }
-        .info-item { padding: 10px 0; border-bottom: 1px solid var(--navy-100); font-size: 0.88em; color: var(--navy-700); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-body { padding: 16px 20px; flex: 1; }
+        .drawer-section-title { font-size: 0.7em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--blue-muted); margin-bottom: 8px; margin-top: 14px; }
+
+        .drawer-actions {
+            display: flex;
+            gap: 8px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--navy-100);
+            background: var(--gray-100);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        /* ===== INFO DRAWER ===== */
+        .info-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--navy-100);
+            font-size: 0.88em;
+            color: #254070;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .info-item:hover { color: var(--coral-600); }
         .info-item-name { font-weight: 600; }
-        .info-item-sub { font-size: 0.78em; color: var(--navy-400); margin-top: 2px; }
-        .search-filter { width: 100%; padding: 10px 14px; border: 1.5px solid var(--navy-200); border-radius: 8px; font-size: 0.9em; font-family: 'DM Sans', sans-serif; outline: none; margin-bottom: 12px; background: var(--gray-100); }
+        .search-filter {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--navy-200);
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            margin-bottom: 12px;
+            background: var(--gray-100);
+        }
+
         .search-filter:focus { border-color: var(--coral-500); }
 
-        /* SUBMISSION FORM */
+        /* ===== SUBMISSION FORM ===== */
         .submit-form { display: flex; flex-direction: column; gap: 12px; }
-        .submit-form input, .submit-form select, .submit-form textarea { width: 100%; padding: 10px 14px; border: 1.5px solid var(--navy-200); border-radius: 8px; font-size: 0.88em; font-family: 'DM Sans', sans-serif; outline: none; background: var(--gray-100); color: var(--navy-900); }
+        .submit-form input, .submit-form select, .submit-form textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--navy-200);
+            border-radius: 8px;
+            font-size: 0.88em;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            background: var(--gray-100);
+            color: #0a1628;
+        }
+
         .submit-form input:focus, .submit-form select:focus, .submit-form textarea:focus { border-color: var(--coral-500); }
         .submit-form textarea { min-height: 80px; resize: vertical; }
-        .submit-form label { font-size: 0.75em; font-weight: 600; color: var(--navy-600); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; display: block; }
+        .submit-form label { font-size: 0.75em; font-weight: 600; color: #4a5166; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; display: block; }
 
-        /* TRACKING */
-        .tracking-bar { display: none; background: var(--navy-900); color: white; padding: 10px 16px; border-radius: 8px; margin-bottom: 14px; align-items: center; justify-content: space-between; gap: 12px; }
+        /* ===== TRACKING ===== */
+        .tracking-bar {
+            display: none;
+            background: var(--blue);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
         .tracking-bar.active { display: flex; }
         .tracking-status { font-size: 0.85em; }
 
-        /* LOADING */
-        .loading { text-align: center; padding: 50px 20px; color: var(--navy-400); font-size: 0.92em; }
+        /* ===== LOADING ===== */
+        .loading { text-align: center; padding: 50px 20px; color: var(--blue-muted); font-size: 0.92em; }
         .loading-spinner { width: 32px; height: 32px; border: 3px solid var(--navy-200); border-top-color: var(--coral-600); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
         .error-msg { background: var(--coral-100); color: #8a2020; padding: 14px; border-radius: 8px; font-size: 0.88em; }
         .success-msg { background: #e6f4ea; color: #1e6e3a; padding: 14px; border-radius: 8px; font-size: 0.88em; font-weight: 600; }
 
-        /* ABOUT */
-        .about-hero { background: var(--navy-900); border-radius: 12px; padding: 32px; color: white; margin-bottom: 16px; }
-        .about-hero h2 { font-family: 'DM Serif Display', serif; font-size: 1.8em; margin-bottom: 8px; }
-        .about-hero p { font-size: 0.92em; color: var(--navy-400); line-height: 1.7; }
+        /* ===== ABOUT ===== */
         .about-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 16px; }
         .about-card { background: var(--white); border-radius: 10px; padding: 18px; border: 1px solid var(--navy-200); }
-        .about-card h4 { font-size: 0.88em; font-weight: 600; color: var(--navy-900); margin-bottom: 6px; }
-        .about-card p { font-size: 0.82em; color: var(--navy-600); line-height: 1.6; }
-        .source-tag { display: inline-block; background: var(--navy-100); color: var(--navy-700); padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 600; margin: 3px; cursor: pointer; transition: all 0.15s; }
-        .source-tag:hover { background: var(--navy-900); color: white; }
+        .about-card h4 { font-size: 0.88em; font-weight: 600; color: #0a1628; margin-bottom: 6px; }
+        .about-card p { font-size: 0.82em; color: #4a5166; line-height: 1.6; }
 
-        /* MOBILE */
-        .mobile-topnav { display: none; background: var(--navy-900); position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 0 12px; align-items: center; height: 52px; gap: 4px; }
+        .source-tag {
+            display: inline-block;
+            background: var(--navy-100);
+            color: #254070;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin: 3px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .source-tag:hover { background: var(--blue); color: white; }
+
+        /* ===== MOBILE TOP NAV ===== */
+        .mobile-topnav {
+            display: none;
+            background: var(--blue);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 200;
+            padding: 0 12px;
+            align-items: center;
+            height: 52px;
+            gap: 4px;
+        }
+
         .mobile-logo { font-family: 'DM Serif Display', serif; color: var(--white); font-size: 1em; margin-right: auto; white-space: nowrap; }
-        .mobile-nav-btn { display: flex; flex-direction: column; align-items: center; padding: 6px 10px; border-radius: 8px; cursor: pointer; color: var(--navy-400); font-size: 0.6em; font-weight: 600; gap: 3px; border: none; background: none; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
-        .mobile-nav-btn svg { width: 18px; height: 18px; }
+
+        .mobile-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--blue-muted);
+            font-size: 0.58em;
+            font-weight: 600;
+            gap: 3px;
+            border: none;
+            background: none;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .mobile-nav-btn svg { width: 17px; height: 17px; }
         .mobile-nav-btn.active { color: var(--coral-400); }
-        .bottom-tabs { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--navy-900); border-top: 1px solid var(--navy-700); z-index: 200; padding: 6px 0 8px; }
+
+        /* ===== BOTTOM TABS ===== */
+        .bottom-tabs {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--blue);
+            border-top: 1px solid var(--blue-light);
+            z-index: 200;
+            padding: 6px 0 8px;
+        }
+
         .bottom-tabs-inner { display: flex; justify-content: space-around; }
-        .bottom-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 12px; cursor: pointer; color: var(--navy-400); font-size: 0.6em; font-weight: 600; font-family: 'DM Sans', sans-serif; transition: color 0.15s; border: none; background: none; }
+
+        .bottom-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 4px 12px;
+            cursor: pointer;
+            color: var(--blue-muted);
+            font-size: 0.58em;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: color 0.15s;
+            border: none;
+            background: none;
+        }
+
         .bottom-tab svg { width: 20px; height: 20px; }
         .bottom-tab.active { color: var(--coral-400); }
+
         .notification { position: fixed; top: 20px; right: 20px; color: white; padding: 14px 18px; border-radius: 10px; font-size: 0.88em; font-weight: 600; z-index: 9999; max-width: 300px; font-family: 'DM Sans', sans-serif; transition: opacity 0.5s; }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
             .sidebar { display: none; }
             .mobile-topnav { display: flex; }
@@ -252,22 +1274,26 @@
             .featured-grid { grid-template-columns: 1fr; }
             .safety-grid { grid-template-columns: 1fr; }
             .about-grid { grid-template-columns: 1fr; }
+            .community-flags-grid { grid-template-columns: 1fr; }
             .score-hero { flex-direction: column; text-align: center; gap: 14px; padding: 20px; }
             .score-actions { justify-content: center; }
-            .ticker-wrap { display: none; }
             .route-layout { grid-template-columns: 1fr; }
             .route-inputs { position: static; }
             .drawer { width: 100%; max-width: 100%; }
-            .route-inputs { max-width: 100%; }
-            #route-results:empty { display: none; }
+            .metrics-row { grid-template-columns: repeat(3, 1fr); }
+            .stats-strip { padding: 12px 16px; }
+            .hero-section { border-radius: 0; }
         }
 
         @media (max-width: 480px) {
             .stats-row { gap: 8px; }
-            .stat-num { font-size: 1.5em; }
             .content { padding: 12px; }
-            .score-circle { width: 80px; height: 80px; }
-            .score-num { font-size: 2em; }
+            .ring-wrap { width: 80px; height: 80px; }
+            .ring-wrap svg { width: 80px; height: 80px; }
+            .ring-score { font-size: 1.6em; }
+            .metrics-row { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .metric-card { padding: 10px 8px; }
+            .metric-num { font-size: 1.2em; }
         }
 
         @media (min-width: 901px) {
@@ -281,7 +1307,11 @@
 <!-- MOBILE TOP NAV -->
 <nav class="mobile-topnav">
     <span class="mobile-logo">Conscious Consumer</span>
-    <button class="mobile-nav-btn active" id="mob-business" onclick="switchPanel('business')">
+    <button class="mobile-nav-btn active" id="mob-home" onclick="switchPanel('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        Home
+    </button>
+    <button class="mobile-nav-btn" id="mob-business" onclick="switchPanel('business')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         Search
     </button>
@@ -303,11 +1333,15 @@
 <aside class="sidebar">
     <div class="sidebar-logo">
         <h1>Conscious Consumer</h1>
-        <p>Inspired by the Green Book — know before you go, know before you spend.</p>
+        <p>Know before you go. Know before you spend.</p>
     </div>
     <nav class="sidebar-nav">
-        <div class="nav-label">Tools</div>
-        <div class="nav-item active" id="nav-business" onclick="switchPanel('business')">
+        <div class="nav-label">Navigate</div>
+        <div class="nav-item active" id="nav-home" onclick="switchPanel('home')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Home
+        </div>
+        <div class="nav-item" id="nav-business" onclick="switchPanel('business')">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             Business Transparency
         </div>
@@ -319,7 +1353,7 @@
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/></svg>
             Route Planner
         </div>
-        <div class="nav-label">About</div>
+        <div class="nav-label">Info</div>
         <div class="nav-item" id="nav-about" onclick="switchPanel('about')">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
             About & Sources
@@ -334,38 +1368,90 @@
 <!-- MAIN -->
 <main class="main">
     <div class="topbar">
-        <div class="topbar-left">
-            <h2 id="topbar-title">Business Transparency</h2>
-            <p id="topbar-sub">Search any business, brand, or law enforcement agency</p>
+        <div>
+            <h2 id="topbar-title">Home</h2>
+            <p id="topbar-sub">Know before you go. Know before you spend.</p>
         </div>
     </div>
 
     <div class="content">
 
-        <!-- BUSINESS PANEL -->
-        <div class="panel active" id="panel-business">
-            <div class="ticker-wrap">
-                <div class="ticker-label">Latest</div>
-                <div class="ticker-track">
-                    <span class="ticker-item">Volkswagen faces new emissions lawsuit in EU courts</span>
-                    <span class="ticker-item">Wells Fargo ordered to pay $3.7B in consumer penalties</span>
-                    <span class="ticker-item">Amazon warehouse workers file safety complaints in 6 states</span>
-                    <span class="ticker-item">Purdue Pharma settlement payments begin distribution</span>
-                    <span class="ticker-item">Florida NAACP travel advisory remains in effect</span>
-                    <span class="ticker-item">Tyson Foods cited for worker safety violations</span>
-                    <span class="ticker-item">Meta faces new data privacy investigation in EU</span>
-                    <span class="ticker-item">Exxon lobbying against climate disclosure rules</span>
-                    <span class="ticker-item">Volkswagen faces new emissions lawsuit in EU courts</span>
-                    <span class="ticker-item">Wells Fargo ordered to pay $3.7B in consumer penalties</span>
-                    <span class="ticker-item">Amazon warehouse workers file safety complaints in 6 states</span>
-                    <span class="ticker-item">Purdue Pharma settlement payments begin distribution</span>
-                    <span class="ticker-item">Florida NAACP travel advisory remains in effect</span>
-                    <span class="ticker-item">Tyson Foods cited for worker safety violations</span>
-                    <span class="ticker-item">Meta faces new data privacy investigation in EU</span>
-                    <span class="ticker-item">Exxon lobbying against climate disclosure rules</span>
+        <!-- HOME PANEL -->
+        <div class="panel active" id="panel-home">
+            <div class="hero-section" style="border-radius:12px 12px 0 0;">
+                <div class="hero-tag">Civic Intelligence Platform</div>
+                <div class="hero-title">
+                    Everyone deserves to feel <span class="accent-teal">safe</span><br>
+                    and spend with <span class="accent-coral">confidence.</span>
+                </div>
+                <div class="hero-sub">
+                    Real data on corporate accountability, state safety ratings, and travel guidance — built for LGBTQ+ travelers, people of color, religious minorities, people with disabilities, and women.
                 </div>
             </div>
 
+            <div class="stats-strip rounded">
+                <div class="stat-item"><div class="stat-num">250+</div><div class="stat-label">Companies</div></div>
+                <div class="stat-item"><div class="stat-num">51</div><div class="stat-label">States + DC</div></div>
+                <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Data Sources</div></div>
+                <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Communities</div></div>
+            </div>
+
+            <div class="tool-cards">
+                <div class="tool-card" onclick="switchPanel('business')">
+                    <div class="tool-card-icon business">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#e8503a" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    </div>
+                    <div>
+                        <div class="tool-card-name">Business Transparency</div>
+                        <div class="tool-card-desc">Score any company on ESG, human rights, political activity, and legal record</div>
+                    </div>
+                    <div class="tool-card-arrow">›</div>
+                </div>
+                <div class="tool-card" onclick="switchPanel('travel')">
+                    <div class="tool-card-icon travel">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#0f9e78" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+                    </div>
+                    <div>
+                        <div class="tool-card-name">Safe Travel Guide</div>
+                        <div class="tool-card-desc">Safety ratings for any US state, city, or full address — with GPS tracking</div>
+                    </div>
+                    <div class="tool-card-arrow">›</div>
+                </div>
+                <div class="tool-card" onclick="switchPanel('route')">
+                    <div class="tool-card-icon route">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#2c3e55" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/></svg>
+                    </div>
+                    <div>
+                        <div class="tool-card-name">Route Planner</div>
+                        <div class="tool-card-desc">Plan a safe route with state-by-state safety ratings and turn-by-turn directions</div>
+                    </div>
+                    <div class="tool-card-arrow">›</div>
+                </div>
+            </div>
+
+            <p style="font-size:0.72em; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--blue-muted); margin-bottom:10px;">Communities We Serve</p>
+            <div class="community-pills" style="margin-bottom:20px;">
+                <div class="community-pill"><div class="pill-dot"></div>LGBTQ+ Travelers</div>
+                <div class="community-pill"><div class="pill-dot"></div>People of Color</div>
+                <div class="community-pill"><div class="pill-dot"></div>Religious Minorities</div>
+                <div class="community-pill"><div class="pill-dot"></div>People with Disabilities</div>
+                <div class="community-pill"><div class="pill-dot"></div>Women</div>
+            </div>
+
+            <div class="history-card">
+                <div class="history-card-header">
+                    <div class="history-card-title">The History Behind This App</div>
+                </div>
+                <div class="history-card-body">
+                    <div class="history-card-headline">The Negro Motorist Green Book</div>
+                    <div class="history-card-text">From 1936 to 1966, Victor Hugo Green published an annual travel guide helping Black Americans navigate a country that was often hostile to them — listing safe hotels, restaurants, and businesses during the Jim Crow era. The Green Book was more than a directory; it was a lifeline. Conscious Consumer carries that mission forward for today's marginalized communities.</div>
+                    <div class="history-year">1936 — 1966</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUSINESS PANEL -->
+        <div class="panel" id="panel-business">
             <div class="search-section">
                 <h3>Search a Business</h3>
                 <div class="search-bar">
@@ -379,20 +1465,20 @@
 
             <div class="stats-row">
                 <div class="stat-card" onclick="openInfoDrawer('companies')">
-                    <div class="stat-num">250+</div>
-                    <div class="stat-label">Companies Tracked</div>
+                    <div class="stat-card-num">250+</div>
+                    <div class="stat-card-label">Companies Tracked</div>
                 </div>
                 <div class="stat-card" onclick="openInfoDrawer('states')">
-                    <div class="stat-num">51</div>
-                    <div class="stat-label">States + DC</div>
+                    <div class="stat-card-num">51</div>
+                    <div class="stat-card-label">States + DC</div>
                 </div>
                 <div class="stat-card" onclick="openInfoDrawer('sources')">
-                    <div class="stat-num">6</div>
-                    <div class="stat-label">Data Sources</div>
+                    <div class="stat-card-num">6</div>
+                    <div class="stat-card-label">Data Sources</div>
                 </div>
                 <div class="stat-card" onclick="openInfoDrawer('communities')">
-                    <div class="stat-num">5</div>
-                    <div class="stat-label">Communities</div>
+                    <div class="stat-card-num">5</div>
+                    <div class="stat-card-label">Communities</div>
                 </div>
             </div>
 
@@ -466,50 +1552,26 @@
             <div id="travel-results"></div>
 
             <div class="stats-row" style="margin-top:20px;">
-                <div class="stat-card"><div class="stat-num">51</div><div class="stat-label">States + DC</div></div>
-                <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Communities</div></div>
-                <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Active Advisories</div></div>
-                <div class="stat-card"><div class="stat-num">28k+</div><div class="stat-label">Incidents Tracked</div></div>
+                <div class="stat-card"><div class="stat-card-num">51</div><div class="stat-card-label">States + DC</div></div>
+                <div class="stat-card"><div class="stat-card-num">5</div><div class="stat-card-label">Communities</div></div>
+                <div class="stat-card"><div class="stat-card-num">3</div><div class="stat-card-label">Active Advisories</div></div>
+                <div class="stat-card"><div class="stat-card-num">28k+</div><div class="stat-card-label">Incidents Tracked</div></div>
             </div>
 
             <div class="featured-grid">
                 <div class="featured-section">
                     <div class="featured-header good">Most Welcoming States</div>
-                    <div class="featured-item" onclick="quickSearch('Massachusetts')">
-                        <div><div class="feat-name">Massachusetts</div><div class="feat-sub">First state to legalize same-sex marriage</div></div>
-                        <span class="badge badge-low">Low Risk</span>
-                    </div>
-                    <div class="featured-item" onclick="quickSearch('New York')">
-                        <div><div class="feat-name">New York</div><div class="feat-sub">Comprehensive protections for all communities</div></div>
-                        <span class="badge badge-low">Low Risk</span>
-                    </div>
-                    <div class="featured-item" onclick="quickSearch('Vermont')">
-                        <div><div class="feat-name">Vermont</div><div class="feat-sub">Abortion rights in constitution</div></div>
-                        <span class="badge badge-low">Low Risk</span>
-                    </div>
-                    <div class="featured-item" onclick="quickSearch('Hawaii')">
-                        <div><div class="feat-name">Hawaii</div><div class="feat-sub">Most diverse state, excellent protections</div></div>
-                        <span class="badge badge-low">Low Risk</span>
-                    </div>
+                    <div class="featured-item" onclick="quickSearch('Massachusetts')"><div><div class="feat-name">Massachusetts</div><div class="feat-sub">First state to legalize same-sex marriage</div></div><span class="badge badge-low">Low Risk</span></div>
+                    <div class="featured-item" onclick="quickSearch('New York')"><div><div class="feat-name">New York</div><div class="feat-sub">Comprehensive protections for all communities</div></div><span class="badge badge-low">Low Risk</span></div>
+                    <div class="featured-item" onclick="quickSearch('Vermont')"><div><div class="feat-name">Vermont</div><div class="feat-sub">Abortion rights in constitution</div></div><span class="badge badge-low">Low Risk</span></div>
+                    <div class="featured-item" onclick="quickSearch('Hawaii')"><div><div class="feat-name">Hawaii</div><div class="feat-sub">Most diverse state, excellent protections</div></div><span class="badge badge-low">Low Risk</span></div>
                 </div>
                 <div class="featured-section">
                     <div class="featured-header bad">Active Travel Advisories</div>
-                    <div class="featured-item" onclick="quickSearch('Florida')">
-                        <div><div class="feat-name">Florida</div><div class="feat-sub">NAACP + HRC advisories active</div></div>
-                        <span class="badge badge-high">High Risk</span>
-                    </div>
-                    <div class="featured-item" onclick="quickSearch('Mississippi')">
-                        <div><div class="feat-name">Mississippi</div><div class="feat-sub">NAACP advisory, broad discrimination permitted</div></div>
-                        <span class="badge badge-severe">High Risk</span>
-                    </div>
-                    <div class="featured-item" onclick="quickSearch('Texas')">
-                        <div><div class="feat-name">Texas</div><div class="feat-sub">Total abortion ban, anti-trans healthcare laws</div></div>
-                        <span class="badge badge-high">High Risk</span>
-                    </div>
-                    <div class="featured-item" onclick="quickSearch('Tennessee')">
-                        <div><div class="feat-name">Tennessee</div><div class="feat-sub">Anti-drag laws, near-total abortion ban</div></div>
-                        <span class="badge badge-high">High Risk</span>
-                    </div>
+                    <div class="featured-item" onclick="quickSearch('Florida')"><div><div class="feat-name">Florida</div><div class="feat-sub">NAACP + HRC advisories active</div></div><span class="badge badge-high">High Risk</span></div>
+                    <div class="featured-item" onclick="quickSearch('Mississippi')"><div><div class="feat-name">Mississippi</div><div class="feat-sub">NAACP advisory, broad discrimination permitted</div></div><span class="badge badge-severe">High Risk</span></div>
+                    <div class="featured-item" onclick="quickSearch('Texas')"><div><div class="feat-name">Texas</div><div class="feat-sub">Total abortion ban, anti-trans healthcare laws</div></div><span class="badge badge-high">High Risk</span></div>
+                    <div class="featured-item" onclick="quickSearch('Tennessee')"><div><div class="feat-name">Tennessee</div><div class="feat-sub">Anti-drag laws, near-total abortion ban</div></div><span class="badge badge-high">High Risk</span></div>
                 </div>
             </div>
 
@@ -566,28 +1628,23 @@
 
         <!-- ABOUT PANEL -->
         <div class="panel" id="panel-about">
-            <div class="about-hero">
-                <h2>About Conscious Consumer</h2>
-                <p>A civic transparency platform inspired by the historic Green Book, which guided Black travelers to safe businesses during the Jim Crow era. We help LGBTQ+ travelers, people of color, religious minorities, people with disabilities, and women make informed decisions about where they spend their money and where they travel.</p>
+            <div class="hero-section" style="margin-bottom:0; border-radius:12px 12px 0 0;">
+                <div class="hero-tag">About This Platform</div>
+                <div class="hero-title" style="font-size:1.4em;">Conscious Consumer</div>
+                <div class="hero-sub">A civic transparency platform inspired by the historic Green Book, which guided Black travelers to safe businesses during the Jim Crow era.</div>
+            </div>
+            <div class="stats-strip rounded">
+                <div class="stat-item"><div class="stat-num">250+</div><div class="stat-label">Companies</div></div>
+                <div class="stat-item"><div class="stat-num">51</div><div class="stat-label">States + DC</div></div>
+                <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Data Sources</div></div>
+                <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Communities</div></div>
             </div>
 
             <div class="about-grid">
-                <div class="about-card">
-                    <h4>Our Mission</h4>
-                    <p>To democratize access to corporate transparency data and travel safety information for marginalized communities — putting the power of information in the hands of consumers.</p>
-                </div>
-                <div class="about-card">
-                    <h4>How Scores Work</h4>
-                    <p>Businesses start at 100 and lose points based on political donations, negative news coverage, federal court cases, ESG ratings, human rights records, and police violence data.</p>
-                </div>
-                <div class="about-card">
-                    <h4>Travel Safety</h4>
-                    <p>State safety ratings draw from NAACP travel advisories, HRC Corporate Equality Index, ACLU legislative tracking, Movement Advancement Project data, and ADA compliance records.</p>
-                </div>
-                <div class="about-card">
-                    <h4>Police Violence Data</h4>
-                    <p>Incident data comes from Mapping Police Violence, which tracks all known police killings in the US. Accountability rates reflect criminal charges filed against officers.</p>
-                </div>
+                <div class="about-card"><h4>Our Mission</h4><p>To democratize access to corporate transparency data and travel safety information for marginalized communities — putting the power of information in the hands of consumers.</p></div>
+                <div class="about-card"><h4>How Scores Work</h4><p>Businesses start at 100 and lose points based on political donations, negative news coverage, federal court cases, ESG ratings, human rights records, and police violence data.</p></div>
+                <div class="about-card"><h4>Travel Safety</h4><p>State safety ratings draw from NAACP travel advisories, HRC Corporate Equality Index, ACLU legislative tracking, Movement Advancement Project data, and ADA compliance records.</p></div>
+                <div class="about-card"><h4>Police Violence Data</h4><p>Incident data comes from Mapping Police Violence, which tracks all known police killings in the US. Accountability rates reflect criminal charges filed against officers.</p></div>
             </div>
 
             <div class="card">
@@ -622,7 +1679,11 @@
 <!-- BOTTOM TAB BAR -->
 <nav class="bottom-tabs">
     <div class="bottom-tabs-inner">
-        <button class="bottom-tab active" id="tab-business" onclick="switchPanel('business')">
+        <button class="bottom-tab active" id="tab-home" onclick="switchPanel('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            Home
+        </button>
+        <button class="bottom-tab" id="tab-business" onclick="switchPanel('business')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             Business
         </button>
@@ -647,7 +1708,7 @@
     <div class="drawer-header">
         <div>
             <div class="drawer-title" id="drawerTitle">Detail</div>
-            <div style="font-size:0.78em; color:var(--navy-400); margin-top:3px;" id="drawerVerdict"></div>
+            <div style="font-size:0.78em; color:var(--blue-muted); margin-top:3px;" id="drawerVerdict"></div>
         </div>
         <button class="drawer-close" onclick="closeDrawer()">✕</button>
     </div>
@@ -660,6 +1721,7 @@
 
 <script>
 const TITLES = {
+    home: ['Home', 'Know before you go. Know before you spend.'],
     business: ['Business Transparency', 'Search any business, brand, or law enforcement agency'],
     travel: ['Safe Travel Guide', 'Search any US city, state, or full address'],
     route: ['Route Planner', 'Check safety ratings for your entire journey'],
@@ -668,70 +1730,17 @@ const TITLES = {
 
 const HIGH_RISK_STATES = ['Alabama','Arkansas','Florida','Georgia','Idaho','Indiana','Iowa','Kansas','Kentucky','Louisiana','Mississippi','Missouri','Montana','Nebraska','North Dakota','Ohio','Oklahoma','South Carolina','South Dakota','Tennessee','Texas','Utah','West Virginia','Wyoming'];
 
-const ALL_COMPANIES = [
-    'Walmart','Amazon','Target','Costco','Home Depot','Lowes','Kroger','Walgreens','CVS','Dollar General','Dollar Tree','Shein','Fashion Nova','TJ Maxx','Marshalls','Ross','Macys','Nordstrom','Gap','Old Navy','H&M','Zara','Forever 21','Nike','Adidas','Under Armour','Best Buy','Ebay','Etsy','Wayfair','IKEA','Sephora','Ulta','Bath and Body Works','Victoria\'s Secret','Ralph Lauren',
-    'McDonald\'s','Starbucks','Chick-fil-A','Burger King','Taco Bell','Wendy\'s','Subway','Domino\'s','Pizza Hut','Chipotle','Dunkin','Popeyes','KFC','Sonic','Dairy Queen','Five Guys','In-N-Out','Shake Shack','Panda Express','Olive Garden','Applebee\'s','IHOP','Denny\'s','Red Lobster','Panera','Papa John\'s','Little Caesars',
-    'Apple','Google','Microsoft','Meta','Twitter/X','Netflix','Uber','Lyft','Airbnb','TikTok','Snap','Spotify','Adobe','Salesforce','Oracle','IBM','Intel','Nvidia','AMD','Qualcomm','Cisco','Dell','HP','Samsung','Sony','PayPal','Shopify','Zoom','Discord',
-    'JPMorgan','Bank of America','Wells Fargo','Citibank','Goldman Sachs','Morgan Stanley','American Express','Visa','Mastercard','Discover','Capital One','Chase','US Bank','Charles Schwab','Fidelity','Vanguard','BlackRock','Coinbase','Robinhood',
-    'Exxon','Chevron','Shell','BP','ConocoPhillips','Halliburton','Duke Energy','NextEra Energy','Tesla Energy','First Solar',
-    'Johnson & Johnson','Pfizer','Moderna','Merck','AbbVie','Eli Lilly','Novartis','Roche','Bayer','Purdue Pharma',
-    'Coca-Cola','Pepsi','Nestlé','Unilever','Kraft Heinz','General Mills','Kellogg\'s','Tyson Foods','Smithfield','Beyond Meat',
-    'State Farm','Allstate','Geico','Progressive','Liberty Mutual','USAA','Nationwide','AIG','Aflac',
-    'AT&T','Verizon','T-Mobile','Xfinity','Spectrum','Cox',
-    'Tesla','Ford','General Motors','Toyota','Honda','Volkswagen','BMW','Mercedes','Volvo','Subaru','Rivian','Carvana',
-    'Marriott','Hilton','Delta Airlines','United Airlines','American Airlines','Southwest Airlines','Carnival Cruise','Royal Caribbean',
-    'University of Phoenix','DeVry University','Khan Academy','Coursera','Udemy','Chegg','Pearson','Duolingo'
-];
+const ALL_COMPANIES = ['Walmart','Amazon','Target','Costco','Home Depot','Lowes','Kroger','Walgreens','CVS','Dollar General','Dollar Tree','Shein','Fashion Nova','TJ Maxx','Marshalls','Ross','Macys','Nordstrom','Gap','Old Navy','H&M','Zara','Forever 21','Nike','Adidas','Under Armour','Best Buy','Ebay','Etsy','Wayfair','IKEA','Sephora','Ulta','Bath and Body Works',"Victoria's Secret",'Ralph Lauren',"McDonald's",'Starbucks','Chick-fil-A','Burger King','Taco Bell',"Wendy's",'Subway',"Domino's",'Pizza Hut','Chipotle','Dunkin','Popeyes','KFC','Sonic','Dairy Queen','Five Guys','In-N-Out','Shake Shack','Panda Express','Olive Garden',"Applebee's",'IHOP',"Denny's",'Red Lobster','Panera',"Papa John's",'Little Caesars','Apple','Google','Microsoft','Meta','Twitter/X','Netflix','Uber','Lyft','Airbnb','TikTok','Snap','Spotify','Adobe','Salesforce','Oracle','IBM','Intel','Nvidia','AMD','Qualcomm','Cisco','Dell','HP','Samsung','Sony','PayPal','Shopify','Zoom','Discord','JPMorgan','Bank of America','Wells Fargo','Citibank','Goldman Sachs','Morgan Stanley','American Express','Visa','Mastercard','Discover','Capital One','Chase','US Bank','Charles Schwab','Fidelity','Vanguard','BlackRock','Coinbase','Robinhood','Exxon','Chevron','Shell','BP','ConocoPhillips','Halliburton','Duke Energy','NextEra Energy','Tesla Energy','First Solar','Johnson & Johnson','Pfizer','Moderna','Merck','AbbVie','Eli Lilly','Novartis','Roche','Bayer','Purdue Pharma','Coca-Cola','Pepsi','Nestlé','Unilever','Kraft Heinz','General Mills',"Kellogg's",'Tyson Foods','Smithfield','Beyond Meat','State Farm','Allstate','Geico','Progressive','Liberty Mutual','USAA','Nationwide','AIG','Aflac','AT&T','Verizon','T-Mobile','Xfinity','Spectrum','Cox','Tesla','Ford','General Motors','Toyota','Honda','Volkswagen','BMW','Mercedes','Volvo','Subaru','Rivian','Carvana','Marriott','Hilton','Delta Airlines','United Airlines','American Airlines','Southwest Airlines','Carnival Cruise','Royal Caribbean'];
 
 const DATA_SOURCES = {
-    'source-fec': {
-        title: 'Federal Election Commission',
-        description: 'The FEC tracks all political donations by corporations and PACs. We use this data to identify companies with significant political spending, particularly in ways that may conflict with consumer interests.',
-        url: 'https://www.fec.gov',
-        impact: 'Up to 40 points deducted based on committee count and donation patterns.'
-    },
-    'source-news': {
-        title: 'NewsAPI',
-        description: 'We scan recent news headlines for negative coverage including lawsuits, fraud, violations, penalties, and controversies. Only verified news sources are included.',
-        url: 'https://newsapi.org',
-        impact: 'Up to 30 points deducted based on negative headline count.'
-    },
-    'source-court': {
-        title: 'CourtListener / RECAP Archive',
-        description: 'Free Law Project\'s CourtListener provides access to federal court records. We search for cases involving each company and factor in the volume of litigation.',
-        url: 'https://www.courtlistener.com',
-        impact: 'Up to 30 points deducted based on federal case count.'
-    },
-    'source-mpv': {
-        title: 'Mapping Police Violence',
-        description: 'A comprehensive database tracking all known police killings in the US, maintained by researchers and updated regularly. Used for both travel safety ratings and law enforcement agency scoring.',
-        url: 'https://mappingpoliceviolence.us',
-        impact: 'Used for travel safety ratings and law enforcement agency business scores.'
-    },
-    'source-hrc': {
-        title: 'HRC Corporate Equality Index',
-        description: 'The Human Rights Campaign\'s annual rating of major employers on LGBTQ+ workplace policies. We use this alongside our static ESG dataset for company scoring.',
-        url: 'https://www.hrc.org',
-        impact: 'Informs state-level LGBTQ+ safety ratings and travel advisories.'
-    },
-    'source-naacp': {
-        title: 'NAACP Travel Advisories',
-        description: 'The NAACP issues travel advisories for states with documented threats to Black Americans and other communities of color. These inform our state-level racial safety ratings.',
-        url: 'https://naacp.org',
-        impact: 'Directly informs state racial safety ratings.'
-    },
-    'source-esg': {
-        title: 'Sustainalytics ESG Data',
-        description: 'ESG (Environmental, Social, Governance) risk scores based on Sustainalytics methodology. Higher scores indicate greater ESG risk. Our dataset covers 250+ companies.',
-        url: 'https://www.sustainalytics.com',
-        impact: 'Up to 25 points deducted based on ESG risk rating.'
-    },
-    'source-bhr': {
-        title: 'Business & Human Rights Resource Centre',
-        description: 'Tracks human rights impacts of business globally, including labor rights, supply chain abuses, and community impacts. Combined with KnowTheChain benchmark data.',
-        url: 'https://www.business-humanrights.org',
-        impact: 'Up to 25 points deducted based on human rights risk rating.'
-    }
+    'source-fec': { title: 'Federal Election Commission', description: 'The FEC tracks all political donations by corporations and PACs. We use this data to identify companies with significant political spending, particularly in ways that may conflict with consumer interests.', url: 'https://www.fec.gov', impact: 'Up to 40 points deducted based on committee count and donation patterns.' },
+    'source-news': { title: 'NewsAPI', description: 'We scan recent news headlines for negative coverage including lawsuits, fraud, violations, penalties, and controversies. Only verified news sources are included.', url: 'https://newsapi.org', impact: 'Up to 30 points deducted based on negative headline count.' },
+    'source-court': { title: 'CourtListener / RECAP Archive', description: "Free Law Project's CourtListener provides access to federal court records. We search for cases involving each company and factor in the volume of litigation.", url: 'https://www.courtlistener.com', impact: 'Up to 30 points deducted based on federal case count.' },
+    'source-mpv': { title: 'Mapping Police Violence', description: 'A comprehensive database tracking all known police killings in the US, maintained by researchers and updated regularly. Used for both travel safety ratings and law enforcement agency scoring.', url: 'https://mappingpoliceviolence.us', impact: 'Used for travel safety ratings and law enforcement agency business scores.' },
+    'source-hrc': { title: 'HRC Corporate Equality Index', description: "The Human Rights Campaign's annual rating of major employers on LGBTQ+ workplace policies.", url: 'https://www.hrc.org', impact: 'Informs state-level LGBTQ+ safety ratings and travel advisories.' },
+    'source-naacp': { title: 'NAACP Travel Advisories', description: 'The NAACP issues travel advisories for states with documented threats to Black Americans and other communities of color.', url: 'https://naacp.org', impact: 'Directly informs state racial safety ratings.' },
+    'source-esg': { title: 'Sustainalytics ESG Data', description: 'ESG risk scores based on Sustainalytics methodology. Higher scores indicate greater ESG risk. Our dataset covers 250+ companies.', url: 'https://www.sustainalytics.com', impact: 'Up to 25 points deducted based on ESG risk rating.' },
+    'source-bhr': { title: 'Business & Human Rights Resource Centre', description: 'Tracks human rights impacts of business globally, including labor rights, supply chain abuses, and community impacts.', url: 'https://www.business-humanrights.org', impact: 'Up to 25 points deducted based on human rights risk rating.' }
 };
 
 const COMMUNITIES_INFO = {
@@ -739,12 +1748,12 @@ const COMMUNITIES_INFO = {
     racial: { label: 'Racial & Ethnic Minorities', description: 'We track NAACP travel advisories, voting rights restrictions, racial disparities in criminal justice, and documented racial profiling concerns.' },
     religious: { label: 'Religious Minorities', description: 'We track accommodations for non-Christian travelers, RFRA laws that may permit discrimination, and local religious diversity.' },
     disability: { label: 'People with Disabilities', description: 'We track ADA compliance, accessible transportation availability, and terrain accessibility for each state.' },
-    women: { label: 'Women', description: 'We track reproductive healthcare access, abortion restrictions, and women\'s legal protections in each state.' }
+    women: { label: 'Women', description: 'We track reproductive healthcare access, abortion restrictions, and legal protections in each state.' }
 };
 
 function switchPanel(panel) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    ['business','travel','route','about'].forEach(id => {
+    ['home','business','travel','route','about'].forEach(id => {
         ['nav-','mob-','tab-'].forEach(prefix => {
             const el = document.getElementById(prefix + id);
             if (el) el.classList.remove('active');
@@ -762,6 +1771,157 @@ function switchPanel(panel) {
     window.scrollTo(0, 0);
 }
 
+// ===== RING ANIMATION =====
+function animateRing(score) {
+    const circumference = 2 * Math.PI * 40;
+    const fill = document.getElementById('ringFill');
+    if (!fill) return;
+    fill.style.strokeDasharray = `0 ${circumference}`;
+    setTimeout(() => {
+        const progress = (score / 100) * circumference;
+        fill.style.strokeDasharray = `${progress} ${circumference}`;
+    }, 100);
+}
+
+// ===== COMMUNITY FLAGS =====
+function getCommunityFlags(data) {
+    const flags = data.flags || [];
+    const flagText = flags.join(' ').toLowerCase();
+    const esg = (data.esg_data || {});
+    const hr = (data.human_rights_data || {});
+    const fec = (data.fec_data || {});
+    const legal = (data.legal_data || {});
+
+    const communities = [
+        {
+            id: 'bipoc',
+            label: 'BIPOC',
+            check: () => {
+                const triggers = ['indigenous', 'racial', 'discrimination', 'civil rights', 'naacp', 'racial justice', 'minority'];
+                return triggers.some(t => flagText.includes(t));
+            },
+            warnText: 'Racial discrimination concerns documented',
+            okText: 'No specific BIPOC concerns found',
+            source: legal.found ? 'View court records' : null,
+            sourceType: 'court'
+        },
+        {
+            id: 'lgbtq',
+            label: 'LGBTQ+',
+            check: () => {
+                const triggers = ['lgbtq', 'gay', 'transgender', 'pride', 'sexual orientation', 'gender identity', 'hrc'];
+                return triggers.some(t => flagText.includes(t));
+            },
+            warnText: 'LGBTQ+ concerns or political opposition found',
+            okText: 'No specific LGBTQ+ concerns found',
+            source: fec.found ? 'View FEC records' : null,
+            sourceType: 'fec'
+        },
+        {
+            id: 'women',
+            label: 'Women',
+            check: () => {
+                const triggers = ['women', 'gender pay', 'sexual harassment', 'abortion', 'reproductive', 'maternity', 'gender discrimination'];
+                return triggers.some(t => flagText.includes(t));
+            },
+            warnText: 'Gender discrimination or pay gap concerns documented',
+            okText: 'No specific concerns for women found',
+            source: legal.found ? 'View court records' : null,
+            sourceType: 'court'
+        },
+        {
+            id: 'workers',
+            label: 'Workers',
+            check: () => {
+                const triggers = ['labor', 'worker', 'wage', 'union', 'employee', 'workplace', 'safety violation', 'osha'];
+                return triggers.some(t => flagText.includes(t));
+            },
+            warnText: 'Labor violations or worker safety issues on record',
+            okText: 'No specific worker concerns found',
+            source: data.news_data && data.news_data.found ? 'View news coverage' : null,
+            sourceType: 'news'
+        },
+        {
+            id: 'disability',
+            label: 'Disability',
+            check: () => {
+                const triggers = ['disability', 'ada', 'accessibility', 'accommodation'];
+                return triggers.some(t => flagText.includes(t));
+            },
+            warnText: 'ADA violations or accessibility concerns documented',
+            okText: 'No specific disability concerns found',
+            source: legal.found ? 'View court records' : null,
+            sourceType: 'court'
+        }
+    ];
+
+    return communities.map(c => {
+        const hasIssue = c.check();
+        return {
+            ...c,
+            hasIssue
+        };
+    });
+}
+
+function renderCommunityFlags(data, drawerMode = false) {
+    const communities = getCommunityFlags(data);
+    const sourceLinks = {
+        court: `https://www.courtlistener.com/?q=${encodeURIComponent(data.business)}`,
+        fec: `https://www.fec.gov/data/committees/?q=${encodeURIComponent(data.business)}`,
+        news: `https://newsapi.org`
+    };
+
+    return `
+        <div class="community-flags-title">Community Impact</div>
+        <div class="community-flags-grid">
+            ${communities.map(c => `
+                <div class="comm-flag ${c.hasIssue ? 'warn' : 'ok'}" onclick="openCommunityDrawer('${c.id}', '${data.business}', ${c.hasIssue})">
+                    <div class="comm-flag-label">${c.label}</div>
+                    <div class="comm-flag-text">${c.hasIssue ? c.warnText : c.okText}</div>
+                    ${c.hasIssue && c.source ? `<a href="${sourceLinks[c.sourceType]}" target="_blank" class="comm-flag-link">${c.source} →</a>` : ''}
+                </div>`).join('')}
+        </div>`;
+}
+
+function openCommunityDrawer(communityId, businessName, hasIssue) {
+    const info = COMMUNITIES_INFO[communityId === 'bipoc' ? 'racial' : communityId === 'workers' ? 'racial' : communityId];
+    const labels = { bipoc: 'BIPOC', lgbtq: 'LGBTQ+', women: 'Women', workers: 'Workers', disability: 'Disability' };
+
+    document.getElementById('drawerTitle').textContent = `${labels[communityId]} — ${businessName}`;
+    document.getElementById('drawerVerdict').textContent = hasIssue ? 'Concerns documented' : 'No specific concerns found';
+    document.getElementById('drawerScoreSection').innerHTML = '';
+    document.getElementById('drawerActions').innerHTML = `
+        <button class="btn-primary" onclick="closeDrawer(); quickBusinessSearch('${businessName}')">Back to Results</button>
+    `;
+
+    const sourceLinks = {
+        bipoc: { label: 'Search Court Records', url: `https://www.courtlistener.com/?q=${encodeURIComponent(businessName)}` },
+        lgbtq: { label: 'Search FEC Records', url: `https://www.fec.gov/data/committees/?q=${encodeURIComponent(businessName)}` },
+        women: { label: 'Search Court Records', url: `https://www.courtlistener.com/?q=${encodeURIComponent(businessName)}` },
+        workers: { label: 'Search News Coverage', url: `https://newsapi.org` },
+        disability: { label: 'Search Court Records', url: `https://www.courtlistener.com/?q=${encodeURIComponent(businessName)}` }
+    };
+
+    document.getElementById('drawerBody').innerHTML = `
+        ${hasIssue ? `
+        <div style="background:var(--coral-100); padding:14px; border-radius:8px; margin-bottom:14px;">
+            <div style="font-size:0.75em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#8a2020; margin-bottom:6px;">What We Found</div>
+            <div style="font-size:0.85em; color:#8a2020; line-height:1.6;">Our data sources indicate concerns related to ${labels[communityId]} communities for ${businessName}. Review the source records for full details.</div>
+        </div>` : `
+        <div style="background:var(--teal-faint); padding:14px; border-radius:8px; margin-bottom:14px;">
+            <div style="font-size:0.75em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#0f6e56; margin-bottom:6px;">No Concerns Found</div>
+            <div style="font-size:0.85em; color:#0f6e56; line-height:1.6;">Our current data sources did not flag specific concerns for ${labels[communityId]} communities at ${businessName}. This does not guarantee no issues exist.</div>
+        </div>`}
+        <div style="font-size:0.75em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--blue-muted); margin-bottom:8px; margin-top:14px;">About This Community</div>
+        <div style="font-size:0.85em; color:#4a5166; line-height:1.7; margin-bottom:14px;">${info ? info.description : 'We track discrimination concerns, legal cases, and policy impacts for this community.'}</div>
+        <a href="${sourceLinks[communityId].url}" target="_blank" style="display:inline-block; padding:10px 18px; background:var(--blue); color:white; border-radius:8px; font-size:0.88em; font-weight:600; text-decoration:none;">${sourceLinks[communityId].label} →</a>
+    `;
+
+    document.getElementById('drawerOverlay').classList.add('open');
+    document.getElementById('drawer').classList.add('open');
+}
+
 // ===== INFO DRAWER =====
 function openInfoDrawer(type) {
     document.getElementById('drawerScoreSection').innerHTML = '';
@@ -774,18 +1934,15 @@ function openInfoDrawer(type) {
             <input class="search-filter" id="companyFilter" placeholder="Search companies..." oninput="filterCompanies()" />
             <div id="companyList">
                 ${ALL_COMPANIES.map(c => `
-                    <div class="info-item" onclick="closeDrawer(); quickBusinessSearch('${c}')">
-                        <div>
-                            <div class="info-item-name">${c}</div>
-                        </div>
+                    <div class="info-item" onclick="closeDrawer(); quickBusinessSearch('${c.replace(/'/g, "\\'")}')">
+                        <div class="info-item-name">${c}</div>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
                     </div>`).join('')}
             </div>
             <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--navy-100);">
-                <p style="font-size:0.82em; color:var(--navy-400); margin-bottom:10px;">Don't see your company? Submit it for review.</p>
+                <p style="font-size:0.82em; color:var(--blue-muted); margin-bottom:10px;">Don't see your company? Submit it for review.</p>
                 <button class="btn-outline" onclick="openInfoDrawer('submit')">Submit a Company</button>
-            </div>
-        `;
+            </div>`;
     } else if (type === 'states') {
         document.getElementById('drawerTitle').textContent = 'States Covered';
         document.getElementById('drawerVerdict').textContent = 'All 50 states + Washington DC';
@@ -798,33 +1955,30 @@ function openInfoDrawer(type) {
                         <div class="info-item-name">${s}</div>
                         <span class="badge ${HIGH_RISK_STATES.includes(s) ? 'badge-high' : 'badge-low'}">${HIGH_RISK_STATES.includes(s) ? 'High Risk' : 'Low Risk'}</span>
                     </div>`).join('')}
-            </div>
-        `;
+            </div>`;
     } else if (type === 'sources') {
         document.getElementById('drawerTitle').textContent = 'Data Sources';
         document.getElementById('drawerVerdict').textContent = '8 independent data sources';
         document.getElementById('drawerBody').innerHTML = Object.entries(DATA_SOURCES).map(([key, source]) => `
             <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--navy-100);">
-                <div style="font-weight:600; font-size:0.92em; color:var(--navy-900); margin-bottom:4px;">${source.title}</div>
-                <div style="font-size:0.82em; color:var(--navy-600); line-height:1.6; margin-bottom:6px;">${source.description}</div>
+                <div style="font-weight:600; font-size:0.92em; color:#0a1628; margin-bottom:4px;">${source.title}</div>
+                <div style="font-size:0.82em; color:#4a5166; line-height:1.6; margin-bottom:6px;">${source.description}</div>
                 <div style="font-size:0.78em; color:var(--coral-600); font-weight:600;">${source.impact}</div>
-                <a href="${source.url}" target="_blank" style="font-size:0.78em; color:var(--navy-400); display:inline-block; margin-top:4px;">${source.url} →</a>
+                <a href="${source.url}" target="_blank" style="font-size:0.78em; color:var(--blue-muted); display:inline-block; margin-top:4px;">${source.url} →</a>
             </div>`).join('');
     } else if (type === 'communities') {
         document.getElementById('drawerTitle').textContent = 'Communities Protected';
         document.getElementById('drawerVerdict').textContent = '5 marginalized communities tracked';
         document.getElementById('drawerBody').innerHTML = Object.values(COMMUNITIES_INFO).map(c => `
             <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--navy-100);">
-                <div style="font-weight:600; font-size:0.92em; color:var(--navy-900); margin-bottom:6px;">${c.label}</div>
-                <div style="font-size:0.82em; color:var(--navy-600); line-height:1.6;">${c.description}</div>
+                <div style="font-weight:600; font-size:0.92em; color:#0a1628; margin-bottom:6px;">${c.label}</div>
+                <div style="font-size:0.82em; color:#4a5166; line-height:1.6;">${c.description}</div>
             </div>`).join('');
     } else if (type === 'submit') {
         document.getElementById('drawerTitle').textContent = 'Submit a Company';
         document.getElementById('drawerVerdict').textContent = 'Help us expand our database';
         document.getElementById('drawerBody').innerHTML = `
-            <p style="font-size:0.85em; color:var(--navy-600); margin-bottom:16px; line-height:1.6;">
-                Submit a company for review and we'll research and add it to our transparency database. We typically review submissions within 2-4 weeks.
-            </p>
+            <p style="font-size:0.85em; color:#4a5166; margin-bottom:16px; line-height:1.6;">Submit a company for review and we'll research and add it to our transparency database.</p>
             <div class="submit-form">
                 <div><label>Company Name *</label><input type="text" id="submitName" placeholder="e.g. Trader Joe's" /></div>
                 <div><label>Category *</label>
@@ -850,21 +2004,19 @@ function openInfoDrawer(type) {
                 <div><label>Additional Notes</label><textarea id="submitNotes" placeholder="Any known ESG concerns, labor practices, or other relevant information..."></textarea></div>
                 <button class="btn-primary" onclick="submitCompany()">Submit for Review</button>
                 <div id="submitResult"></div>
-            </div>
-        `;
+            </div>`;
     } else if (type.startsWith('source-')) {
         const source = DATA_SOURCES[type];
         if (source) {
             document.getElementById('drawerTitle').textContent = source.title;
             document.getElementById('drawerVerdict').textContent = 'Data Source Methodology';
             document.getElementById('drawerBody').innerHTML = `
-                <div style="font-size:0.9em; color:var(--navy-700); line-height:1.7; margin-bottom:14px;">${source.description}</div>
+                <div style="font-size:0.9em; color:#4a5166; line-height:1.7; margin-bottom:14px;">${source.description}</div>
                 <div style="background:var(--coral-100); padding:12px; border-radius:8px; margin-bottom:14px;">
                     <div style="font-size:0.75em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#8a2020; margin-bottom:4px;">Score Impact</div>
                     <div style="font-size:0.88em; color:#8a2020;">${source.impact}</div>
                 </div>
-                <a href="${source.url}" target="_blank" style="display:inline-block; padding:10px 18px; background:var(--navy-900); color:white; border-radius:8px; font-size:0.88em; font-weight:600; text-decoration:none;">Visit ${source.title} →</a>
-            `;
+                <a href="${source.url}" target="_blank" style="display:inline-block; padding:10px 18px; background:var(--blue); color:white; border-radius:8px; font-size:0.88em; font-weight:600; text-decoration:none;">Visit ${source.title} →</a>`;
         }
     }
 
@@ -874,16 +2026,14 @@ function openInfoDrawer(type) {
 
 function filterCompanies() {
     const filter = document.getElementById('companyFilter').value.toLowerCase();
-    const items = document.querySelectorAll('#companyList .info-item');
-    items.forEach(item => {
+    document.querySelectorAll('#companyList .info-item').forEach(item => {
         item.style.display = item.textContent.toLowerCase().includes(filter) ? 'flex' : 'none';
     });
 }
 
 function filterStates() {
     const filter = document.getElementById('stateFilter').value.toLowerCase();
-    const items = document.querySelectorAll('#stateList .info-item');
-    items.forEach(item => {
+    document.querySelectorAll('#stateList .info-item').forEach(item => {
         item.style.display = item.textContent.toLowerCase().includes(filter) ? 'flex' : 'none';
     });
 }
@@ -894,12 +2044,7 @@ async function submitCompany() {
     const website = document.getElementById('submitWebsite').value.trim();
     const notes = document.getElementById('submitNotes').value.trim();
     const resultDiv = document.getElementById('submitResult');
-
-    if (!name || !category) {
-        resultDiv.innerHTML = `<div class="error-msg" style="margin-top:10px;">Please enter a company name and select a category.</div>`;
-        return;
-    }
-
+    if (!name || !category) { resultDiv.innerHTML = `<div class="error-msg" style="margin-top:10px;">Please enter a company name and select a category.</div>`; return; }
     try {
         const response = await fetch(`/submit_company?company_name=${encodeURIComponent(name)}&category=${encodeURIComponent(category)}&website=${encodeURIComponent(website)}&notes=${encodeURIComponent(notes)}`, { method: 'POST' });
         const data = await response.json();
@@ -922,41 +2067,29 @@ function openBusinessDrawer(businessName, data) {
     const sc = getScoreClass(data.score);
     document.getElementById('drawerTitle').textContent = data.business;
     document.getElementById('drawerVerdict').textContent = getVerdict(data.score);
-
     document.getElementById('drawerScoreSection').innerHTML = `
         <div class="drawer-score">
             <div class="drawer-score-circle ${sc}">
                 <div class="drawer-score-num ${sc}">${data.score}</div>
                 <div class="score-out">/100</div>
             </div>
-            <div style="font-size:0.85em; color:var(--navy-600); line-height:1.6;">${data.summary}</div>
+            <div style="font-size:0.85em; color:#4a5166; line-height:1.6;">${data.summary}</div>
         </div>`;
-
     const flagsHtml = data.flags && data.flags.length > 0
         ? data.flags.map(f => renderFlag(f)).join('')
-        : '<p style="color:var(--navy-400); font-size:0.85em;">No major flags detected.</p>';
-
+        : '<p style="color:var(--blue-muted); font-size:0.85em;">No major flags detected.</p>';
     const altHtml = data.alternatives && data.alternatives.length > 0
         ? `<div class="drawer-section-title">Ethical Alternatives</div>
-           ${data.alternatives.map(a => `
-            <div class="biz-row" onclick="closeDrawer(); quickBusinessSearch('${a.name}')">
-                <div><div class="biz-name">${a.name}</div><div class="biz-sub">ESG: ${a.esg_rating}</div></div>
-                <span class="badge badge-low">${a.score}/100</span>
-            </div>`).join('')}`
+           ${data.alternatives.map(a => `<div class="biz-row" onclick="closeDrawer(); quickBusinessSearch('${a.name}')"><div><div class="biz-name">${a.name}</div><div class="biz-sub">ESG: ${a.esg_rating}</div></div><span class="badge badge-low">${a.score}/100</span></div>`).join('')}`
         : '';
-
     document.getElementById('drawerBody').innerHTML = `
         <div class="drawer-section-title">Flags & Concerns</div>
         ${flagsHtml}
-        ${altHtml}
-    `;
-
+        ${altHtml}`;
     document.getElementById('drawerActions').innerHTML = `
-        <button class="btn-primary" onclick="findNearestAndRoute('${businessName}')">Find Nearest Location</button>
-        <button class="btn-secondary" onclick="checkAreaSafety('${businessName}')">Check Area Safety</button>
-        <button class="btn-outline-navy" onclick="openGoogleMaps('${businessName}')">Google Maps</button>
-    `;
-
+        <button class="btn-primary" onclick="findNearestAndRoute('${businessName}')">Find Nearest</button>
+        <button class="btn-secondary" onclick="checkAreaSafety('${businessName}')">Area Safety</button>
+        <button class="btn-outline-navy" onclick="window.open('https://www.google.com/maps/search/${encodeURIComponent(businessName)}','_blank')">Maps</button>`;
     document.getElementById('drawerOverlay').classList.add('open');
     document.getElementById('drawer').classList.add('open');
 }
@@ -967,55 +2100,9 @@ function renderFlag(flag) {
         const title = parts[1] || '';
         const url = parts[2] || '';
         const source = parts[3] || '';
-        return `<div class="flag-item">
-            <div class="flag-dot"></div>
-            <div>
-                ${title}
-                ${url ? `<a href="${url}" target="_blank" class="flag-link">${source || 'Read More'} →</a>` : ''}
-            </div>
-        </div>`;
+        return `<div class="flag-item"><div class="flag-dot"></div><div>${title}${url ? `<a href="${url}" target="_blank" class="flag-link">${source || 'Read More'} →</a>` : ''}</div></div>`;
     }
     return `<div class="flag-item"><div class="flag-dot"></div>${flag}</div>`;
-}
-
-function openGoogleMaps(businessName) {
-    window.open(`https://www.google.com/maps/search/${encodeURIComponent(businessName)}`, '_blank');
-}
-
-async function findNearestAndRoute(businessName) {
-    if (!navigator.geolocation) {
-        closeDrawer();
-        switchPanel('route');
-        document.getElementById('routeDestination').value = businessName;
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(async position => {
-        const { latitude: lat, longitude: lon } = position.coords;
-        try {
-            const response = await fetch(
-                `/nearest_location?business_name=${encodeURIComponent(businessName)}&lat=${lat}&lon=${lon}`,
-                { method: 'POST' }
-            );
-            const data = await response.json();
-            closeDrawer();
-            switchPanel('route');
-            if (data.found) {
-                document.getElementById('routeDestination').value = `${data.name}, ${data.address}`;
-            } else {
-                document.getElementById('routeDestination').value = businessName;
-            }
-            document.getElementById('routeOrigin').focus();
-        } catch (e) {
-            closeDrawer();
-            switchPanel('route');
-            document.getElementById('routeDestination').value = businessName;
-        }
-    }, () => {
-        closeDrawer();
-        switchPanel('route');
-        document.getElementById('routeDestination').value = businessName;
-    });
 }
 
 function closeDrawer() {
@@ -1023,24 +2110,22 @@ function closeDrawer() {
     document.getElementById('drawer').classList.remove('open');
 }
 
-function prefillRoute(businessName) {
-    closeDrawer();
-    switchPanel('route');
-    document.getElementById('routeDestination').value = businessName;
-    document.getElementById('routeOrigin').focus();
-}
+function prefillRoute(businessName) { closeDrawer(); switchPanel('route'); document.getElementById('routeDestination').value = businessName; document.getElementById('routeOrigin').focus(); }
+function checkAreaSafety(businessName) { closeDrawer(); switchPanel('travel'); document.getElementById('travelInput').value = businessName; searchTravel(); }
+function prefillRouteToLocation(location) { switchPanel('route'); document.getElementById('routeDestination').value = location; document.getElementById('routeOrigin').focus(); }
 
-function checkAreaSafety(businessName) {
-    closeDrawer();
-    switchPanel('travel');
-    document.getElementById('travelInput').value = businessName;
-    searchTravel();
-}
-
-function prefillRouteToLocation(location) {
-    switchPanel('route');
-    document.getElementById('routeDestination').value = location;
-    document.getElementById('routeOrigin').focus();
+async function findNearestAndRoute(businessName) {
+    if (!navigator.geolocation) { closeDrawer(); switchPanel('route'); document.getElementById('routeDestination').value = businessName; return; }
+    navigator.geolocation.getCurrentPosition(async position => {
+        const { latitude: lat, longitude: lon } = position.coords;
+        try {
+            const response = await fetch(`/nearest_location?business_name=${encodeURIComponent(businessName)}&lat=${lat}&lon=${lon}`, { method: 'POST' });
+            const data = await response.json();
+            closeDrawer(); switchPanel('route');
+            document.getElementById('routeDestination').value = data.found ? `${data.name}, ${data.address}` : businessName;
+            document.getElementById('routeOrigin').focus();
+        } catch (e) { closeDrawer(); switchPanel('route'); document.getElementById('routeDestination').value = businessName; }
+    }, () => { closeDrawer(); switchPanel('route'); document.getElementById('routeDestination').value = businessName; });
 }
 
 // ===== HELPERS =====
@@ -1078,12 +2163,8 @@ function checkSafetyAlert(location) {
     const alertDiv = document.getElementById('safety-alert');
     if (!alertDiv) return;
     const matched = HIGH_RISK_STATES.find(state => location.toUpperCase().includes(state.toUpperCase()));
-    if (matched) {
-        alertDiv.textContent = `Safety Advisory: ${matched} has active travel advisories for marginalized communities. Review the safety ratings below carefully.`;
-        alertDiv.classList.add('visible');
-    } else {
-        alertDiv.classList.remove('visible');
-    }
+    if (matched) { alertDiv.textContent = `Safety Advisory: ${matched} has active travel advisories for marginalized communities. Review the safety ratings below carefully.`; alertDiv.classList.add('visible'); }
+    else { alertDiv.classList.remove('visible'); }
 }
 
 function showLoadingSpinner(divId) {
@@ -1117,26 +2198,31 @@ function quickBusinessSearch(name) {
 
 function displayResults(data) {
     const sc = getScoreClass(data.score);
-    const flagsHtml = data.flags && data.flags.length > 0
-        ? data.flags.map(f => renderFlag(f)).join('')
-        : '<p style="color:var(--navy-400); font-size:0.85em;">No major flags detected.</p>';
+    const circumference = 2 * Math.PI * 40;
+    const progress = (data.score / 100) * circumference;
+
+    const legal = data.legal_data || {};
+    const esg = data.esg_data || {};
+    const hr = data.human_rights_data || {};
 
     const altHtml = data.alternatives && data.alternatives.length > 0
-        ? `<div class="card">
-            <h4>Ethical Alternatives in Same Category</h4>
-            ${data.alternatives.map(a => `
-                <div class="biz-row" onclick="quickBusinessSearch('${a.name}')">
-                    <div><div class="biz-name">${a.name}</div><div class="biz-sub">ESG: ${a.esg_rating}</div></div>
-                    <span class="badge badge-low">${a.score}/100</span>
-                </div>`).join('')}
-           </div>`
+        ? `<div class="card"><h4>Ethical Alternatives in Same Category</h4>
+           ${data.alternatives.map(a => `<div class="biz-row" onclick="quickBusinessSearch('${a.name}')"><div><div class="biz-name">${a.name}</div><div class="biz-sub">ESG: ${a.esg_rating}</div></div><span class="badge badge-low">${a.score}/100</span></div>`).join('')}</div>`
         : '';
 
     document.getElementById('results').innerHTML = `
         <div class="score-hero">
-            <div class="score-circle ${sc}">
-                <div class="score-num ${sc}">${data.score}</div>
-                <div class="score-out">/100</div>
+            <div class="ring-wrap">
+                <svg viewBox="0 0 88 88">
+                    <circle class="ring-track" cx="44" cy="44" r="40"/>
+                    <circle id="ringFill" class="ring-fill ${sc}" cx="44" cy="44" r="40"
+                        stroke-dasharray="0 ${circumference}"
+                        stroke-dashoffset="0"/>
+                </svg>
+                <div class="ring-center">
+                    <div class="ring-score ${sc}">${data.score}</div>
+                    <div class="ring-out">/100</div>
+                </div>
             </div>
             <div class="score-info">
                 <h3>${data.business}</h3>
@@ -1149,19 +2235,38 @@ function displayResults(data) {
                 </div>
             </div>
         </div>
+
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-num ${legal.found && legal.case_count > 0 ? '' : 'ok'}">${legal.found ? legal.case_count || 0 : 0}</div>
+                <div class="metric-label">Court Cases</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-num ${esg.found && esg.score_impact > 10 ? '' : 'ok'}">${esg.found ? esg.rating || 'N/A' : 'N/A'}</div>
+                <div class="metric-label">ESG Risk</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-num ${hr.found && hr.score_impact > 10 ? '' : 'ok'}">${hr.found ? hr.rating || 'N/A' : 'N/A'}</div>
+                <div class="metric-label">Human Rights</div>
+            </div>
+        </div>
+
+        ${renderCommunityFlags(data)}
+
         <div class="card">
             <h4>Flags & Concerns</h4>
-            ${flagsHtml}
+            ${data.flags && data.flags.length > 0 ? data.flags.map(f => renderFlag(f)).join('') : '<p style="color:var(--blue-muted); font-size:0.85em;">No major flags detected.</p>'}
         </div>
+
         ${altHtml}
     `;
+
+    animateRing(data.score);
 }
 
-document.getElementById('searchInput').addEventListener('keypress', e => {
-    if (e.key === 'Enter') searchBusiness();
-});
+document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') searchBusiness(); });
 
-// ===== TRAVEL SEARCH =====
+// ===== TRAVEL =====
 async function searchTravel() {
     const location = document.getElementById('travelInput').value.trim();
     if (!location) return;
@@ -1181,22 +2286,12 @@ async function searchTravel() {
     }
 }
 
-function quickSearch(state) {
-    document.getElementById('travelInput').value = state;
-    checkSafetyAlert(state);
-    searchTravel();
-}
+function quickSearch(state) { document.getElementById('travelInput').value = state; checkSafetyAlert(state); searchTravel(); }
 
 function renderSafetyItem(label, data) {
     if (!data) return '';
-    const advisories = data.advisories && data.advisories.length > 0
-        ? data.advisories.map(a => `<div class="advisory">${a}</div>`).join('')
-        : '';
-    return `<div class="safety-item">
-        <h5>${label} <span class="badge ${getBadgeClass(data.rating)}">${data.rating}</span></h5>
-        <p>${data.notes}</p>
-        ${advisories}
-    </div>`;
+    const advisories = data.advisories && data.advisories.length > 0 ? data.advisories.map(a => `<div class="advisory">${a}</div>`).join('') : '';
+    return `<div class="safety-item"><h5>${label} <span class="badge ${getBadgeClass(data.rating)}">${data.rating}</span></h5><p>${data.notes}</p>${advisories}</div>`;
 }
 
 function renderPoliceViolence(policeData) {
@@ -1206,69 +2301,28 @@ function renderPoliceViolence(policeData) {
     if ((!state || !state.found) && (!city || !city.found)) return '';
     let html = `<div class="section-divider">Police Violence Data</div>`;
     if (city && city.found) {
-        const breakdown = city.racial_breakdown
-            ? Object.entries(city.racial_breakdown).map(([r, c]) => `<div class="advisory">${r}: ${c} incidents</div>`).join('')
-            : '';
-        html += `<div class="safety-item">
-            <h5>City Level <span class="badge ${getBadgeClass(city.risk_level)}">${city.risk_level}</span></h5>
-            <p>Total: ${city.total_incidents} · Accountability: ${city.accountability_rate} · Unarmed: ${city.unarmed_rate}</p>
-            ${breakdown}</div>`;
+        const breakdown = city.racial_breakdown ? Object.entries(city.racial_breakdown).map(([r, c]) => `<div class="advisory">${r}: ${c} incidents</div>`).join('') : '';
+        html += `<div class="safety-item"><h5>City Level <span class="badge ${getBadgeClass(city.risk_level)}">${city.risk_level}</span></h5><p>Total: ${city.total_incidents} · Accountability: ${city.accountability_rate} · Unarmed: ${city.unarmed_rate}</p>${breakdown}</div>`;
     }
     if (state && state.found) {
-        const breakdown = state.racial_breakdown
-            ? Object.entries(state.racial_breakdown).slice(0,5).map(([r, c]) => `<div class="advisory">${r}: ${c} incidents</div>`).join('')
-            : '';
-        html += `<div class="safety-item">
-            <h5>State Level <span class="badge ${getBadgeClass(state.risk_level)}">${state.risk_level}</span></h5>
-            <p>Total: ${state.total_incidents} · Accountability: ${state.accountability_rate} · Unarmed: ${state.unarmed_rate} · Body cam: ${state.body_camera_rate}</p>
-            ${breakdown}</div>`;
+        const breakdown = state.racial_breakdown ? Object.entries(state.racial_breakdown).slice(0,5).map(([r, c]) => `<div class="advisory">${r}: ${c} incidents</div>`).join('') : '';
+        html += `<div class="safety-item"><h5>State Level <span class="badge ${getBadgeClass(state.risk_level)}">${state.risk_level}</span></h5><p>Total: ${state.total_incidents} · Accountability: ${state.accountability_rate} · Unarmed: ${state.unarmed_rate} · Body cam: ${state.body_camera_rate}</p>${breakdown}</div>`;
     }
     return html;
 }
 
 function displayTravelResults(data, localData) {
     const resultsDiv = document.getElementById('travel-results');
-    if (!data.found) {
-        resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`;
-        return;
-    }
-
+    if (!data.found) { resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`; return; }
     const nearbyHtml = localData && localData.found && localData.nearby_scored && localData.nearby_scored.length > 0
-        ? localData.nearby_scored.map(b => `
-            <div class="biz-row" onclick="quickBusinessSearch('${b.name}')">
-                <div>
-                    <div class="biz-name">${b.name}</div>
-                    <div class="biz-sub">${b.address || ''}</div>
-                    <div class="biz-sub">${b.distance_miles != null ? b.distance_miles + ' mi · ' : ''}ESG: ${b.esg_rating} · HR: ${b.hr_rating}</div>
-                </div>
-                <span class="badge ${getBadgeClass(b.score >= 75 ? 'low' : b.score >= 50 ? 'medium' : 'high')}">${b.score}/100</span>
-            </div>`).join('')
-        : '<p style="color:var(--navy-400); font-size:0.85em;">No scored businesses found nearby.</p>';
-
+        ? localData.nearby_scored.map(b => `<div class="biz-row" onclick="quickBusinessSearch('${b.name}')"><div><div class="biz-name">${b.name}</div><div class="biz-sub">${b.address || ''}</div><div class="biz-sub">${b.distance_miles != null ? b.distance_miles + ' mi · ' : ''}ESG: ${b.esg_rating} · HR: ${b.hr_rating}</div></div><span class="badge ${getBadgeClass(b.score >= 75 ? 'low' : b.score >= 50 ? 'medium' : 'high')}">${b.score}/100</span></div>`).join('')
+        : '<p style="color:var(--blue-muted); font-size:0.85em;">No scored businesses found nearby.</p>';
     const unratedHtml = localData && localData.found && localData.nearby_unrated && localData.nearby_unrated.length > 0
-        ? localData.nearby_unrated.map(b => `
-            <div class="biz-row">
-                <div>
-                    <div class="biz-name">${b.name}</div>
-                    <div class="biz-sub">${b.address || ''}${b.distance_miles != null ? ' · ' + b.distance_miles + ' mi' : ''}</div>
-                </div>
-                <span class="badge badge-unrated">Unrated</span>
-            </div>`).join('')
-        : '';
-
+        ? localData.nearby_unrated.map(b => `<div class="biz-row"><div><div class="biz-name">${b.name}</div><div class="biz-sub">${b.address || ''}${b.distance_miles != null ? ' · ' + b.distance_miles + ' mi' : ''}</div></div><span class="badge badge-unrated">Unrated</span></div>`).join('') : '';
     const altHtml = localData && localData.found && localData.ethical_alternatives && localData.ethical_alternatives.length > 0
-        ? localData.ethical_alternatives.map(b => `
-            <div class="biz-row" onclick="quickBusinessSearch('${b.name}')">
-                <div><div class="biz-name">${b.name}</div><div class="biz-sub">ESG: ${b.esg_rating}</div></div>
-                <span class="badge badge-low">${b.score}/100</span>
-            </div>`).join('')
-        : '';
-
+        ? localData.ethical_alternatives.map(b => `<div class="biz-row" onclick="quickBusinessSearch('${b.name}')"><div><div class="biz-name">${b.name}</div><div class="biz-sub">ESG: ${b.esg_rating}</div></div><span class="badge badge-low">${b.score}/100</span></div>`).join('') : '';
     resultsDiv.innerHTML = `
-        <div class="${getBannerClass(data.overall_rating)} overall-banner">
-            <span>${data.location}</span>
-            <span>Overall: ${data.overall_rating}</span>
-        </div>
+        <div class="${getBannerClass(data.overall_rating)} overall-banner"><span>${data.location}</span><span>Overall: ${data.overall_rating}</span></div>
         <button class="btn-outline" onclick="prefillRouteToLocation('${data.location}')" style="margin-bottom:12px;">Plan Safe Route Here</button>
         <div class="safety-grid">
             ${renderSafetyItem('LGBTQ+ Safety', data.lgbtq)}
@@ -1281,20 +2335,14 @@ function displayTravelResults(data, localData) {
         <div class="section-divider">Nearby Businesses</div>
         ${nearbyHtml}
         ${unratedHtml ? `<div class="section-divider">Other Nearby (Unrated)</div>${unratedHtml}` : ''}
-        ${altHtml ? `<div class="section-divider">Ethical Alternatives</div>${altHtml}` : ''}
-    `;
+        ${altHtml ? `<div class="section-divider">Ethical Alternatives</div>${altHtml}` : ''}`;
 }
 
-document.getElementById('travelInput').addEventListener('keypress', e => {
-    if (e.key === 'Enter') searchTravel();
-});
+document.getElementById('travelInput').addEventListener('keypress', e => { if (e.key === 'Enter') searchTravel(); });
 
 // ===== GPS =====
 function getLocation() {
-    if (!navigator.geolocation) {
-        document.getElementById('location-status').textContent = 'Geolocation not supported.';
-        return;
-    }
+    if (!navigator.geolocation) { document.getElementById('location-status').textContent = 'Geolocation not supported.'; return; }
     document.getElementById('location-status').textContent = 'Detecting your location...';
     navigator.geolocation.getCurrentPosition(
         position => reverseGeocode(position.coords.latitude, position.coords.longitude),
@@ -1312,17 +2360,10 @@ async function reverseGeocode(lat, lon) {
         ]);
         const travelData = await travelRes.json();
         const localData = await localRes.json();
-        if (travelData.found) {
-            document.getElementById('travelInput').value = travelData.location;
-            document.getElementById('location-status').textContent = `Location detected: ${travelData.location}`;
-            checkSafetyAlert(travelData.location);
-        } else {
-            document.getElementById('location-status').textContent = 'Could not determine location. Please search manually.';
-        }
+        if (travelData.found) { document.getElementById('travelInput').value = travelData.location; document.getElementById('location-status').textContent = `Location detected: ${travelData.location}`; checkSafetyAlert(travelData.location); }
+        else { document.getElementById('location-status').textContent = 'Could not determine location. Please search manually.'; }
         displayTravelResults(travelData, localData);
-    } catch (e) {
-        document.getElementById('location-status').textContent = 'Could not detect location. Please search manually.';
-    }
+    } catch (e) { document.getElementById('location-status').textContent = 'Could not detect location. Please search manually.'; }
 }
 
 // ===== TRACKING =====
@@ -1360,49 +2401,38 @@ function checkCurrentLocation() {
                     lastTrackedState = currentState;
                     checkSafetyAlert(data.location);
                     const isHighRisk = HIGH_RISK_STATES.some(s => data.location.toUpperCase().includes(s.toUpperCase()));
-                    showTrackingNotification(
-                        isHighRisk ? `Entered ${currentState} — High Risk state. Review safety ratings.` : `Entered ${currentState}.`,
-                        isHighRisk
-                    );
+                    showTrackingNotification(isHighRisk ? `Entered ${currentState} — High Risk state. Review safety ratings.` : `Entered ${currentState}.`, isHighRisk);
                     const localRes = await fetch(`/local_by_coords?lat=${lat}&lon=${lon}`, { method: 'POST' });
                     const localData = await localRes.json();
                     displayTravelResults(data, localData);
                 }
             }
-        } catch (e) {
-            document.getElementById('tracking-status').textContent = 'Could not update location.';
-        }
+        } catch (e) { document.getElementById('tracking-status').textContent = 'Could not update location.'; }
     }, () => { stopTracking(); });
 }
 
 function showTrackingNotification(message, isHighRisk) {
     const n = document.createElement('div');
     n.className = 'notification';
-    n.style.background = isHighRisk ? 'var(--coral-600)' : 'var(--green)';
+    n.style.background = isHighRisk ? 'var(--coral-600)' : 'var(--teal)';
     n.textContent = message;
     document.body.appendChild(n);
     setTimeout(() => { n.style.opacity = '0'; setTimeout(() => n.remove(), 500); }, 5000);
 }
 
-// ===== ROUTE PLANNER =====
+// ===== ROUTE =====
 async function planRoute(withDirections) {
     const origin = document.getElementById('routeOrigin').value.trim();
     const destination = document.getElementById('routeDestination').value.trim();
     if (!origin || !destination) return;
     showLoadingSpinner('route-results');
-
-    // Show embedded map
     const mapContainer = document.getElementById('map-container');
     const mapIframe = document.getElementById('map-iframe');
     const GOOGLE_KEY = 'AIzaSyBalxLq35w_7SCawNXOq-xpzpd06cWUpyM';
     mapIframe.src = `https://www.google.com/maps/embed/v1/directions?key=${GOOGLE_KEY}&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&mode=driving`;
     mapContainer.style.display = 'block';
-
     try {
-        const response = await fetch(
-            `/route_safety?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`,
-            { method: 'POST' }
-        );
+        const response = await fetch(`/route_safety?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`, { method: 'POST' });
         const data = await response.json();
         displayRouteResults(data, withDirections);
     } catch (e) {
@@ -1420,13 +2450,8 @@ function getRouteStateClass(overall) {
 
 function displayRouteResults(data, withDirections) {
     const resultsDiv = document.getElementById('route-results');
-    if (!data.found) {
-        resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`;
-        return;
-    }
-
-    const highRiskColor = data.high_risk_states > 0 ? 'var(--coral-400)' : 'var(--green)';
-
+    if (!data.found) { resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`; return; }
+    const highRiskColor = data.high_risk_states > 0 ? 'var(--coral-400)' : 'var(--teal-light)';
     const statesHtml = data.states_on_route.map(state => `
         <div class="route-state ${getRouteStateClass(state.overall)}">
             <div class="route-state-header">
@@ -1447,19 +2472,12 @@ function displayRouteResults(data, withDirections) {
     let directionsHtml = '';
     if (withDirections && data.directions && data.directions.length > 0) {
         let stepCount = 0;
-        directionsHtml = `
-            <div class="section-divider">Turn-by-Turn Directions</div>
+        directionsHtml = `<div class="section-divider">Turn-by-Turn Directions</div>
             <div class="card" style="padding:0; overflow:hidden;">
                 ${data.directions.map(step => {
-                    if (step.type === 'warning') {
-                        return `<div class="step-item warning">⚠️ ${step.text}</div>`;
-                    } else {
-                        stepCount++;
-                        return `<div class="step-item">
-                            <div class="step-num">${stepCount}</div>
-                            <div>${step.text}${step.distance ? ` <span style="color:var(--navy-400); font-size:0.9em;">(${step.distance})</span>` : ''}</div>
-                        </div>`;
-                    }
+                    if (step.type === 'warning') return `<div class="step-item warning">⚠️ ${step.text}</div>`;
+                    stepCount++;
+                    return `<div class="step-item"><div class="step-num">${stepCount}</div><div>${step.text}${step.distance ? ` <span style="color:var(--blue-muted); font-size:0.9em;">(${step.distance})</span>` : ''}</div></div>`;
                 }).join('')}
             </div>`;
     }
@@ -1471,46 +2489,23 @@ function displayRouteResults(data, withDirections) {
             <div class="route-stat"><div class="route-stat-num">${data.states_on_route.length}</div><div class="route-stat-label">States</div></div>
             <div class="route-stat"><div class="route-stat-num" style="color:${highRiskColor}">${data.high_risk_states}</div><div class="route-stat-label">High Risk</div></div>
         </div>
-        <p style="font-size:0.82em; color:var(--navy-400); margin-bottom:14px;">${data.origin} → ${data.destination} via ${data.route_summary}</p>
+        <p style="font-size:0.82em; color:var(--blue-muted); margin-bottom:14px;">${data.origin} → ${data.destination} via ${data.route_summary}</p>
         <div class="section-divider">States Along Your Route</div>
         ${statesHtml}
-        ${directionsHtml}
-    `;
+        ${directionsHtml}`;
 }
 
 // ===== TIPS =====
-const TIPS = [
-    "Before buying from a large retailer, check their ESG score and human rights record. Companies with poor labor practices often score below 50.",
-    "When traveling, search your destination state before you go. States with active NAACP or HRC travel advisories may require extra precautions.",
-    "Credit unions and community banks typically score higher than major banks like Wells Fargo or Citibank, which have histories of predatory lending.",
-    "Fast fashion brands like Shein and Fashion Nova have some of the worst supply chain human rights records. Consider thrift stores or ethical brands.",
-    "Police violence data shows accountability rates are often below 5%. When traveling to a new city, check local enforcement records in the Safe Travel Guide.",
-    "Small local businesses are rarely in our database — which often means they haven't been flagged for major violations. Supporting local is often the most conscious choice."
-];
-
-const TRAVEL_TIPS = [
-    "Always check the Safe Travel Guide before visiting a new state. NAACP and HRC advisories are updated regularly.",
-    "Even in high-risk states, major cities like Atlanta, Nashville, and Houston often have stronger local protections. Search the city specifically.",
-    "If you are transgender and require medical care while traveling, check the state's healthcare laws first. Several states restrict gender-affirming care.",
-    "The police violence data shows real incident records. States with accountability rates below 5% have historically offered little recourse for victims.",
-    "Religious minority travelers may find rural areas of certain states less accommodating. Urban areas are generally safer.",
-    "Disability accessibility varies widely even within states. Always call ahead to verify accessibility at specific venues."
-];
+const TIPS = ["Before buying from a large retailer, check their ESG score and human rights record. Companies with poor labor practices often score below 50.","When traveling, search your destination state before you go. States with active NAACP or HRC travel advisories may require extra precautions.","Credit unions and community banks typically score higher than major banks like Wells Fargo or Citibank, which have histories of predatory lending.","Fast fashion brands like Shein and Fashion Nova have some of the worst supply chain human rights records. Consider thrift stores or ethical brands.","Police violence data shows accountability rates are often below 5%. When traveling to a new city, check local enforcement records in the Safe Travel Guide.","Small local businesses are rarely in our database — which often means they haven't been flagged for major violations. Supporting local is often the most conscious choice."];
+const TRAVEL_TIPS = ["Always check the Safe Travel Guide before visiting a new state. NAACP and HRC advisories are updated regularly.","Even in high-risk states, major cities like Atlanta, Nashville, and Houston often have stronger local protections. Search the city specifically.","If you are transgender and require medical care while traveling, check the state's healthcare laws first. Several states restrict gender-affirming care.","The police violence data shows real incident records. States with accountability rates below 5% have historically offered little recourse for victims.","Religious minority travelers may find rural areas of certain states less accommodating. Urban areas are generally safer.","Disability accessibility varies widely even within states. Always call ahead to verify accessibility at specific venues."];
 
 let currentTip = 0;
 let currentTravelTip = 0;
 
-function showTip() {
-    document.getElementById('tips-body').textContent = TIPS[currentTip];
-    document.getElementById('tips-counter').textContent = `${currentTip + 1} / ${TIPS.length}`;
-}
+function showTip() { document.getElementById('tips-body').textContent = TIPS[currentTip]; document.getElementById('tips-counter').textContent = `${currentTip + 1} / ${TIPS.length}`; }
 function nextTip() { currentTip = (currentTip + 1) % TIPS.length; showTip(); }
 function prevTip() { currentTip = (currentTip - 1 + TIPS.length) % TIPS.length; showTip(); }
-
-function showTravelTip() {
-    document.getElementById('travel-tips-body').textContent = TRAVEL_TIPS[currentTravelTip];
-    document.getElementById('travel-tips-counter').textContent = `${currentTravelTip + 1} / ${TRAVEL_TIPS.length}`;
-}
+function showTravelTip() { document.getElementById('travel-tips-body').textContent = TRAVEL_TIPS[currentTravelTip]; document.getElementById('travel-tips-counter').textContent = `${currentTravelTip + 1} / ${TRAVEL_TIPS.length}`; }
 function nextTravelTip() { currentTravelTip = (currentTravelTip + 1) % TRAVEL_TIPS.length; showTravelTip(); }
 function prevTravelTip() { currentTravelTip = (currentTravelTip - 1 + TRAVEL_TIPS.length) % TRAVEL_TIPS.length; showTravelTip(); }
 
@@ -1519,9 +2514,7 @@ showTravelTip();
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service_worker.js')
-            .then(() => console.log('SW registered'))
-            .catch(err => console.log('SW error:', err));
+        navigator.serviceWorker.register('/service_worker.js').then(() => console.log('SW registered')).catch(err => console.log('SW error:', err));
     });
 }
 </script>
