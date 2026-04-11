@@ -16,6 +16,37 @@ from local_awareness import get_local_awareness, get_local_awareness_by_coords
 from ai_summary import generate_summary
 from categories import get_category, get_alternatives_in_category
 
+
+def get_google_reviews(business_name):
+    """Get Google Places rating and review count"""
+    try:
+        GOOGLE_KEY = os.getenv("GOOGLE_API_KEY", "")
+        response = requests.get(
+            "https://maps.googleapis.com/maps/api/place/findplacefromtext/json",
+            params={
+                "input": business_name,
+                "inputtype": "textquery",
+                "fields": "name,rating,user_ratings_total,formatted_address",
+                "key": GOOGLE_KEY
+            }
+        )
+        data = response.json()
+        candidates = data.get("candidates", [])
+        if not candidates:
+            return {"found": False}
+        place = candidates[0]
+        rating = place.get("rating", None)
+        total = place.get("user_ratings_total", 0)
+        return {
+            "found": True,
+            "name": place.get("name"),
+            "rating": rating,
+            "total_reviews": total,
+            "sentiment": "positive" if rating and rating >= 4.0 else "negative" if rating and rating < 3.0 else "mixed"
+        }
+    except Exception as e:
+        return {"found": False}
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -53,8 +84,11 @@ def search_business(business_name: str):
     legal_data = get_legal_records(business_name)
     esg_data = get_esg_rating(business_name)
     hr_data = get_human_rights_rating(business_name)
+    google_reviews = get_google_reviews(business_name)
+
     base_score = 100
     flags = []
+
     if fec_data["found"]:
         base_score -= fec_data["score_impact"]
         flags.append("Political activity detected in FEC records")
@@ -79,7 +113,16 @@ def search_business(business_name: str):
         flags.append(f"Human rights concerns: {hr_data['rating']}")
         for flag in hr_data["flags"]:
             flags.append(f"⚠️ {flag}")
-    
+
+    # Factor Google reviews into score
+    if google_reviews["found"] and google_reviews["rating"]:
+        if google_reviews["rating"] < 2.5:
+            base_score -= 15
+            flags.append(f"Poor consumer ratings: {google_reviews['rating']}/5 stars ({google_reviews['total_reviews']:,} reviews)")
+        elif google_reviews["rating"] < 3.5:
+            base_score -= 5
+            flags.append(f"Below average consumer ratings: {google_reviews['rating']}/5 stars ({google_reviews['total_reviews']:,} reviews)")
+
     # Check if this is a law enforcement agency
     pv_data = get_agency_violence_score(business_name)
     if pv_data["found"] and pv_data["score_impact"] > 0:
@@ -88,22 +131,142 @@ def search_business(business_name: str):
         flags.append(f"Total incidents: {pv_data['total_incidents']}")
         flags.append(f"Accountability rate: {pv_data['accountability_rate']}")
         flags.append(f"Unarmed victims: {pv_data['unarmed_rate']}")
-    
+
     final_score = max(base_score, 0)
-    ai_summary = generate_summary(
-        business_name,
-        final_score,
-        flags,
-        esg_data,
-        hr_data,
-        legal_data
-    )
-# Get ethical alternatives if score is low
+    ai_summary = generate_summary(business_name, final_score, flags, esg_data, hr_data, legal_data)
+
+    # Get ethical alternatives if score is low
     alternatives = []
     if final_score < 50:
         category = get_category(business_name)
         if category:
             alternatives = get_alternatives_in_category(category, business_name)
+
+    # Build source URLs
+    bbb_url = f"https://www.bbb.org/search?find_text={business_name.replace(' ', '+')}"
+    glassdoor_url = f"https://www.glassdoor.com/Search/results.htm?keyword={business_name.replace(' ', '+')}"
+    google_reviews_url = f"https://www.google.com/search?q={business_name.replace(' ', '+')}+reviews"
+
+    # Build community-specific flags
+    all_flags_text = ' '.join(flags).lower()
+
+    community_flags = {
+        "bipoc": {
+            "has_issue": False,
+            "text": "No specific BIPOC concerns found in our database",
+            "sources": [
+                {"label": "BBB Profile", "url": bbb_url},
+                {"label": "Google Reviews", "url": google_reviews_url},
+                {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+discrimination&type=r"}
+            ]
+        },
+        "lgbtq": {
+            "has_issue": False,
+            "text": "No specific LGBTQ+ concerns found in our database",
+            "sources": [
+                {"label": "View FEC Records", "url": f"https://www.fec.gov/data/committees/?q={business_name.replace(' ', '+')}"},
+                {"label": "BBB Profile", "url": bbb_url},
+                {"label": "Google Reviews", "url": google_reviews_url}
+            ]
+        },
+        "women": {
+            "has_issue": False,
+            "text": "No specific concerns for women found in our database",
+            "sources": [
+                {"label": "BBB Profile", "url": bbb_url},
+                {"label": "Google Reviews", "url": google_reviews_url},
+                {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+gender+discrimination&type=r"}
+            ]
+        },
+        "workers": {
+            "has_issue": False,
+            "text": "No specific worker concerns found in our database",
+            "sources": [
+                {"label": "Glassdoor Reviews", "url": glassdoor_url},
+                {"label": "BBB Profile", "url": bbb_url},
+                {"label": "Google Reviews", "url": google_reviews_url}
+            ]
+        },
+        "disability": {
+            "has_issue": False,
+            "text": "No specific disability concerns found in our database",
+            "sources": [
+                {"label": "BBB Profile", "url": bbb_url},
+                {"label": "Google Reviews", "url": google_reviews_url},
+                {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+ADA+accessibility&type=r"}
+            ]
+        }
+    }
+
+    # BIPOC
+    bipoc_triggers = ['indigenous', 'racial', 'discrimination', 'civil rights', 'naacp', 'minority', 'race']
+    if any(t in all_flags_text for t in bipoc_triggers):
+        community_flags["bipoc"]["has_issue"] = True
+        community_flags["bipoc"]["text"] = "Racial discrimination concerns found in court or news records"
+        community_flags["bipoc"]["sources"] = [
+            {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+discrimination&type=r"},
+            {"label": "EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}"},
+            {"label": "BBB Profile", "url": bbb_url},
+            {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+racial+discrimination"}
+        ]
+
+    # LGBTQ+
+    lgbtq_triggers = ['lgbtq', 'gay', 'transgender', 'pride', 'sexual orientation', 'gender identity', 'hrc', 'anti-gay', 'conversion']
+    if any(t in all_flags_text for t in lgbtq_triggers):
+        community_flags["lgbtq"]["has_issue"] = True
+        community_flags["lgbtq"]["text"] = "LGBTQ+ concerns or political opposition documented"
+        community_flags["lgbtq"]["sources"] = [
+            {"label": "View FEC Records", "url": f"https://www.fec.gov/data/committees/?q={business_name.replace(' ', '+')}"},
+            {"label": "HRC Scorecard", "url": "https://www.hrc.org/resources/corporate-equality-index"},
+            {"label": "BBB Profile", "url": bbb_url},
+            {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+LGBTQ"}
+        ]
+
+    # Women
+    women_triggers = ['women', 'gender pay', 'sexual harassment', 'abortion', 'reproductive', 'maternity', 'gender discrimination']
+    if any(t in all_flags_text for t in women_triggers):
+        community_flags["women"]["has_issue"] = True
+        community_flags["women"]["text"] = "Gender discrimination or workplace concerns documented"
+        community_flags["women"]["sources"] = [
+            {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+gender+discrimination&type=r"},
+            {"label": "EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}"},
+            {"label": "BBB Profile", "url": bbb_url},
+            {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+gender+discrimination"}
+        ]
+
+    # Workers
+    worker_triggers = ['labor', 'worker', 'wage', 'union', 'employee', 'workplace', 'safety violation', 'osha', 'wage theft']
+    if any(t in all_flags_text for t in worker_triggers):
+        community_flags["workers"]["has_issue"] = True
+        community_flags["workers"]["text"] = "Labor violations or worker safety issues on record"
+        community_flags["workers"]["sources"] = [
+            {"label": "OSHA Records", "url": f"https://www.osha.gov/pls/imis/establishment.search?p_logger=1&establishment={business_name.replace(' ', '+')}"},
+            {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+labor+violation&type=r"},
+            {"label": "Glassdoor Reviews", "url": glassdoor_url},
+            {"label": "BBB Profile", "url": bbb_url},
+            {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+labor+violations"}
+        ]
+
+    # Disability
+    disability_triggers = ['disability', 'ada', 'accessibility', 'accommodation']
+    if any(t in all_flags_text for t in disability_triggers):
+        community_flags["disability"]["has_issue"] = True
+        community_flags["disability"]["text"] = "ADA violations or accessibility concerns documented"
+        community_flags["disability"]["sources"] = [
+            {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+ADA+accessibility&type=r"},
+            {"label": "ADA.gov", "url": "https://www.ada.gov/"},
+            {"label": "BBB Profile", "url": bbb_url},
+            {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+ADA+disability"}
+        ]
+
+    # Add news headline URLs to workers sources if available
+    if news_data.get("found") and news_data.get("flagged_headlines"):
+        for headline in news_data["flagged_headlines"]:
+            if isinstance(headline, dict) and headline.get("url"):
+                community_flags["workers"]["sources"].append({
+                    "label": headline.get("source", "News Article"),
+                    "url": headline["url"]
+                })
 
     return {
         "business": business_name,
@@ -111,6 +274,8 @@ def search_business(business_name: str):
         "flags": flags,
         "summary": ai_summary,
         "alternatives": alternatives,
+        "community_flags": community_flags,
+        "google_reviews": google_reviews,
         "fec_data": fec_data,
         "news_data": news_data,
         "legal_data": legal_data,
