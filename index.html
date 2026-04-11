@@ -129,24 +129,7 @@
             flex-direction: column;
         }
 
-        .topbar {
-            background: var(--white);
-            border-bottom: 1px solid var(--navy-200);
-            padding: 14px 28px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-        }
 
-        .topbar h2 {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.2em;
-            color: #0a1628;
-        }
-
-        .topbar p { font-size: 0.8em; color: var(--blue-muted); margin-top: 1px; }
 
         .content { padding: 24px 28px; flex: 1; }
 
@@ -1268,7 +1251,6 @@
             .mobile-topnav { display: flex; }
             .bottom-tabs { display: block; }
             .main { margin-left: 0; padding-top: 52px; padding-bottom: 70px; }
-            .topbar { display: none; }
             .content { padding: 16px; }
             .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .featured-grid { grid-template-columns: 1fr; }
@@ -1367,12 +1349,7 @@
 
 <!-- MAIN -->
 <main class="main">
-    <div class="topbar">
-        <div>
-            <h2 id="topbar-title">Home</h2>
-            <p id="topbar-sub">Know before you go. Know before you spend.</p>
-        </div>
-    </div>
+
 
     <div class="content">
 
@@ -1764,10 +1741,7 @@ function switchPanel(panel) {
         const el = document.getElementById(prefix + panel);
         if (el) el.classList.add('active');
     });
-    if (document.getElementById('topbar-title')) {
-        document.getElementById('topbar-title').textContent = TITLES[panel][0];
-        document.getElementById('topbar-sub').textContent = TITLES[panel][1];
-    }
+    
     window.scrollTo(0, 0);
 }
 
@@ -2204,6 +2178,7 @@ function displayResults(data) {
     const legal = data.legal_data || {};
     const esg = data.esg_data || {};
     const hr = data.human_rights_data || {};
+    const reviews = data.google_reviews || {};
 
     const altHtml = data.alternatives && data.alternatives.length > 0
         ? `<div class="card"><h4>Ethical Alternatives in Same Category</h4>
@@ -2246,8 +2221,8 @@ function displayResults(data) {
                 <div class="metric-label">ESG Risk</div>
             </div>
             <div class="metric-card">
-                <div class="metric-num ${hr.found && hr.score_impact > 10 ? '' : 'ok'}">${hr.found ? hr.rating || 'N/A' : 'N/A'}</div>
-                <div class="metric-label">Human Rights</div>
+                <div class="metric-num ${reviews && reviews.found && reviews.rating < 3.5 ? '' : 'ok'}">${reviews && reviews.found && reviews.rating ? reviews.rating + '★' : 'N/A'}</div>
+                <div class="metric-label">Google Rating</div>
             </div>
         </div>
 
