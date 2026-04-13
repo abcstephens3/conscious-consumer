@@ -15,6 +15,7 @@ from police_violence import get_police_violence_by_state, get_police_violence_by
 from local_awareness import get_local_awareness, get_local_awareness_by_coords
 from ai_summary import generate_summary
 from categories import get_category, get_alternatives_in_category
+from eeoc import get_eeoc_data
 
 
 def get_google_reviews(business_name):
@@ -85,6 +86,7 @@ def search_business(business_name: str):
     esg_data = get_esg_rating(business_name)
     hr_data = get_human_rights_rating(business_name)
     google_reviews = get_google_reviews(business_name)
+    eeoc_data = get_eeoc_data(business_name)
 
     base_score = 100
     flags = []
@@ -113,6 +115,14 @@ def search_business(business_name: str):
         flags.append(f"Human rights concerns: {hr_data['rating']}")
         for flag in hr_data["flags"]:
             flags.append(f"⚠️ {flag}")
+   
+    # Factor EEOC cases into score
+    if eeoc_data["found"] and eeoc_data["case_count"] > 0:
+        eeoc_impact = min(eeoc_data["case_count"] * 2, 20)
+        base_score -= eeoc_impact
+        flags.append(f"EEOC discrimination cases on record: {eeoc_data['case_count']} cases")
+        flags.append(f"Communities affected: {', '.join(eeoc_data['communities']).upper()}")
+        flags.append(f"EEOC summary: {eeoc_data['summary']}")
 
     # Factor Google reviews into score
     if google_reviews["found"] and google_reviews["rating"]:
@@ -200,14 +210,14 @@ def search_business(business_name: str):
 
     # BIPOC
     bipoc_triggers = ['indigenous', 'racial', 'discrimination', 'civil rights', 'naacp', 'minority', 'race']
-    if any(t in all_flags_text for t in bipoc_triggers):
+    if any(t in all_flags_text for t in bipoc_triggers) or (eeoc_data.get("found") and "bipoc" in eeoc_data.get("communities", [])):
         community_flags["bipoc"]["has_issue"] = True
-        community_flags["bipoc"]["text"] = "Racial discrimination concerns found in court or news records"
-        community_flags["bipoc"]["sources"] = [
+        community_flags["bipoc"]["text"] = "Racial discrimination concerns found in court, EEOC, or news records"
+        eeoc_cases = [{"label": c["title"], "url": c["url"]} for c in eeoc_data.get("cases", [])] if eeoc_data.get("found") else []
+        community_flags["bipoc"]["sources"] = eeoc_cases + [
+            {"label": "Search EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}+race"},
             {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+discrimination&type=r"},
-            {"label": "EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}"},
-            {"label": "BBB Profile", "url": bbb_url},
-            {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+racial+discrimination"}
+            {"label": "BBB Profile", "url": bbb_url}
         ]
 
     # LGBTQ+
@@ -224,14 +234,14 @@ def search_business(business_name: str):
 
     # Women
     women_triggers = ['women', 'gender pay', 'sexual harassment', 'abortion', 'reproductive', 'maternity', 'gender discrimination']
-    if any(t in all_flags_text for t in women_triggers):
+    if any(t in all_flags_text for t in women_triggers) or (eeoc_data.get("found") and "women" in eeoc_data.get("communities", [])):
         community_flags["women"]["has_issue"] = True
-        community_flags["women"]["text"] = "Gender discrimination or workplace concerns documented"
-        community_flags["women"]["sources"] = [
+        community_flags["women"]["text"] = "Gender discrimination or workplace concerns found in EEOC or court records"
+        eeoc_cases = [{"label": c["title"], "url": c["url"]} for c in eeoc_data.get("cases", [])] if eeoc_data.get("found") else []
+        community_flags["women"]["sources"] = eeoc_cases + [
+            {"label": "Search EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}+gender"},
             {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+gender+discrimination&type=r"},
-            {"label": "EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}"},
-            {"label": "BBB Profile", "url": bbb_url},
-            {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+gender+discrimination"}
+            {"label": "BBB Profile", "url": bbb_url}
         ]
 
     # Workers
@@ -249,14 +259,14 @@ def search_business(business_name: str):
 
     # Disability
     disability_triggers = ['disability', 'ada', 'accessibility', 'accommodation']
-    if any(t in all_flags_text for t in disability_triggers):
+    if any(t in all_flags_text for t in disability_triggers) or (eeoc_data.get("found") and "disability" in eeoc_data.get("communities", [])):
         community_flags["disability"]["has_issue"] = True
-        community_flags["disability"]["text"] = "ADA violations or accessibility concerns documented"
-        community_flags["disability"]["sources"] = [
-            {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+ADA+accessibility&type=r"},
-            {"label": "ADA.gov", "url": "https://www.ada.gov/"},
-            {"label": "BBB Profile", "url": bbb_url},
-            {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+ADA+disability"}
+        community_flags["disability"]["text"] = "ADA or disability discrimination concerns found in EEOC or court records"
+        eeoc_cases = [{"label": c["title"], "url": c["url"]} for c in eeoc_data.get("cases", [])] if eeoc_data.get("found") else []
+        community_flags["disability"]["sources"] = eeoc_cases + [
+            {"label": "Search EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}+disability"},
+            {"label": "ADA.gov Records", "url": "https://www.ada.gov/"},
+            {"label": "BBB Profile", "url": bbb_url}
         ]
 
     # Add news headline URLs to workers sources if available
@@ -276,6 +286,7 @@ def search_business(business_name: str):
         "alternatives": alternatives,
         "community_flags": community_flags,
         "google_reviews": google_reviews,
+        "eeoc_data": eeoc_data,
         "fec_data": fec_data,
         "news_data": news_data,
         "legal_data": legal_data,
