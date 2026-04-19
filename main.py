@@ -597,4 +597,97 @@ def route_safety(origin: str, destination: str):
         "high_risk_states": len(high_risk),
         "route_summary": route["summary"],
         "directions": directions
+    
+@app.post("/route_safe_stops")
+def route_safe_stops(
+    origin: str,
+    destination: str,
+    interval_hours: float = 4.0,
+    categories: str = "food,gas,rest"
+):
+    import requests, os
+    GOOGLE_KEY = os.getenv("GOOGLE_API_KEY", "")
+    
+    # Get route from Google
+    response = requests.get(
+        "https://maps.googleapis.com/maps/api/directions/json",
+        params={
+            "origin": origin,
+            "destination": destination,
+            "key": GOOGLE_KEY
+        }
+    )
+    data = response.json()
+    
+    if data.get("status") != "OK":
+        return {"found": False, "message": "Could not find route"}
+    
+    route = data["routes"][0]
+    legs = route["legs"]
+    total_duration_seconds = sum(leg["duration"]["value"] for leg in legs)
+    total_hours = total_duration_seconds / 3600
+    
+    # Build list of steps with cumulative time
+    steps_with_time = []
+    cumulative = 0
+    for leg in legs:
+        for step in leg["steps"]:
+            cumulative += step["duration"]["value"] / 3600
+            steps_with_time.append({
+                "cumulative_hours": cumulative,
+                "lat": step["end_location"]["lat"],
+                "lon": step["end_location"]["lng"]
+            })
+    
+    # Calculate waypoint times
+    waypoint_times = []
+    current = interval_hours
+    while current < total_hours - 0.5:
+        waypoint_times.append(round(current, 1))
+        current += interval_hours
+    
+    if not waypoint_times:
+        waypoint_times = [round(total_hours / 2, 1)]
+    
+    # Find closest step to each waypoint time
+    cats = [c.strip() for c in categories.split(",")]
+    from local_awareness import get_safe_stops_near
+    
+    waypoints = []
+    for target_time in waypoint_times:
+        closest = min(steps_with_time, key=lambda s: abs(s["cumulative_hours"] - target_time))
+        
+        # Reverse geocode to get city name
+        geo = requests.get(
+            "https://maps.googleapis.com/maps/api/geocode/json",
+            params={
+                "latlng": f"{closest['lat']},{closest['lon']}",
+                "result_type": "locality",
+                "key": GOOGLE_KEY
+            }
+        )
+        geo_data = geo.json()
+        city = "Along your route"
+        if geo_data.get("results"):
+            city = geo_data["results"][0].get("formatted_address", "Along your route")
+        
+        stops = get_safe_stops_near(
+            closest["lat"], closest["lon"],
+            cats, radius_miles=15, min_score=65
+        )
+        
+        waypoints.append({
+            "hours_in": target_time,
+            "city": city,
+            "lat": closest["lat"],
+            "lon": closest["lon"],
+            "stops": stops
+        })
+    
+    return {
+        "found": True,
+        "total_hours": round(total_hours, 1),
+        "interval_hours": interval_hours,
+        "waypoints": waypoints
+    }    
     }

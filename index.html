@@ -1010,6 +1010,125 @@
         .map-container { border-radius: 12px; overflow: hidden; border: 1px solid var(--navy-200); margin-bottom: 16px; }
         .map-container iframe { width: 100%; height: 300px; border: none; display: block; }
 
+        /* ===== SAFE STOPS ===== */
+	.safe-stop-card {
+	    background: rgba(15,158,120,0.06);
+	    border-radius: 12px;
+	    border: 1px solid rgba(15,158,120,0.25);
+	    padding: 14px;
+	    margin-bottom: 12px;
+	}
+
+	.safe-stop-header-row {
+	    display: flex;
+	    align-items: center;
+	    gap: 8px;
+	    margin-bottom: 10px;
+	}
+
+	.teal-pulse {
+	    width: 8px;
+	    height: 8px;
+	    border-radius: 50%;
+	    background: var(--teal);
+	    flex-shrink: 0;
+	}
+
+	.safe-stop-title {
+	    font-size: 0.88em;
+	    font-weight: 600;
+	    color: #085041;
+	}
+
+	.safe-stop-sub {
+	    font-size: 0.75em;
+	    color: var(--teal);
+	    margin-top: 1px;
+	}
+
+	.stop-row {
+	    display: flex;
+	    align-items: center;
+	    gap: 10px;
+	    background: var(--white);
+	    border-radius: 7px;
+	    border: 1px solid rgba(15,158,120,0.15);
+	    padding: 8px 10px;
+	    margin-bottom: 5px;
+	    cursor: pointer;
+	    transition: background 0.15s;
+	}
+
+	.stop-row:hover { background: var(--gray-100); }
+
+	.stop-cat-icon {
+	    width: 28px;
+	    height: 28px;
+	    border-radius: 50%;
+	    background: var(--teal-faint);
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    font-size: 13px;
+	    flex-shrink: 0;
+	}
+
+	.teal-plus {
+	    color: var(--teal);
+	    font-size: 18px;
+	    font-weight: 300;
+	    border: 1.5px dashed rgba(15,158,120,0.4);
+	    background: transparent;
+	}
+
+	.stop-info { flex: 1; min-width: 0; }
+	.stop-name { font-size: 0.85em; font-weight: 600; color: #0a1628; }
+	.stop-meta { font-size: 0.74em; color: var(--blue-muted); margin-top: 2px; }
+
+	.stop-right { text-align: right; flex-shrink: 0; }
+	.stop-score { font-size: 0.9em; font-weight: 600; }
+	.stop-score.high { color: var(--green); }
+	.stop-score.medium { color: var(--amber); }
+	.stop-score.low { color: var(--coral-600); }
+	.stop-dist { font-size: 0.74em; color: var(--blue-muted); }
+
+	.submit-stop-row { border-style: dashed; border-color: rgba(15,158,120,0.3); background: transparent; }
+	.submit-stop-row:hover { background: var(--teal-faint); }
+
+	/* ===== INTERVAL CONTROLS ===== */
+	.drive-opt {
+	    padding: 6px 12px;
+	    background: var(--blue-dark);
+	    color: var(--blue-muted);
+	    border: 1px solid var(--blue-light);
+	    border-radius: 6px;
+	    font-size: 0.82em;
+	    font-weight: 600;
+	    cursor: pointer;
+	    font-family: 'DM Sans', sans-serif;
+	    transition: all 0.15s;
+	}
+
+	.drive-opt.selected { background: var(--coral-600); color: white; border-color: var(--coral-600); }
+	.drive-opt:hover { background: var(--blue-light); color: white; }
+
+	.cat-pill {
+	    padding: 4px 10px;
+	    background: var(--blue-dark);
+	    color: var(--blue-muted);
+	    border: 1px solid var(--blue-light);
+	    border-radius: 20px;
+	    font-size: 0.78em;
+	    font-weight: 600;
+	    cursor: pointer;
+	    font-family: 'DM Sans', sans-serif;
+	    transition: all 0.15s;
+	}
+
+	.cat-pill.active { background: rgba(15,158,120,0.2); color: var(--teal-light); border-color: var(--teal); }
+	.cat-pill:hover { border-color: var(--teal-light); }
+	.cat-pill.more { border-style: dashed; }
+
         /* ===== DRAWER ===== */
         .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(10,22,40,0.4); z-index: 300; }
         .drawer-overlay.open { display: block; }
@@ -1595,12 +1714,36 @@
                     </div>
                     <button onclick="planRoute(false)" class="btn-primary">Plan Safe Route</button>
                     <button onclick="planRoute(true)" class="btn-secondary">Plan with Directions</button>
+                    <div id="drive-interval-section" style="display:none; margin-top:14px;">
+                        <div style="font-size:0.72em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--teal-light); margin-bottom:8px;">Stop interval</div>
+                        <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+                            <button class="drive-opt" data-hours="2" onclick="selectInterval(this)">2 hrs</button>
+                            <button class="drive-opt selected" data-hours="4" onclick="selectInterval(this)">4 hrs</button>
+                            <button class="drive-opt" data-hours="6" onclick="selectInterval(this)">6 hrs</button>
+                            <button class="drive-opt" data-hours="custom" onclick="selectInterval(this)">Custom</button>
+                        </div>
+                        <div id="custom-interval-wrap" style="display:none; margin-bottom:8px;">
+                            <input type="number" id="intervalCustom" min="0.5" max="12" step="0.5" value="3" placeholder="Hours between stops" style="width:100%; padding:8px 12px; border:1.5px solid var(--navy-200); border-radius:7px; font-size:0.88em; font-family:'DM Sans',sans-serif; outline:none; background:var(--blue-dark); color:white;" />
+                        </div>
+                        <div style="font-size:0.72em; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--teal-light); margin-bottom:8px; margin-top:10px;">Stop categories</div>
+                        <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:8px;">
+                            <button class="cat-pill active" data-cat="food" onclick="toggleCat(this)">Food</button>
+                            <button class="cat-pill active" data-cat="gas" onclick="toggleCat(this)">Gas</button>
+                            <button class="cat-pill active" data-cat="rest" onclick="toggleCat(this)">Rest Stop</button>
+                            <button class="cat-pill" data-cat="coffee" onclick="toggleCat(this)">Coffee</button>
+                            <button class="cat-pill" data-cat="lodging" onclick="toggleCat(this)">Lodging</button>
+                            <button class="cat-pill more" onclick="openInfoDrawer('more-categories')">+ More</button>
+                        </div>
+                        <button class="btn-primary" style="width:100%;" onclick="fetchSafeStops()">Find Safe Stops</button>
+                    </div>
                     <div id="map-container" class="map-container" style="display:none;">
                         <iframe id="map-iframe" src="" allowfullscreen></iframe>
                     </div>
                 </div>
-                <div id="route-results"></div>
-            </div>
+                <div>
+		    <div id="safe-stops-section"></div>
+		    <div id="route-results"></div>
+		</div>
         </div>
 
         <!-- ABOUT PANEL -->
@@ -1917,6 +2060,32 @@ function openInfoDrawer(type) {
                 <p style="font-size:0.82em; color:var(--blue-muted); margin-bottom:10px;">Don't see your company? Submit it for review.</p>
                 <button class="btn-outline" onclick="openInfoDrawer('submit')">Submit a Company</button>
             </div>`;
+            
+    } else if (type === 'more-categories') {
+        document.getElementById('drawerTitle').textContent = 'More Stop Categories';
+        document.getElementById('drawerVerdict').textContent = 'Add to your safe stop search';
+        document.getElementById('drawerBody').innerHTML = `
+            <p style="font-size:0.85em; color:#4a5166; margin-bottom:16px; line-height:1.6;">Select additional categories to include in your safe stop recommendations.</p>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                ${[
+                    {cat:'lgbtq', label:'LGBTQ+ Spaces', desc:'Queer-owned and affirming businesses'},
+                    {cat:'black_owned', label:'Black-Owned', desc:'Verified via ByBlack and Black Owned API'},
+                    {cat:'women_owned', label:'Women-Owned', desc:'WBENC certified businesses'},
+                    {cat:'accessible', label:'Fully Accessible', desc:'Wheelchair accessible entrance, restroom, and seating'},
+                    {cat:'pharmacy', label:'Pharmacy', desc:'CVS, Walgreens, and independent pharmacies'},
+                    {cat:'coffee', label:'Coffee', desc:'Cafes and coffee shops'}
+                ].map(c => `
+                    <div style="background:var(--gray-100); border-radius:8px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="addCategory('${c.cat}', '${c.label}')">
+                        <div>
+                            <div style="font-size:0.88em; font-weight:600; color:#0a1628;">${c.label}</div>
+                            <div style="font-size:0.78em; color:var(--blue-muted); margin-top:2px;">${c.desc}</div>
+                        </div>
+                        <button class="btn-outline" style="font-size:0.75em; padding:5px 10px;">Add</button>
+                    </div>`).join('')}
+            </div>`;
+        document.getElementById('drawerOverlay').classList.add('open');
+        document.getElementById('drawer').classList.add('open');        
+            
     } else if (type === 'states') {
         document.getElementById('drawerTitle').textContent = 'States Covered';
         document.getElementById('drawerVerdict').textContent = 'All 50 states + Washington DC';
@@ -1996,6 +2165,19 @@ function openInfoDrawer(type) {
 
     document.getElementById('drawerOverlay').classList.add('open');
     document.getElementById('drawer').classList.add('open');
+}
+
+function addCategory(cat, label) {
+    const bar = document.querySelector('.cat-pill.more').parentElement;
+    if (!bar.querySelector(`[data-cat="${cat}"]`)) {
+        const pill = document.createElement('button');
+        pill.className = 'cat-pill active';
+        pill.dataset.cat = cat;
+        pill.textContent = label;
+        pill.onclick = function() { toggleCat(this); };
+        bar.insertBefore(pill, bar.querySelector('.cat-pill.more'));
+    }
+    closeDrawer();
 }
 
 function filterCompanies() {
@@ -2410,64 +2592,80 @@ async function planRoute(withDirections) {
         const response = await fetch(`/route_safety?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`, { method: 'POST' });
         const data = await response.json();
         displayRouteResults(data, withDirections);
+        showDriveInterval();
+        setTimeout(() => fetchSafeStops(), 300);
     } catch (e) {
         document.getElementById('route-results').innerHTML = `<div class="error-msg">Could not plan route. Please try again.</div>`;
     }
 }
 
-function getRouteStateClass(overall) {
-    if (!overall) return '';
-    const r = overall.toLowerCase();
-    if (r.includes('low')) return 'low-risk';
-    if (r.includes('medium')) return 'medium-risk';
-    return 'high-risk';
+async function fetchSafeStops() {
+    const origin = document.getElementById('routeOrigin').value.trim();
+    const destination = document.getElementById('routeDestination').value.trim();
+    const intervalHours = document.getElementById('intervalCustom')?.value || document.querySelector('.drive-opt.selected')?.dataset.hours || 4;
+    const categories = getSelectedCategories();
+    if (!origin || !destination) return;
+
+    document.getElementById('safe-stops-section').innerHTML = `<div class="loading"><div class="loading-spinner"></div>Finding safe stops...</div>`;
+
+    try {
+        const response = await fetch(
+            `/route_safe_stops?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&interval_hours=${intervalHours}&categories=${encodeURIComponent(categories)}`,
+            { method: 'POST' }
+        );
+        const data = await response.json();
+        displaySafeStops(data);
+    } catch (e) {
+        document.getElementById('safe-stops-section').innerHTML = `<div class="error-msg">Could not load safe stops.</div>`;
+    }
 }
 
-function displayRouteResults(data, withDirections) {
-    const resultsDiv = document.getElementById('route-results');
-    if (!data.found) { resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`; return; }
-    const highRiskColor = data.high_risk_states > 0 ? 'var(--coral-400)' : 'var(--teal-light)';
-    const statesHtml = data.states_on_route.map(state => `
-        <div class="route-state ${getRouteStateClass(state.overall)}">
-            <div class="route-state-header">
-                <div class="route-state-name">${state.state}</div>
-                <div style="display:flex; gap:6px; align-items:center;">
-                    <span class="badge ${getBadgeClass(state.overall)}">${state.overall}</span>
-                    <button class="btn-outline-navy" style="padding:4px 8px; font-size:0.72em;" onclick="quickSearch('${state.state}')">Details</button>
-                </div>
-            </div>
-            <div class="route-state-ratings">
-                <span class="badge ${getBadgeClass(state.lgbtq)}" style="font-size:0.7em;">LGBTQ+: ${state.lgbtq}</span>
-                <span class="badge ${getBadgeClass(state.racial)}" style="font-size:0.7em;">Racial: ${state.racial}</span>
-                <span class="badge ${getBadgeClass(state.women)}" style="font-size:0.7em;">Women: ${state.women}</span>
-            </div>
-            ${state.advisories && state.advisories.length > 0 ? `<div class="advisory" style="margin-top:8px;">${state.advisories[0]}</div>` : ''}
-        </div>`).join('');
+function getSelectedCategories() {
+    const active = document.querySelectorAll('.cat-pill.active');
+    return Array.from(active).map(p => p.dataset.cat).join(',');
+}
 
-    let directionsHtml = '';
-    if (withDirections && data.directions && data.directions.length > 0) {
-        let stepCount = 0;
-        directionsHtml = `<div class="section-divider">Turn-by-Turn Directions</div>
-            <div class="card" style="padding:0; overflow:hidden;">
-                ${data.directions.map(step => {
-                    if (step.type === 'warning') return `<div class="step-item warning">⚠️ ${step.text}</div>`;
-                    stepCount++;
-                    return `<div class="step-item"><div class="step-num">${stepCount}</div><div>${step.text}${step.distance ? ` <span style="color:var(--blue-muted); font-size:0.9em;">(${step.distance})</span>` : ''}</div></div>`;
-                }).join('')}
-            </div>`;
+function displaySafeStops(data) {
+    const el = document.getElementById('safe-stops-section');
+    if (!data.found || !data.waypoints || data.waypoints.length === 0) {
+        el.innerHTML = `<div class="card"><p style="color:var(--blue-muted); font-size:0.85em;">No safe stops found along this route. Try adjusting your interval or categories.</p></div>`;
+        return;
     }
 
-    resultsDiv.innerHTML = `
-        <div class="route-summary">
-            <div class="route-stat"><div class="route-stat-num">${data.distance_miles}</div><div class="route-stat-label">Miles</div></div>
-            <div class="route-stat"><div class="route-stat-num">${data.duration_hours}</div><div class="route-stat-label">Hours</div></div>
-            <div class="route-stat"><div class="route-stat-num">${data.states_on_route.length}</div><div class="route-stat-label">States</div></div>
-            <div class="route-stat"><div class="route-stat-num" style="color:${highRiskColor}">${data.high_risk_states}</div><div class="route-stat-label">High Risk</div></div>
-        </div>
-        <p style="font-size:0.82em; color:var(--blue-muted); margin-bottom:14px;">${data.origin} → ${data.destination} via ${data.route_summary}</p>
-        <div class="section-divider">States Along Your Route</div>
-        ${statesHtml}
-        ${directionsHtml}`;
+    el.innerHTML = data.waypoints.map(wp => `
+        <div class="safe-stop-card">
+            <div class="safe-stop-header-row">
+                <div class="teal-pulse"></div>
+                <div>
+                    <div class="safe-stop-title">Safe stops · ~${wp.hours_in} hrs in</div>
+                    <div class="safe-stop-sub">${wp.city}</div>
+                </div>
+            </div>
+            ${wp.stops.length > 0 ? wp.stops.map(s => `
+                <div class="stop-row">
+                    <div class="stop-cat-icon">${getCatIcon(s.category)}</div>
+                    <div class="stop-info">
+                        <div class="stop-name">${s.name}</div>
+                        <div class="stop-meta">${s.category}${s.wheelchair_accessible ? ' · Wheelchair accessible' : ''}${s.lgbtq_friendly ? ' · LGBTQ+ friendly' : ''}</div>
+                    </div>
+                    <div class="stop-right">
+                        <div class="stop-score ${getScoreClass(s.score)}">${s.score}</div>
+                        <div class="stop-dist">${s.distance_miles} mi</div>
+                    </div>
+                </div>`).join('') : '<p style="font-size:0.82em; color:var(--blue-muted); padding:8px 0;">No scored businesses found nearby. Try a different interval.</p>'}
+            <div class="stop-row submit-stop-row" onclick="openInfoDrawer('submit')">
+                <div class="stop-cat-icon teal-plus">+</div>
+                <div class="stop-info">
+                    <div class="stop-name" style="color:var(--teal);">Know a safe stop near here?</div>
+                    <div class="stop-meta">Submit a community recommendation</div>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+function getCatIcon(category) {
+    const icons = { 'Food': '🍽', 'Gas': '⛽', 'Coffee': '☕', 'Lodging': '🛏', 'Pharmacy': '💊', 'Rest Stop': '🌿' };
+    return icons[category] || '📍';
 }
 
 // ===== TIPS =====
@@ -2476,6 +2674,25 @@ const TRAVEL_TIPS = ["Always check the Safe Travel Guide before visiting a new s
 
 let currentTip = 0;
 let currentTravelTip = 0;
+
+function selectInterval(btn) {
+    document.querySelectorAll('.drive-opt').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const customWrap = document.getElementById('custom-interval-wrap');
+    if (btn.dataset.hours === 'custom') {
+        customWrap.style.display = 'block';
+    } else {
+        customWrap.style.display = 'none';
+    }
+}
+
+function toggleCat(btn) {
+    btn.classList.toggle('active');
+}
+
+function showDriveInterval() {
+    document.getElementById('drive-interval-section').style.display = 'block';
+}
 
 function showTip() { document.getElementById('tips-body').textContent = TIPS[currentTip]; document.getElementById('tips-counter').textContent = `${currentTip + 1} / ${TIPS.length}`; }
 function nextTip() { currentTip = (currentTip + 1) % TIPS.length; showTip(); }

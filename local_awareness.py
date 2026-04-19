@@ -182,3 +182,123 @@ def get_local_awareness_by_coords(lat, lon):
             "found": False,
             "message": f"Error looking up location: {str(e)}"
         }
+        
+def get_safe_stops_near(lat, lon, categories, radius_miles=10, min_score=65):
+    """Get safe stop recommendations near a waypoint"""
+    import os, requests
+    GOOGLE_KEY = os.getenv("GOOGLE_API_KEY", "")
+    
+    CATEGORY_TYPES = {
+        "food": ["restaurant", "meal_takeaway", "fast_food"],
+        "gas": ["gas_station"],
+        "rest": ["rest_stop", "park"],
+        "coffee": ["cafe"],
+        "lodging": ["lodging"],
+        "pharmacy": ["pharmacy", "drugstore"]
+    }
+    
+    radius_meters = int(radius_miles * 1609.34)
+    place_types = []
+    for cat in categories:
+        place_types.extend(CATEGORY_TYPES.get(cat, []))
+    
+    if not place_types:
+        place_types = ["restaurant", "gas_station", "cafe"]
+    
+    results = []
+    seen_places = set()
+    
+    for place_type in place_types[:6]:
+        try:
+            response = requests.get(
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+                params={
+                    "location": f"{lat},{lon}",
+                    "radius": radius_meters,
+                    "type": place_type,
+                    "key": GOOGLE_KEY
+                }
+            )
+            data = response.json()
+            
+            for place in data.get("results", [])[:5]:
+                place_id = place.get("place_id")
+                if place_id in seen_places:
+                    continue
+                seen_places.add(place_id)
+                
+                name = place.get("name", "")
+                address = place.get("vicinity", "")
+                google_rating = place.get("rating", None)
+                
+                # Check our database for score
+                from esg import get_esg_rating
+                from humanrights import get_human_rights_rating
+                esg = get_esg_rating(name)
+                hr = get_human_rights_rating(name)
+                
+                base = 100
+                if esg.get("found") and esg.get("score_impact", 0) > 0:
+                    base -= esg["score_impact"]
+                if hr.get("found") and hr.get("score_impact", 0) > 0:
+                    base -= hr["score_impact"]
+                score = max(base, 0)
+                
+                # Get place details for attributes
+                details_response = requests.get(
+                    "https://maps.googleapis.com/maps/api/place/details/json",
+                    params={
+                        "place_id": place_id,
+                        "fields": "name,formatted_address,rating,geometry,wheelchair_accessible_entrance",
+                        "key": GOOGLE_KEY
+                    }
+                )
+                details = details_response.json().get("result", {})
+                
+                place_lat = place["geometry"]["location"]["lat"]
+                place_lon = place["geometry"]["location"]["lng"]
+                
+                # Calculate distance
+                import math
+                dlat = math.radians(place_lat - lat)
+                dlon = math.radians(place_lon - lon)
+                a = math.sin(dlat/2)**2 + math.cos(math.radians(lat)) * math.cos(math.radians(place_lat)) * math.sin(dlon/2)**2
+                distance_miles = round(3959 * 2 * math.asin(math.sqrt(a)), 1)
+                
+                # Determine category label
+                cat_label = place_type.replace("_", " ").title()
+                if place_type in ["restaurant", "meal_takeaway", "fast_food"]:
+                    cat_label = "Food"
+                elif place_type == "gas_station":
+                    cat_label = "Gas"
+                elif place_type == "cafe":
+                    cat_label = "Coffee"
+                elif place_type == "lodging":
+                    cat_label = "Lodging"
+                elif place_type == "pharmacy":
+                    cat_label = "Pharmacy"
+                elif place_type in ["rest_stop", "park"]:
+                    cat_label = "Rest Stop"
+                
+                # Only include if meets minimum score
+                if score >= min_score:
+                    results.append({
+                        "name": name,
+                        "address": address,
+                        "category": cat_label,
+                        "score": score,
+                        "distance_miles": distance_miles,
+                        "google_rating": google_rating,
+                        "wheelchair_accessible": details.get("wheelchair_accessible_entrance", False),
+                        "lgbtq_friendly": False,
+                        "community_verified": False,
+                        "place_id": place_id,
+                        "lat": place_lat,
+                        "lon": place_lon
+                    })
+        except Exception as e:
+            continue
+    
+    # Sort by score descending, then distance
+    results.sort(key=lambda x: (-x["score"], x["distance_miles"]))
+    return results[:8]        
