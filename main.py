@@ -20,6 +20,7 @@ from nlrb_data import get_nlrb_data
 from osm_stops import get_osm_rest_stops
 from map_data import get_map_data, get_map_lgbtq_rating
 from corpwatch import get_corpwatch_data
+from products import get_product_company
 
 
 def get_google_reviews(business_name):
@@ -84,6 +85,15 @@ def serve_service_worker():
 
 @app.post("/search")
 def search_business(business_name: str):
+    # Check if search term is a product — redirect to parent company
+    product_check = get_product_company(business_name)
+    if product_check["found"]:
+        original_product = business_name
+        business_name = product_check["company"]
+        product_redirect = {"found": True, "searched_product": original_product, "parent_company": product_check["company"]}
+    else:
+        product_redirect = {"found": False}
+        
     fec_data = get_fec_donations(business_name)
     news_data = get_news_sentiment(business_name)
     legal_data = get_legal_records(business_name)
@@ -318,6 +328,7 @@ def search_business(business_name: str):
         "news_data": news_data,
         "legal_data": legal_data,
         "esg_data": esg_data,
+        "product_redirect": product_redirect,
         "human_rights_data": hr_data
     }
 

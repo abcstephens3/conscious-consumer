@@ -628,6 +628,12 @@ function quickBusinessSearch(name) {
 
 function displayResults(data) {
     const sc = getScoreClass(data.score);
+    // Show product redirect notice if applicable
+    const productNote = data.product_redirect && data.product_redirect.found
+        ? `<div style="background:var(--teal-faint); border:1px solid var(--teal); border-radius:8px; padding:10px 14px; margin-bottom:12px; font-size:0.85em; color:#085041;">
+            <strong>${data.product_redirect.searched_product}</strong> is a product of <strong>${data.product_redirect.parent_company}</strong> — showing company transparency score.
+           </div>`
+        : '';
     const circumference = 2 * Math.PI * 40;
     const progress = (data.score / 100) * circumference;
 
@@ -655,7 +661,8 @@ const corpwatch = data.corpwatch_data || {};
             ${corpwatch.source_url ? `<a href="${corpwatch.source_url}" target="_blank" style="font-size:0.78em; color:var(--teal); font-weight:600; margin-top:8px; display:inline-block;">Full corporate profile →</a>` : ''}
         </div>` : '';
 
-    document.getElementById('results').innerHTML = `
+    document.getElementById('results').innerHTML =
+    	${productNote} `
         <div class="score-hero">
             <div class="ring-wrap">
                 <svg viewBox="0 0 88 88">
