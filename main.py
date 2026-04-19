@@ -19,6 +19,7 @@ from eeoc import get_eeoc_data
 from nlrb_data import get_nlrb_data
 from osm_stops import get_osm_rest_stops
 from map_data import get_map_data, get_map_lgbtq_rating
+from corpwatch import get_corpwatch_data
 
 
 def get_google_reviews(business_name):
@@ -91,6 +92,7 @@ def search_business(business_name: str):
     google_reviews = get_google_reviews(business_name)
     eeoc_data = get_eeoc_data(business_name)
     nlrb_data = get_nlrb_data(business_name)
+    corpwatch_data = get_corpwatch_data(business_name)
     
     # Factor NLRB into score
     if nlrb_data["found"] and nlrb_data["case_count"] > 0:
@@ -311,6 +313,7 @@ def search_business(business_name: str):
         "google_reviews": google_reviews,
         "eeoc_data": eeoc_data,
         "nlrb_data": nlrb_data,
+        "corpwatch_data": corpwatch_data,
         "fec_data": fec_data,
         "news_data": news_data,
         "legal_data": legal_data,
