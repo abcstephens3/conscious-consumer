@@ -598,6 +598,8 @@ def route_safety(origin: str, destination: str):
         "route_summary": route["summary"],
         "directions": directions
     
+    }
+    
 @app.post("/route_safe_stops")
 def route_safe_stops(
     origin: str,
@@ -690,4 +692,3 @@ def route_safe_stops(
         "interval_hours": interval_hours,
         "waypoints": waypoints
     }    
-    }
