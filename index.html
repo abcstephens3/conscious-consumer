@@ -2620,6 +2620,66 @@ async function fetchSafeStops() {
     }
 }
 
+function getRouteStateClass(overall) {
+    if (!overall) return '';
+    const r = overall.toLowerCase();
+    if (r.includes('low')) return 'low-risk';
+    if (r.includes('medium')) return 'medium-risk';
+    return 'high-risk';
+}
+
+function displayRouteResults(data, withDirections) {
+    const resultsDiv = document.getElementById('route-results');
+    if (!data.found) { resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`; return; }
+    const highRiskColor = data.high_risk_states > 0 ? 'var(--coral-400)' : 'var(--teal-light)';
+    const statesHtml = data.states_on_route.map(state => `
+        <div class="route-state ${getRouteStateClass(state.overall)}">
+            <div class="route-state-header">
+                <div class="route-state-name">${state.state}</div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <span class="badge ${getBadgeClass(state.overall)}">${state.overall}</span>
+                    <button class="btn-outline-navy" style="padding:4px 8px; font-size:0.72em;" onclick="quickSearch('${state.state}')">Details</button>
+                    <button class="btn-outline-navy" style="padding:4px 8px; font-size:0.72em; border-color:var(--teal); color:var(--teal);" onclick="fetchStateStops('${state.state}')">Stops</button>
+                </div>
+            </div>
+            <div class="route-state-ratings">
+                <span class="badge ${getBadgeClass(state.lgbtq)}" style="font-size:0.7em;">LGBTQ+: ${state.lgbtq}</span>
+                <span class="badge ${getBadgeClass(state.racial)}" style="font-size:0.7em;">Racial: ${state.racial}</span>
+                <span class="badge ${getBadgeClass(state.women)}" style="font-size:0.7em;">Women: ${state.women}</span>
+            </div>
+            ${state.advisories && state.advisories.length > 0 ? `<div class="advisory" style="margin-top:8px;">${state.advisories[0]}</div>` : ''}
+        </div>`).join('');
+
+    let directionsHtml = '';
+    if (withDirections && data.directions && data.directions.length > 0) {
+        let stepCount = 0;
+        directionsHtml = `<div class="section-divider">Turn-by-Turn Directions</div>
+            <div class="card" style="padding:0; overflow:hidden;">
+                ${data.directions.map(step => {
+                    if (step.type === 'warning') return `<div class="step-item warning">⚠️ ${step.text}</div>`;
+                    stepCount++;
+                    return `<div class="step-item"><div class="step-num">${stepCount}</div><div>${step.text}${step.distance ? ` <span style="color:var(--blue-muted); font-size:0.9em;">(${step.distance})</span>` : ''}</div></div>`;
+                }).join('')}
+            </div>`;
+    }
+
+    resultsDiv.innerHTML = `
+        <div class="route-summary">
+            <div class="route-stat"><div class="route-stat-num">${data.distance_miles}</div><div class="route-stat-label">Miles</div></div>
+            <div class="route-stat"><div class="route-stat-num">${data.duration_hours}</div><div class="route-stat-label">Hours</div></div>
+            <div class="route-stat"><div class="route-stat-num">${data.states_on_route.length}</div><div class="route-stat-label">States</div></div>
+            <div class="route-stat"><div class="route-stat-num" style="color:${highRiskColor}">${data.high_risk_states}</div><div class="route-stat-label">High Risk</div></div>
+        </div>
+        <p style="font-size:0.82em; color:var(--blue-muted); margin-bottom:14px;">${data.origin} → ${data.destination} via ${data.route_summary}</p>
+        <div class="section-divider">States Along Your Route</div>
+        ${statesHtml}
+        ${directionsHtml}`;
+}
+
+function fetchStateStops(stateName) {
+    openInfoDrawer('submit');
+}
+
 function getSelectedCategories() {
     const active = document.querySelectorAll('.cat-pill.active');
     return Array.from(active).map(p => p.dataset.cat).join(',');
