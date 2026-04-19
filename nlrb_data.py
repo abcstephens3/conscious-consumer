@@ -59,7 +59,7 @@ NLRB_DATA = {
             {"label": "NLRB Case Search — McDonald's", "url": "https://www.nlrb.gov/search/case?f%5B0%5D=case_stye%3AC&f%5B1%5D=respondent%3AMcDonalds"}
         ]
     },
-"starbucks":    "whole foods": {
+    "whole foods": {
         "has_cases": True,
         "case_count": 12,
         "summary": "NLRB charges including surveillance of workers and retaliatory discipline of employees engaged in union activity",
