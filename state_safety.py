@@ -1713,10 +1713,10 @@ def get_state_safety(location):
     
     # Try direct match first
     data = None
-    if key in STATE_SAFETY_DATA:
-        data = STATE_SAFETY_DATA[key]
+    if key in STATE_SAFETY:
+        data = STATE_SAFETY[key]
     else:
-        for state, state_data in STATE_SAFETY_DATA.items():
+        for state, state_data in STATE_SAFETY.items():
             if state in key or key in state:
                 data = state_data
                 key = state
