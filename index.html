@@ -2413,6 +2413,12 @@ function displayResults(data) {
         <div class="card">
             <h4>Flags & Concerns</h4>
             ${data.flags && data.flags.length > 0 ? data.flags.map(f => renderFlag(f)).join('') : '<p style="color:var(--blue-muted); font-size:0.85em;">No major flags detected.</p>'}
+            ${data.nlrb_data && data.nlrb_data.found ? `
+            <div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--navy-100);">
+                <div style="font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--blue-muted); margin-bottom:6px;">NLRB Labor Record</div>
+                <div class="flag-item"><div class="flag-dot"></div>${data.nlrb_data.case_count} unfair labor practice charges filed — ${data.nlrb_data.summary}</div>
+                ${data.nlrb_data.sources ? data.nlrb_data.sources.map(s => `<a href="${s.url}" target="_blank" style="display:inline-block; font-size:0.78em; font-weight:600; color:var(--teal); padding:3px 8px; background:var(--teal-faint); border-radius:4px; margin:3px 3px 0 0; text-decoration:none;">${s.label} →</a>`).join('') : ''}
+            </div>` : ''}
         </div>
 
         ${altHtml}
@@ -2445,10 +2451,18 @@ async function searchTravel() {
 
 function quickSearch(state) { document.getElementById('travelInput').value = state; checkSafetyAlert(state); searchTravel(); }
 
-function renderSafetyItem(label, data) {
+function renderSafetyItem(label, data, mapData) {
     if (!data) return '';
     const advisories = data.advisories && data.advisories.length > 0 ? data.advisories.map(a => `<div class="advisory">${a}</div>`).join('') : '';
-    return `<div class="safety-item"><h5>${label} <span class="badge ${getBadgeClass(data.rating)}">${data.rating}</span></h5><p>${data.notes}</p>${advisories}</div>`;
+    const mapDetails = (label === 'LGBTQ+ Safety' && mapData) ? `
+        <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:4px;">
+            ${mapData.nondiscrimination_law !== undefined ? `<span class="badge ${mapData.nondiscrimination_law ? 'badge-low' : 'badge-high'}" style="font-size:0.68em;">Nondiscrimination law: ${mapData.nondiscrimination_law ? 'Yes' : 'No'}</span>` : ''}
+            ${mapData.conversion_therapy_ban !== undefined ? `<span class="badge ${mapData.conversion_therapy_ban ? 'badge-low' : 'badge-high'}" style="font-size:0.68em;">Conversion therapy ban: ${mapData.conversion_therapy_ban ? 'Yes' : 'No'}</span>` : ''}
+            ${mapData.anti_trans_laws !== undefined ? `<span class="badge ${mapData.anti_trans_laws ? 'badge-high' : 'badge-low'}" style="font-size:0.68em;">Anti-trans laws: ${mapData.anti_trans_laws ? 'Yes' : 'No'}</span>` : ''}
+            ${mapData.map_score !== undefined ? `<span class="badge badge-unrated" style="font-size:0.68em;">MAP score: ${mapData.map_score}</span>` : ''}
+            ${mapData.map_source ? `<a href="${mapData.map_source}" target="_blank" style="font-size:0.68em; color:var(--teal); font-weight:600; padding:2px 6px; background:var(--teal-faint); border-radius:4px;">Full MAP profile →</a>` : ''}
+        </div>` : '';
+    return `<div class="safety-item"><h5>${label} <span class="badge ${getBadgeClass(data.rating)}">${data.rating}</span></h5><p>${data.notes}</p>${advisories}${mapDetails}</div>`;
 }
 
 function renderPoliceViolence(policeData) {
@@ -2482,11 +2496,11 @@ function displayTravelResults(data, localData) {
         <div class="${getBannerClass(data.overall_rating)} overall-banner"><span>${data.location}</span><span>Overall: ${data.overall_rating}</span></div>
         <button class="btn-outline" onclick="prefillRouteToLocation('${data.location}')" style="margin-bottom:12px;">Plan Safe Route Here</button>
         <div class="safety-grid">
-            ${renderSafetyItem('LGBTQ+ Safety', data.lgbtq)}
-            ${renderSafetyItem('Racial Safety', data.racial)}
-            ${renderSafetyItem('Religious Minority', data.religious_minority)}
-            ${renderSafetyItem('Disability Access', data.disability)}
-            ${renderSafetyItem("Women's Safety", data.women)}
+            ${renderSafetyItem('LGBTQ+ Safety', data.lgbtq, data.map_data)}
+        ${renderSafetyItem('Racial Safety', data.racial, null)}
+        ${renderSafetyItem('Religious Minority', data.religious_minority, null)}
+        ${renderSafetyItem('Disability Access', data.disability, null)}
+        ${renderSafetyItem("Women's Safety", data.women, null)}
         </div>
         ${renderPoliceViolence(data.police_violence)}
         <div class="section-divider">Nearby Businesses</div>
@@ -2706,7 +2720,7 @@ function displaySafeStops(data) {
                     <div class="stop-cat-icon">${getCatIcon(s.category)}</div>
                     <div class="stop-info">
                         <div class="stop-name">${s.name}</div>
-                        <div class="stop-meta">${s.category}${s.wheelchair_accessible ? ' · Wheelchair accessible' : ''}${s.lgbtq_friendly ? ' · LGBTQ+ friendly' : ''}</div>
+                        <div class="stop-meta">${s.category}${s.tags && s.tags.length > 0 ? ' · ' + s.tags.join(' · ') : ''}${s.source === 'OpenStreetMap' ? ' · via OpenStreetMap' : ''}</div>
                     </div>
                     <div class="stop-right">
                         <div class="stop-score ${getScoreClass(s.score)}">${s.score}</div>

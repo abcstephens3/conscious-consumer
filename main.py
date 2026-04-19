@@ -16,6 +16,9 @@ from local_awareness import get_local_awareness, get_local_awareness_by_coords
 from ai_summary import generate_summary
 from categories import get_category, get_alternatives_in_category
 from eeoc import get_eeoc_data
+from nlrb_data import get_nlrb_data
+from osm_stops import get_osm_rest_stops
+from map_data import get_map_data, get_map_lgbtq_rating
 
 
 def get_google_reviews(business_name):
@@ -87,6 +90,13 @@ def search_business(business_name: str):
     hr_data = get_human_rights_rating(business_name)
     google_reviews = get_google_reviews(business_name)
     eeoc_data = get_eeoc_data(business_name)
+    nlrb_data = get_nlrb_data(business_name)
+    
+    # Factor NLRB into score
+    if nlrb_data["found"] and nlrb_data["case_count"] > 0:
+        base_score -= nlrb_data["score_impact"]
+        flags.append(f"NLRB unfair labor practice cases: {nlrb_data['case_count']} charges filed")
+        flags.append(f"NLRB summary: {nlrb_data['summary']}")
 
     base_score = 100
     flags = []
@@ -217,6 +227,7 @@ def search_business(business_name: str):
         community_flags["bipoc"]["sources"] = eeoc_cases + [
             {"label": "Search EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}+race"},
             {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+discrimination&type=r"},
+            {"label": "DOJ Civil Rights Cases", "url": f"https://www.justice.gov/crt/search-cases-and-matters?search={business_name.replace(' ', '+')}"},
             {"label": "BBB Profile", "url": bbb_url}
         ]
 
@@ -229,6 +240,7 @@ def search_business(business_name: str):
             {"label": "View FEC Records", "url": f"https://www.fec.gov/data/committees/?q={business_name.replace(' ', '+')}"},
             {"label": "HRC Scorecard", "url": "https://www.hrc.org/resources/corporate-equality-index"},
             {"label": "BBB Profile", "url": bbb_url},
+            {"label": "DOJ Civil Rights Cases", "url": f"https://www.justice.gov/crt/search-cases-and-matters?search={business_name.replace(' ', '+')}"},
             {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+LGBTQ"}
         ]
 
@@ -241,20 +253,30 @@ def search_business(business_name: str):
         community_flags["women"]["sources"] = eeoc_cases + [
             {"label": "Search EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}+gender"},
             {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+gender+discrimination&type=r"},
+            {"label": "DOJ Civil Rights Cases", "url": f"https://www.justice.gov/crt/search-cases-and-matters?search={business_name.replace(' ', '+')}"},
             {"label": "BBB Profile", "url": bbb_url}
         ]
 
     # Workers
-    worker_triggers = ['labor', 'worker', 'wage', 'union', 'employee', 'workplace', 'safety violation', 'osha', 'wage theft']
-    if any(t in all_flags_text for t in worker_triggers):
+    worker_triggers = ['labor', 'worker', 'wage', 'union', 'employee', 'workplace', 'safety violation', 'osha', 'wage theft', 'nlrb']
+    if any(t in all_flags_text for t in worker_triggers) or (nlrb_data.get("found") and nlrb_data.get("case_count", 0) > 0):
         community_flags["workers"]["has_issue"] = True
         community_flags["workers"]["text"] = "Labor violations or worker safety issues on record"
-        community_flags["workers"]["sources"] = [
+        nlrb_sources = nlrb_data.get("sources", []) if nlrb_data.get("found") else []
+        community_flags["workers"]["sources"] = nlrb_sources + [
+            {"label": "NLRB Case Search", "url": f"https://www.nlrb.gov/search/case?f%5B0%5D=case_type%3AC&f%5B1%5D=respondent%3A{business_name.replace(' ', '+')}"},
             {"label": "OSHA Records", "url": f"https://www.osha.gov/pls/imis/establishment.search?p_logger=1&establishment={business_name.replace(' ', '+')}"},
             {"label": "Search Court Records", "url": f"https://www.courtlistener.com/?q={business_name.replace(' ', '+')}+labor+violation&type=r"},
             {"label": "Glassdoor Reviews", "url": glassdoor_url},
             {"label": "BBB Profile", "url": bbb_url},
+            {"label": "DOJ Civil Rights Cases", "url": f"https://www.justice.gov/crt/search-cases-and-matters?search={business_name.replace(' ', '+')}"},
             {"label": "Search News", "url": f"https://news.google.com/search?q={business_name.replace(' ', '+')}+labor+violations"}
+        ]
+    else:
+        community_flags["workers"]["sources"] = [
+            {"label": "NLRB Case Search", "url": f"https://www.nlrb.gov/search/case?f%5B0%5D=case_type%3AC&f%5B1%5D=respondent%3A{business_name.replace(' ', '+')}"},
+            {"label": "Glassdoor Reviews", "url": glassdoor_url},
+            {"label": "BBB Profile", "url": bbb_url}
         ]
 
     # Disability
@@ -266,6 +288,7 @@ def search_business(business_name: str):
         community_flags["disability"]["sources"] = eeoc_cases + [
             {"label": "Search EEOC Records", "url": f"https://www.eeoc.gov/newsroom/search?query={business_name.replace(' ', '+')}+disability"},
             {"label": "ADA.gov Records", "url": "https://www.ada.gov/"},
+            {"label": "DOJ Civil Rights Cases", "url": f"https://www.justice.gov/crt/search-cases-and-matters?search={business_name.replace(' ', '+')}"},
             {"label": "BBB Profile", "url": bbb_url}
         ]
 
@@ -287,6 +310,7 @@ def search_business(business_name: str):
         "community_flags": community_flags,
         "google_reviews": google_reviews,
         "eeoc_data": eeoc_data,
+        "nlrb_data": nlrb_data,
         "fec_data": fec_data,
         "news_data": news_data,
         "legal_data": legal_data,
@@ -460,20 +484,23 @@ def travel_by_address(address: str):
     if not safety_data["found"]:
         return {"found": False, "message": f"No safety data for {state_name}"}
     
+    map_data = get_map_data(state_name)
+    
     return {
         "found": True,
         "location": result["formatted_address"],
         "coordinates": {"lat": lat, "lon": lon},
-        "overall_rating": safety_data["overall"],
-        "lgbtq": safety_data["lgbtq"],
-        "racial": safety_data["racial"],
-        "religious_minority": safety_data["religious_minority"],
-        "disability": safety_data["disability"],
-        "women": safety_data["women"],
+        "overall_rating": safety_data.get("overall", "Unknown"),
+        "lgbtq": safety_data.get("lgbtq", {}),
+        "racial": safety_data.get("racial", {}),
+        "religious_minority": safety_data.get("religious_minority", {}),
+        "disability": safety_data.get("disability", {}),
+        "women": safety_data.get("women", {}),
         "police_violence": {
             "state": state_violence,
             "city": city_violence
-        }
+        },
+        "map_data": map_data if map_data.get("found") else None
     }    
     
 @app.post("/route_safety")
@@ -677,6 +704,16 @@ def route_safe_stops(
             closest["lat"], closest["lon"],
             cats, radius_miles=15, min_score=65
         )
+        
+        # Supplement with OSM rest stops if rest category selected
+        if "rest" in cats:
+            osm_stops = get_osm_rest_stops(closest["lat"], closest["lon"], radius_miles=15)
+            existing_names = {s["name"].lower() for s in stops}
+            for osm in osm_stops:
+                if osm["name"].lower() not in existing_names:
+                    stops.append(osm)
+            stops.sort(key=lambda x: (-x["score"], x["distance_miles"]))
+            stops = stops[:8]
         
         waypoints.append({
             "hours_in": target_time,

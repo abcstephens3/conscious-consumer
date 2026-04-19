@@ -3,6 +3,8 @@
 # ACLU Legislative Tracking, Movement Advancement Project,
 # ADA National Network, Pew Research
 
+from map_data import get_map_data, get_map_lgbtq_rating
+
 STATE_SAFETY = {
     "Alabama": {
         "overall": "High Risk",
@@ -1705,43 +1707,52 @@ STATE_ABBREVIATIONS = {
     "WI": "Wisconsin", "WY": "Wyoming", "DC": "Washington DC"
 }
 
-def get_state_safety(state_name):
-    try:
-        # Expand any state abbreviation found in the input
-        parts = [p.strip() for p in state_name.split(",")]
-        expanded_parts = []
-        for part in parts:
-            upper = part.strip().upper()
-            if upper in STATE_ABBREVIATIONS:
-                expanded_parts.append(STATE_ABBREVIATIONS[upper])
-            else:
-                expanded_parts.append(part)
-        state_name = ", ".join(expanded_parts)
-
-        # Try exact match
-        data = STATE_SAFETY.get(state_name, None)
-
-        # Try title case
-        if not data:
-            data = STATE_SAFETY.get(state_name.title(), None)
-
-        # Try extracting just the state from "City, State"
-        if not data and "," in state_name:
-            state_part = state_name.split(",")[-1].strip()
-            data = STATE_SAFETY.get(state_part.title(), None)
-
-        if not data:
-            return {"found": False}
-
-        return {
-            "found": True,
-            "state": state_name,
-            "overall": data["overall"],
-            "lgbtq": data["lgbtq"],
-            "racial": data["racial"],
-            "religious_minority": data["religious_minority"],
-            "disability": data["disability"],
-            "women": data["women"]
-        }
-    except Exception as e:
+def get_state_safety(location):
+    """Get safety ratings for a state, enriched with MAP LGBTQ+ data"""
+    key = location.lower().strip()
+    
+    # Try direct match first
+    data = None
+    if key in STATE_SAFETY_DATA:
+        data = STATE_SAFETY_DATA[key]
+    else:
+        for state, state_data in STATE_SAFETY_DATA.items():
+            if state in key or key in state:
+                data = state_data
+                key = state
+                break
+    
+    if not data:
         return {"found": False}
+    
+    import copy
+    result = copy.deepcopy(data)
+    result["found"] = True
+    
+    # Enrich with MAP data
+    map_data = get_map_data(key)
+    if map_data["found"]:
+        # Override LGBTQ rating with MAP's more precise data
+        map_rating = get_map_lgbtq_rating(key)
+        if map_rating and result.get("lgbtq"):
+            result["lgbtq"]["rating"] = map_rating
+            
+            # Add MAP-specific advisories
+            map_advisories = map_data.get("advisories", [])
+            existing = result["lgbtq"].get("advisories", [])
+            combined = list(dict.fromkeys(existing + map_advisories))
+            result["lgbtq"]["advisories"] = combined
+            
+            # Add MAP policy details
+            result["lgbtq"]["map_score"] = map_data.get("tally_score")
+            result["lgbtq"]["map_category"] = map_data.get("category")
+            result["lgbtq"]["nondiscrimination_law"] = map_data.get("nondiscrimination")
+            result["lgbtq"]["conversion_therapy_ban"] = map_data.get("conversion_therapy_ban")
+            result["lgbtq"]["anti_trans_laws"] = map_data.get("anti_trans_laws")
+            result["lgbtq"]["map_source"] = map_data.get("source")
+        
+        # Update overall rating if MAP shows negative category
+        if map_data.get("category") == "negative" and result.get("overall") != "High Risk":
+            result["overall"] = "High Risk"
+    
+    return result

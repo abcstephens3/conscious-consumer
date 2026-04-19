@@ -197,6 +197,7 @@ def get_safe_stops_near(lat, lon, categories, radius_miles=10, min_score=65):
         "pharmacy": ["pharmacy", "drugstore"]
     }
     
+    doj_url = "https://www.justice.gov/crt/search-cases-and-matters"
     radius_meters = int(radius_miles * 1609.34)
     place_types = []
     for cat in categories:
@@ -301,4 +302,16 @@ def get_safe_stops_near(lat, lon, categories, radius_miles=10, min_score=65):
     
     # Sort by score descending, then distance
     results.sort(key=lambda x: (-x["score"], x["distance_miles"]))
-    return results[:8]        
+    
+    # Add community certification flags from Google Places attributes
+    for result in results:
+        tags = []
+        if result.get("wheelchair_accessible"):
+            tags.append("Wheelchair accessible")
+        if result.get("lgbtq_friendly"):
+            tags.append("LGBTQ+ friendly")
+        if result.get("community_verified"):
+            tags.append("Community verified")
+        result["tags"] = tags
+    
+    return results[:8]
