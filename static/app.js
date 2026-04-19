@@ -8,7 +8,114 @@ const TITLES = {
 
 const HIGH_RISK_STATES = ['Alabama','Arkansas','Florida','Georgia','Idaho','Indiana','Iowa','Kansas','Kentucky','Louisiana','Mississippi','Missouri','Montana','Nebraska','North Dakota','Ohio','Oklahoma','South Carolina','South Dakota','Tennessee','Texas','Utah','West Virginia','Wyoming'];
 
-const ALL_COMPANIES = ['Walmart','Amazon','Target','Costco','Home Depot','Lowes','Kroger','Walgreens','CVS','Dollar General','Dollar Tree','Shein','Fashion Nova','TJ Maxx','Marshalls','Ross','Macys','Nordstrom','Gap','Old Navy','H&M','Zara','Forever 21','Nike','Adidas','Under Armour','Best Buy','Ebay','Etsy','Wayfair','IKEA','Sephora','Ulta','Bath and Body Works',"Victoria's Secret",'Ralph Lauren',"McDonald's",'Starbucks','Chick-fil-A','Burger King','Taco Bell',"Wendy's",'Subway',"Domino's",'Pizza Hut','Chipotle','Dunkin','Popeyes','KFC','Sonic','Dairy Queen','Five Guys','In-N-Out','Shake Shack','Panda Express','Olive Garden',"Applebee's",'IHOP',"Denny's",'Red Lobster','Panera',"Papa John's",'Little Caesars','Apple','Google','Microsoft','Meta','Twitter/X','Netflix','Uber','Lyft','Airbnb','TikTok','Snap','Spotify','Adobe','Salesforce','Oracle','IBM','Intel','Nvidia','AMD','Qualcomm','Cisco','Dell','HP','Samsung','Sony','PayPal','Shopify','Zoom','Discord','JPMorgan','Bank of America','Wells Fargo','Citibank','Goldman Sachs','Morgan Stanley','American Express','Visa','Mastercard','Discover','Capital One','Chase','US Bank','Charles Schwab','Fidelity','Vanguard','BlackRock','Coinbase','Robinhood','Exxon','Chevron','Shell','BP','ConocoPhillips','Halliburton','Duke Energy','NextEra Energy','Tesla Energy','First Solar','Johnson & Johnson','Pfizer','Moderna','Merck','AbbVie','Eli Lilly','Novartis','Roche','Bayer','Purdue Pharma','Coca-Cola','Pepsi','Nestlé','Unilever','Kraft Heinz','General Mills',"Kellogg's",'Tyson Foods','Smithfield','Beyond Meat','State Farm','Allstate','Geico','Progressive','Liberty Mutual','USAA','Nationwide','AIG','Aflac','AT&T','Verizon','T-Mobile','Xfinity','Spectrum','Cox','Tesla','Ford','General Motors','Toyota','Honda','Volkswagen','BMW','Mercedes','Volvo','Subaru','Rivian','Carvana','Marriott','Hilton','Delta Airlines','United Airlines','American Airlines','Southwest Airlines','Carnival Cruise','Royal Caribbean'];
+const ALL_COMPANIES = [
+    // Retail / Shopping
+    'Walmart','Amazon','Target','Costco','Home Depot','Lowes','Kroger','Walgreens','CVS',
+    'Dollar General','Dollar Tree','Shein','Fashion Nova','TJ Maxx','Marshalls','Ross',
+    'Macys','Nordstrom','Gap','Old Navy','H&M','Zara','Forever 21','Nike','Adidas',
+    'Under Armour','Best Buy','Ebay','Etsy','Wayfair','IKEA','Sephora','Ulta',
+    'Bath and Body Works',"Victoria's Secret",'Ralph Lauren','Patagonia','REI',
+    'Burlington','Five Below','Aldi','Trader Joes','Whole Foods','Sprouts',
+    'Publix','Safeway','Albertsons','Instacart','Shipt','Chewy','PetSmart','Petco',
+
+    // Fast Food / Restaurants
+    "McDonald's",'Starbucks','Chick-fil-A','Burger King','Taco Bell',"Wendy's",
+    'Subway',"Domino's",'Pizza Hut','Chipotle','Dunkin','Popeyes','KFC','Sonic',
+    'Dairy Queen','Five Guys','In-N-Out','Shake Shack','Panda Express','Olive Garden',
+    "Applebee's",'IHOP',"Denny's",'Red Lobster','Panera',"Papa John's",'Little Caesars',
+    'Cracker Barrel','Texas Roadhouse','Buffalo Wild Wings','Chilis','Outback Steakhouse',
+    'Jack in the Box','Carl\'s Jr','Hardees','Whataburger','Wingstop','Raising Canes',
+    'Dutch Bros','Jamba Juice','Smoothie King',
+
+    // Technology
+    'Apple','Google','Microsoft','Meta','Twitter/X','Netflix','Uber','Lyft','Airbnb',
+    'TikTok','Snap','Spotify','Adobe','Salesforce','Oracle','IBM','Intel','Nvidia',
+    'AMD','Qualcomm','Cisco','Dell','HP','Samsung','Sony','PayPal','Shopify','Zoom',
+    'Discord','DoorDash','Instacart','Grubhub','Robinhood','Coinbase','Stripe','Square',
+    'Palantir','Cloudflare','Dropbox','Slack','Twitter','LinkedIn','Pinterest','Reddit',
+    'Twitch','YouTube','Hulu','Disney Plus','Peacock','Paramount Plus','HBO Max',
+
+    // Banking / Finance
+    'JPMorgan','Bank of America','Wells Fargo','Citibank','Goldman Sachs','Morgan Stanley',
+    'American Express','Visa','Mastercard','Discover','Capital One','Chase','US Bank',
+    'Charles Schwab','Fidelity','Vanguard','BlackRock','Coinbase','Robinhood',
+    'TD Bank','PNC Bank','Truist','Regions Bank','SunTrust','Citizens Bank',
+    'Navy Federal','USAA','Ally Bank','Marcus by Goldman Sachs','Synchrony',
+    'Experian','Equifax','TransUnion','H&R Block','TurboTax','Intuit',
+
+    // Healthcare / Pharma
+    'Johnson & Johnson','Pfizer','Moderna','Merck','AbbVie','Eli Lilly','Novartis',
+    'Roche','Bayer','Purdue Pharma','CVS Health','UnitedHealth','Anthem','Cigna',
+    'Aetna','Humana','HCA Healthcare','Tenet Health','Kaiser Permanente',
+    'Walgreens Boots Alliance','McKesson','AmerisourceBergen','Cardinal Health',
+    'DaVita','Fresenius','Davita','Kindred Healthcare','Envision Healthcare',
+
+    // Energy / Oil
+    'Exxon','Chevron','Shell','BP','ConocoPhillips','Halliburton','Duke Energy',
+    'NextEra Energy','Tesla Energy','First Solar','Dominion Energy','Southern Company',
+    'Entergy','Exelon','PG&E','Con Edison','National Grid','Sunrun','Vivint Solar',
+    'Schlumberger','Baker Hughes','Marathon Oil','Valero','Phillips 66',
+
+    // Food & Beverage
+    'Coca-Cola','Pepsi','Nestlé','Unilever','Kraft Heinz','General Mills',"Kellogg's",
+    'Tyson Foods','Smithfield','Beyond Meat','Impossible Foods','Cargill','ADM',
+    'Conagra','Campbell Soup','Hormel','Dole','Chobani','Danone','Monster Beverage',
+    'Red Bull','Anheuser-Busch','Molson Coors','Constellation Brands','Brown-Forman',
+    'Philip Morris','Altria','RJ Reynolds','JM Smucker','McCormick','Land O Lakes',
+
+    // Insurance
+    'State Farm','Allstate','Geico','Progressive','Liberty Mutual','USAA','Nationwide',
+    'AIG','Aflac','Travelers','Hartford Financial','Chubb','Zurich','MetLife',
+    'Prudential','New York Life','Northwestern Mutual','Unum','Principal Financial',
+
+    // Telecom / Media
+    'AT&T','Verizon','T-Mobile','Xfinity','Spectrum','Cox','Dish Network',
+    'DirecTV','Comcast','Charter','Frontier','CenturyLink','Lumen Technologies',
+    'Disney','Warner Bros','NBCUniversal','Paramount','Fox Corporation','News Corp',
+    'ViacomCBS','Discovery','AMC Networks','iHeartMedia','Clear Channel',
+
+    // Automotive
+    'Tesla','Ford','General Motors','Toyota','Honda','Volkswagen','BMW','Mercedes',
+    'Volvo','Subaru','Rivian','Carvana','CarMax','AutoNation','Penske Automotive',
+    'Stellantis','Chrysler','Jeep','Ram','Dodge','Hyundai','Kia','Mazda','Nissan',
+    'Mitsubishi','Porsche','Audi','Land Rover','Jaguar',
+
+    // Travel / Hospitality
+    'Marriott','Hilton','Delta Airlines','United Airlines','American Airlines',
+    'Southwest Airlines','Carnival Cruise','Royal Caribbean','Norwegian Cruise',
+    'Hyatt','IHG','Wyndham','Choice Hotels','Best Western','Airbnb','Expedia',
+    'Booking.com','Priceline','Tripadvisor','Hertz','Enterprise','Avis','Budget',
+    'Spirit Airlines','Frontier Airlines','JetBlue','Alaska Airlines',
+
+    // Defense / Government Contractors
+    'Lockheed Martin','Raytheon','Boeing','Northrop Grumman','General Dynamics',
+    'L3Harris','Leidos','Booz Allen Hamilton','SAIC','ManTech','DXC Technology',
+    'Accenture','Deloitte','KPMG','PricewaterhouseCoopers','Ernst & Young',
+
+    // Private Prisons
+    'GEO Group','CoreCivic',
+
+    // Agriculture
+    'Monsanto','Bayer CropScience','Syngenta','BASF','Corteva','Deere & Company',
+    'Perdue Farms','Sanderson Farms','Pilgrim\'s Pride','Wayne Farms',
+
+    // Gig / Staffing
+    'DoorDash','Uber Eats','Grubhub','TaskRabbit','Fiverr','Upwork',
+    'Manpower','Robert Half','Adecco','Kelly Services','Randstad',
+
+    // Real Estate
+    'Blackstone','Invitation Homes','American Homes 4 Rent','Zillow','Redfin',
+    'RE/MAX','Keller Williams','Coldwell Banker','CBRE','Jones Lang LaSalle',
+
+    // Education
+    'University of Phoenix','DeVry','Grand Canyon University','Strayer University',
+    'Pearson','McGraw Hill','Chegg','Duolingo','Coursera','Khan Academy',
+
+    // Law Enforcement
+    'Minneapolis Police Department','Los Angeles Police Department',
+    'Chicago Police Department','Houston Police Department',
+    'New York Police Department','Philadelphia Police Department'
+];
 
 const DATA_SOURCES = {
     'source-fec': { title: 'Federal Election Commission', description: 'The FEC tracks all political donations by corporations and PACs. We use this data to identify companies with significant political spending, particularly in ways that may conflict with consumer interests.', url: 'https://www.fec.gov', impact: 'Up to 40 points deducted based on committee count and donation patterns.' },
@@ -28,6 +135,15 @@ const COMMUNITIES_INFO = {
     disability: { label: 'People with Disabilities', description: 'We track ADA compliance, accessible transportation availability, and terrain accessibility for each state.' },
     women: { label: 'Women', description: 'We track reproductive healthcare access, abortion restrictions, and legal protections in each state.' }
 };
+
+function updateCompanyCount() {
+    const countEls = document.querySelectorAll('.stat-card-num, .stat-num');
+    countEls.forEach(el => {
+        if (el.nextElementSibling && el.nextElementSibling.textContent.includes('Companies')) {
+            el.textContent = ALL_COMPANIES.length + '+';
+        }
+    });
+}
 
 function switchPanel(panel) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -950,6 +1066,7 @@ function prevTravelTip() { currentTravelTip = (currentTravelTip - 1 + TRAVEL_TIP
 
 showTip();
 showTravelTip();
+updateCompanyCount();
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
