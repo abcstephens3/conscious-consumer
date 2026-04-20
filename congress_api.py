@@ -132,10 +132,15 @@ def get_congress_member_data(name):
     community_bills = analyze_bills_for_communities(all_bills)
     
     # Get terms info
-    terms = details.get("terms", {}).get("item", [])
+    terms_raw = details.get("terms", {})
+    if isinstance(terms_raw, list):
+        terms = terms_raw
+    elif isinstance(terms_raw, dict):
+        terms = terms_raw.get("item", [])
+    else:
+        terms = []
     if isinstance(terms, dict):
         terms = [terms]
-    current_term = terms[-1] if terms else {}
     
     return {
         "found": True,
