@@ -141,6 +141,7 @@ def get_congress_member_data(name):
         terms = []
     if isinstance(terms, dict):
         terms = [terms]
+    current_term = terms[-1] if terms else {}
     
     return {
         "found": True,
