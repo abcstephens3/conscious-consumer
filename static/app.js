@@ -124,8 +124,14 @@ const DATA_SOURCES = {
     'source-mpv': { title: 'Mapping Police Violence', description: 'A comprehensive database tracking all known police killings in the US, maintained by researchers and updated regularly. Used for both travel safety ratings and law enforcement agency scoring.', url: 'https://mappingpoliceviolence.us', impact: 'Used for travel safety ratings and law enforcement agency business scores.' },
     'source-hrc': { title: 'HRC Corporate Equality Index', description: "The Human Rights Campaign's annual rating of major employers on LGBTQ+ workplace policies.", url: 'https://www.hrc.org', impact: 'Informs state-level LGBTQ+ safety ratings and travel advisories.' },
     'source-naacp': { title: 'NAACP Travel Advisories', description: 'The NAACP issues travel advisories for states with documented threats to Black Americans and other communities of color.', url: 'https://naacp.org', impact: 'Directly informs state racial safety ratings.' },
-    'source-esg': { title: 'Sustainalytics ESG Data', description: 'ESG risk scores based on Sustainalytics methodology. Higher scores indicate greater ESG risk. Our dataset covers 250+ companies.', url: 'https://www.sustainalytics.com', impact: 'Up to 25 points deducted based on ESG risk rating.' },
-    'source-bhr': { title: 'Business & Human Rights Resource Centre', description: 'Tracks human rights impacts of business globally, including labor rights, supply chain abuses, and community impacts.', url: 'https://www.business-humanrights.org', impact: 'Up to 25 points deducted based on human rights risk rating.' }
+    'source-esg': { title: 'Sustainalytics ESG Data', description: 'ESG risk scores based on Sustainalytics methodology. Higher scores indicate greater ESG risk. Our dataset covers 400+ companies.', url: 'https://www.sustainalytics.com', impact: 'Up to 25 points deducted based on ESG risk rating.' },
+    'source-bhr': { title: 'Business & Human Rights Resource Centre', description: 'Tracks human rights impacts of business globally, including labor rights, supply chain abuses, and community impacts.', url: 'https://www.business-humanrights.org', impact: 'Up to 25 points deducted based on human rights risk rating.' },
+    'source-eeoc': { title: 'Equal Employment Opportunity Commission', description: 'The EEOC enforces federal laws prohibiting employment discrimination. We track EEOC lawsuits and settlements against companies across all five protected community categories.', url: 'https://www.eeoc.gov', impact: 'Up to 20 points deducted based on case count and communities affected.' },
+    'source-nlrb': { title: 'National Labor Relations Board', description: 'The NLRB tracks unfair labor practice charges against employers including union-busting, illegal surveillance, and retaliation against organizing workers.', url: 'https://www.nlrb.gov', impact: 'Up to 20 points deducted based on charge count and severity.' },
+    'source-map': { title: 'Movement Advancement Project', description: 'MAP tracks 50+ LGBTQ+ laws and policies in all 50 states and DC, including nondiscrimination laws, conversion therapy bans, healthcare protections, and anti-trans legislation.', url: 'https://mapresearch.org', impact: 'Directly informs state LGBTQ+ safety ratings with law-by-law detail.' },
+    'source-doj': { title: 'DOJ Civil Rights Division', description: 'The Department of Justice Civil Rights Division enforces federal laws prohibiting discrimination. We surface civil rights enforcement actions and settlements across all five community categories.', url: 'https://www.justice.gov/crt', impact: 'Informs community flag source links for BIPOC, LGBTQ+, Women, Disability, and Workers.' },
+    'source-osm': { title: 'OpenStreetMap', description: 'Free, open-source mapping data maintained by a global community. Used to supplement Google Places for rest stops, accessible amenities, and public facilities along routes.', url: 'https://www.openstreetmap.org', impact: 'Used for safe stop recommendations along driving routes.' },
+    'source-corpwatch': { title: 'CorpWatch', description: 'Extracts subsidiary relationship data from SEC 10-K filings, mapping corporate family trees including parent companies, subsidiaries, and countries of operation.', url: 'http://api.corpwatch.org', impact: 'Displayed as corporate structure transparency information.' }
 };
 
 const COMMUNITIES_INFO = {
@@ -135,6 +141,11 @@ const COMMUNITIES_INFO = {
     disability: { label: 'People with Disabilities', description: 'We track ADA compliance, accessible transportation availability, and terrain accessibility for each state.' },
     women: { label: 'Women', description: 'We track reproductive healthcare access, abortion restrictions, and legal protections in each state.' }
 };
+
+function updateSourceCount() {
+    const el = document.getElementById('source-count');
+    if (el) el.textContent = Object.keys(DATA_SOURCES).length;
+}
 
 function updateCompanyCount() {
     const countEls = document.querySelectorAll('.stat-card-num, .stat-num');
@@ -375,7 +386,7 @@ function openInfoDrawer(type) {
             </div>`;
     } else if (type === 'sources') {
         document.getElementById('drawerTitle').textContent = 'Data Sources';
-        document.getElementById('drawerVerdict').textContent = '8 independent data sources';
+        document.getElementById('drawerVerdict').textContent = `${Object.keys(DATA_SOURCES).length} independent data sources`;
         document.getElementById('drawerBody').innerHTML = Object.entries(DATA_SOURCES).map(([key, source]) => `
             <div style="margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--navy-100);">
                 <div style="font-weight:600; font-size:0.92em; color:#0a1628; margin-bottom:4px;">${source.title}</div>
@@ -1074,6 +1085,7 @@ function prevTravelTip() { currentTravelTip = (currentTravelTip - 1 + TRAVEL_TIP
 showTip();
 showTravelTip();
 updateCompanyCount();
+updateSourceCount();
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
