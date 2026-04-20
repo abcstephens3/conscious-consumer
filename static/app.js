@@ -143,7 +143,7 @@ const COMMUNITIES_INFO = {
 };
 
 function updateSourceCount() {
-    ['source-count', 'source-count-business'].forEach(id => {
+    ['source-count', 'source-count-business', 'source-count-card'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = Object.keys(DATA_SOURCES).length;
     });
