@@ -661,8 +661,8 @@ const corpwatch = data.corpwatch_data || {};
             ${corpwatch.source_url ? `<a href="${corpwatch.source_url}" target="_blank" style="font-size:0.78em; color:var(--teal); font-weight:600; margin-top:8px; display:inline-block;">Full corporate profile →</a>` : ''}
         </div>` : '';
 
-    document.getElementById('results').innerHTML =
-    	${productNote} `
+    document.getElementById('results').innerHTML = `
+        ${productNote}
         <div class="score-hero">
             <div class="ring-wrap">
                 <svg viewBox="0 0 88 88">
