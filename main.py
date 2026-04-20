@@ -1,10 +1,12 @@
 import os
 import requests
+import time
 port = int(os.environ.get("PORT", 8000))
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from votesmart import get_politician_data
 from fec import get_fec_donations
 from news import get_news_sentiment
 from legal import get_legal_records
@@ -53,6 +55,11 @@ def get_google_reviews(business_name):
     except Exception as e:
         return {"found": False}
 
+# Daily spotlight cache
+_spotlight_cache = None
+_spotlight_cache_time = 0
+SPOTLIGHT_CACHE_DURATION = 86400  # 24 hours
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -62,6 +69,86 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/daily_spotlight")
+def daily_spotlight():
+    global _spotlight_cache, _spotlight_cache_time
+    
+    # Return cached result if fresh
+    if _spotlight_cache and (time.time() - _spotlight_cache_time) < SPOTLIGHT_CACHE_DURATION:
+        return _spotlight_cache
+    
+    import requests
+    import os
+    NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
+    
+    result = {"positive": None, "negative": None}
+    
+    try:
+        # Negative spotlight
+        neg_response = requests.get(
+            "https://newsapi.org/v2/everything",
+            params={
+                "q": "corporate lawsuit settlement discrimination violation fraud penalty",
+                "language": "en",
+                "sortBy": "publishedAt",
+                "pageSize": 10,
+                "apiKey": NEWS_API_KEY
+            },
+            timeout=8
+        )
+        neg_data = neg_response.json()
+        if neg_data.get("articles"):
+            for article in neg_data["articles"]:
+                title = article.get("title", "")
+                source = article.get("source", {}).get("name", "")
+                url = article.get("url", "")
+                company = article.get("source", {}).get("name", "")
+                # Try to match to a known company
+                if title and url:
+                    result["negative"] = {
+                        "headline": title,
+                        "source": source,
+                        "url": url,
+                        "published": article.get("publishedAt", "")[:10]
+                    }
+                    break
+    except:
+        pass
+    
+    try:
+        # Positive spotlight
+        pos_response = requests.get(
+            "https://newsapi.org/v2/everything",
+            params={
+                "q": "corporate sustainability award ESG workers union certification diversity achievement",
+                "language": "en",
+                "sortBy": "publishedAt",
+                "pageSize": 10,
+                "apiKey": NEWS_API_KEY
+            },
+            timeout=8
+        )
+        pos_data = pos_response.json()
+        if pos_data.get("articles"):
+            for article in pos_data["articles"]:
+                title = article.get("title", "")
+                source = article.get("source", {}).get("name", "")
+                url = article.get("url", "")
+                if title and url:
+                    result["positive"] = {
+                        "headline": title,
+                        "source": source,
+                        "url": url,
+                        "published": article.get("publishedAt", "")[:10]
+                    }
+                    break
+    except:
+        pass
+    
+    _spotlight_cache = result
+    _spotlight_cache_time = time.time()
+    return result
 
 @app.get("/")
 def root():
@@ -331,6 +418,111 @@ def search_business(business_name: str):
         "product_redirect": product_redirect,
         "human_rights_data": hr_data
     }
+
+@app.post("/search_public_figure")
+def search_public_figure(name: str):
+    # First try VoteSmart — if found, they're a politician
+    politician_data = get_politician_data(name)
+    
+    if politician_data["found"]:
+        # Pull additional data for politicians
+        news_data = get_news_sentiment(name)
+        legal_data = get_legal_records(name)
+        fec_data = get_fec_donations(name)
+        
+        # Generate summary
+        summary = generate_summary(name, None, [], {}, {}, legal_data)
+        
+        return {
+            "found": True,
+            "type": "politician",
+            "name": politician_data["name"],
+            "party": politician_data.get("party", ""),
+            "state": politician_data.get("state", ""),
+            "office": politician_data.get("office", ""),
+            "rating_category": get_politician_rating(politician_data["score"]),
+            "community_ratings": politician_data["community_ratings"],
+            "relevant_ratings": politician_data["relevant_ratings"],
+            "recent_votes": politician_data["recent_votes"],
+            "photo_url": politician_data["photo_url"],
+            "source_url": politician_data["source_url"],
+            "news": news_data,
+            "legal": legal_data,
+            "fec": fec_data,
+            "summary": summary,
+            "candidate_id": politician_data["candidate_id"]
+        }
+    
+    # Not a politician — treat as public figure
+    news_data = get_news_sentiment(name)
+    legal_data = get_legal_records(name)
+    fec_data = get_fec_donations(name)
+    
+    # Determine community flags from news and legal
+    flags = []
+    all_text = ""
+    if news_data.get("found"):
+        all_text += " ".join(news_data.get("flagged_headlines", []))
+    if legal_data.get("found"):
+        all_text += " ".join(legal_data.get("flagged_cases", []))
+    all_text = all_text.lower()
+    
+    community_flags = {
+        "bipoc": any(t in all_text for t in ["race", "racial", "discrimination", "civil rights", "naacp"]),
+        "lgbtq": any(t in all_text for t in ["lgbtq", "gay", "transgender", "sexual orientation"]),
+        "women": any(t in all_text for t in ["sexual harassment", "gender", "women", "assault", "metoo"]),
+        "workers": any(t in all_text for t in ["labor", "wage", "worker", "union", "employee"]),
+        "disability": any(t in all_text for t in ["disability", "ada", "accessibility"])
+    }
+    
+    # Determine integrity rating from available signals
+    negative_signals = 0
+    if legal_data.get("found") and legal_data.get("case_count", 0) > 3:
+        negative_signals += 2
+    if legal_data.get("found") and legal_data.get("case_count", 0) > 0:
+        negative_signals += 1
+    if news_data.get("found") and news_data.get("negative_count", 0) > 3:
+        negative_signals += 2
+    if news_data.get("found") and news_data.get("negative_count", 0) > 0:
+        negative_signals += 1
+    if any(community_flags.values()):
+        negative_signals += 1
+    
+    if negative_signals == 0:
+        rating_category = "Community Aligned"
+    elif negative_signals <= 2:
+        rating_category = "Inconsistent Record"
+    elif negative_signals <= 4:
+        rating_category = "Credibility Concerns"
+    else:
+        rating_category = "Pattern of Harm"
+    
+    summary = generate_summary(name, None, flags, {}, {}, legal_data)
+    
+    if not news_data.get("found") and not legal_data.get("found") and not fec_data.get("found"):
+        return {"found": False, "message": f"No public record found for {name}. Try searching their full name."}
+    
+    return {
+        "found": True,
+        "type": "public_figure",
+        "name": name,
+        "rating_category": rating_category,
+        "community_flags": community_flags,
+        "news": news_data,
+        "legal": legal_data,
+        "fec": fec_data,
+        "summary": summary
+    }
+
+def get_politician_rating(score):
+    if score >= 75:
+        return "Community Champion"
+    elif score >= 50:
+        return "Mixed Record"
+    elif score >= 25:
+        return "Accountability Concerns"
+    else:
+        return "Poor Accountability"
 
 @app.post("/travel")
 def travel_safety(location: str):

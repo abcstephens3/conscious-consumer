@@ -3,6 +3,7 @@ const TITLES = {
     business: ['Business Transparency', 'Search any business, brand, or law enforcement agency'],
     travel: ['Safe Travel Guide', 'Search any US city, state, or full address'],
     route: ['Route Planner', 'Check safety ratings for your entire journey'],
+    political: ['Public Figures', 'Politicians, executives, celebrities, and others whose influence shapes communities'],
     about: ['About & Sources', 'Learn about Conscious Consumer and our data sources']
 };
 
@@ -160,7 +161,7 @@ function updateCompanyCount() {
 
 function switchPanel(panel) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    ['home','business','travel','route','about'].forEach(id => {
+    ['home','business','travel','route','political','about'].forEach(id => {
         ['nav-','mob-','tab-'].forEach(prefix => {
             const el = document.getElementById(prefix + id);
             if (el) el.classList.remove('active');
@@ -1084,13 +1085,210 @@ function showTravelTip() { document.getElementById('travel-tips-body').textConte
 function nextTravelTip() { currentTravelTip = (currentTravelTip + 1) % TRAVEL_TIPS.length; showTravelTip(); }
 function prevTravelTip() { currentTravelTip = (currentTravelTip - 1 + TRAVEL_TIPS.length) % TRAVEL_TIPS.length; showTravelTip(); }
 
+// ===== DAILY SPOTLIGHT =====
+async function loadDailySpotlight() {
+    try {
+        const response = await fetch('/daily_spotlight');
+        const data = await response.json();
+        
+        const posEl = document.getElementById('spotlight-positive');
+        const negEl = document.getElementById('spotlight-negative');
+        
+        if (posEl) {
+            if (data.positive) {
+                posEl.innerHTML = `
+                    <div class="featured-item" onclick="window.open('${data.positive.url}', '_blank')">
+                        <div class="featured-name" style="font-size:0.88em; line-height:1.4;">${data.positive.headline}</div>
+                        <div class="featured-sub">${data.positive.source} · ${data.positive.published}</div>
+                        <div style="margin-top:8px;">
+                            <a href="${data.positive.url}" target="_blank" style="font-size:0.78em; color:var(--teal); font-weight:600;">Read More →</a>
+                        </div>
+                    </div>`;
+            } else {
+                posEl.innerHTML = `<p style="font-size:0.85em; color:var(--blue-muted); padding:12px;">No positive spotlight available today.</p>`;
+            }
+        }
+        
+        if (negEl) {
+            if (data.negative) {
+                negEl.innerHTML = `
+                    <div class="featured-item" onclick="window.open('${data.negative.url}', '_blank')">
+                        <div class="featured-name" style="font-size:0.88em; line-height:1.4;">${data.negative.headline}</div>
+                        <div class="featured-sub">${data.negative.source} · ${data.negative.published}</div>
+                        <div style="margin-top:8px;">
+                            <a href="${data.negative.url}" target="_blank" style="font-size:0.78em; color:var(--coral-600); font-weight:600;">Read More →</a>
+                        </div>
+                    </div>`;
+            } else {
+                negEl.innerHTML = `<p style="font-size:0.85em; color:var(--blue-muted); padding:12px;">No flagged spotlight available today.</p>`;
+            }
+        }
+    } catch(e) {
+        console.log('Spotlight load failed:', e);
+    }
+}
+
+// ===== PUBLIC FIGURES =====
+async function searchPublicFigure() {
+    const name = document.getElementById('politicalInput').value.trim();
+    if (!name) return;
+    const resultsDiv = document.getElementById('political-results');
+    resultsDiv.innerHTML = `<div class="loading"><div class="loading-spinner"></div>Searching public record...</div>`;
+    try {
+        const response = await fetch(`/search_public_figure?name=${encodeURIComponent(name)}`, { method: 'POST' });
+        const data = await response.json();
+        displayPublicFigureResults(data);
+    } catch(e) {
+        resultsDiv.innerHTML = `<div class="error-msg">Could not connect to the API.</div>`;
+    }
+}
+
+function getRatingClass(category) {
+    if (category === 'Community Champion' || category === 'Community Aligned') return 'high';
+    if (category === 'Mixed Record' || category === 'Inconsistent Record') return 'medium';
+    return 'low';
+}
+
+function displayPublicFigureResults(data) {
+    const resultsDiv = document.getElementById('political-results');
+    if (!data.found) {
+        resultsDiv.innerHTML = `<div class="error-msg">${data.message}</div>`;
+        return;
+    }
+
+    const rc = getRatingClass(data.rating_category);
+    const isPolitician = data.type === 'politician';
+
+    // Community flags
+    const flagsSource = isPolitician ? data.community_ratings : data.community_flags;
+    const communityHtml = Object.entries(flagsSource).map(([community, value]) => {
+        const hasIssue = isPolitician
+            ? (value !== null && value < 50)
+            : value === true;
+        const displayValue = isPolitician && value !== null ? `${value}%` : '';
+        return `
+            <div class="comm-flag ${hasIssue ? 'warn' : 'ok'}">
+                <div class="comm-flag-label">${community.toUpperCase()}</div>
+                <div class="comm-flag-text">${displayValue}${hasIssue ? ' — Concerns documented' : ' — No specific concerns found'}</div>
+            </div>`;
+    }).join('');
+
+    // Interest group ratings (politicians only)
+    const ratingsHtml = isPolitician && data.relevant_ratings && data.relevant_ratings.length > 0
+        ? `<div class="card">
+            <h4>Interest Group Ratings</h4>
+            <p style="font-size:0.8em; color:var(--blue-muted); margin-bottom:10px;">Ratings from NAACP, HRC, AFL-CIO, ADA, and other advocacy organizations</p>
+            ${data.relevant_ratings.map(r => `
+                <div class="flag-item">
+                    <div class="flag-dot" style="background:${parseFloat(r.rating) >= 50 ? 'var(--teal)' : 'var(--coral-600)'}"></div>
+                    ${r.org}: <strong>${r.rating}</strong>
+                </div>`).join('')}
+           </div>`
+        : '';
+
+    // Recent votes (politicians only)
+    const votesHtml = isPolitician && data.recent_votes && data.recent_votes.length > 0
+        ? `<div class="card">
+            <h4>Recent Votes</h4>
+            ${data.recent_votes.map(v => `
+                <div class="flag-item">
+                    <div class="flag-dot"></div>
+                    ${v.title || v.billNumber || 'Bill'} — ${v.action || ''}
+                </div>`).join('')}
+           </div>`
+        : '';
+
+    // News section
+    const newsHtml = data.news && data.news.found && data.news.flagged_headlines && data.news.flagged_headlines.length > 0
+        ? `<div class="card">
+            <h4>Recent News Coverage</h4>
+            ${data.news.flagged_headlines.map(h => `
+                <div class="flag-item">
+                    <div class="flag-dot"></div>
+                    ${typeof h === 'string' ? h : h.title || h}
+                </div>`).join('')}
+           </div>`
+        : '';
+
+    // Legal section
+    const legalHtml = data.legal && data.legal.found && data.legal.case_count > 0
+        ? `<div class="card">
+            <h4>Court Records</h4>
+            <p style="font-size:0.82em; color:var(--blue-muted); margin-bottom:8px;">${data.legal.case_count} federal court cases found</p>
+            ${data.legal.flagged_cases ? data.legal.flagged_cases.map(c => `
+                <div class="flag-item"><div class="flag-dot"></div>${c}</div>`).join('') : ''}
+            <a href="https://www.courtlistener.com/?q=${encodeURIComponent(data.name)}" target="_blank" 
+               style="font-size:0.78em; color:var(--teal); font-weight:600; margin-top:8px; display:inline-block;">
+               Search Full Court Records →</a>
+           </div>`
+        : '';
+
+    // FEC section
+    const fecHtml = data.fec && data.fec.found
+        ? `<div class="card">
+            <h4>Political Donations</h4>
+            ${data.fec.committees ? data.fec.committees.map(c => `
+                <div class="flag-item"><div class="flag-dot"></div>${c}</div>`).join('') : ''}
+            <a href="https://www.fec.gov/data/committees/?q=${encodeURIComponent(data.name)}" target="_blank"
+               style="font-size:0.78em; color:var(--teal); font-weight:600; margin-top:8px; display:inline-block;">
+               View Full FEC Records →</a>
+           </div>`
+        : '';
+
+    // VoteSmart link (politicians only)
+    const voteSmartHtml = isPolitician && data.source_url
+        ? `<div class="card">
+            <h4>Full Profile</h4>
+            <a href="${data.source_url}" target="_blank" 
+               style="font-size:0.85em; color:var(--teal); font-weight:600;">
+               View Full VoteSmart Profile →</a>
+            ${isPolitician ? `<br><a href="https://www.fec.gov/data/candidates/?q=${encodeURIComponent(data.name)}" 
+               target="_blank" style="font-size:0.85em; color:var(--teal); font-weight:600; margin-top:6px; display:inline-block;">
+               View FEC Campaign Finance →</a>` : ''}
+           </div>`
+        : '';
+
+    resultsDiv.innerHTML = `
+        <div class="score-hero" style="align-items:flex-start;">
+            ${data.photo_url ? `<img src="${data.photo_url}" 
+                style="width:72px; height:72px; border-radius:50%; object-fit:cover; margin-right:16px; border:3px solid var(--navy-200);"
+                onerror="this.style.display='none'">` : ''}
+            <div class="score-info" style="flex:1;">
+                <h3>${data.name}</h3>
+                ${isPolitician ? `<div style="font-size:0.82em; color:var(--blue-muted); margin-bottom:6px;">
+                    ${data.party ? data.party + ' · ' : ''}${data.state ? data.state + ' · ' : ''}${data.office || ''}
+                </div>` : ''}
+                <div class="verdict ${rc}" style="margin-bottom:8px;">${data.rating_category}</div>
+                <div class="score-summary">${data.summary || ''}</div>
+            </div>
+        </div>
+
+        <div class="community-flags-title">Community Impact</div>
+        <div class="community-flags-grid">
+            ${communityHtml}
+        </div>
+
+        ${ratingsHtml}
+        ${votesHtml}
+        ${newsHtml}
+        ${legalHtml}
+        ${fecHtml}
+        ${voteSmartHtml}
+    `;
+}
+
+document.getElementById('politicalInput').addEventListener('keypress', e => { if (e.key === 'Enter') searchPublicFigure(); });
+
 showTip();
 showTravelTip();
 updateCompanyCount();
 updateSourceCount();
+loadDailySpotlight();
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service_worker.js').then(() => console.log('SW registered')).catch(err => console.log('SW error:', err));
     });
 }
+
+
