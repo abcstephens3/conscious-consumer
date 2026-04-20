@@ -446,17 +446,25 @@ def search_public_figure(name: str):
         summary = generate_summary(name_out, None, [], {}, {}, legal_data)
         
         return {
-        "found": True,
-        "type": "public_figure",
-        "name": name,
-        "rating_category": rating_category,
-        "community_flags": community_flags,
-        "individual_fec": individual_fec if individual_fec["found"] else None,
-        "news": news_data,
-        "legal": legal_data,
-        "fec": fec_data,
-        "summary": summary
-    }
+            "found": True,
+            "type": "politician",
+            "name": name_out,
+            "party": party_out,
+            "state": state_out,
+            "office": office_out,
+            "rating_category": get_politician_rating(politician_data.get("score", 50)) if politician_data["found"] else "Mixed Record",
+            "community_ratings": politician_data.get("community_ratings", {c: None for c in ["bipoc","lgbtq","workers","disability","women"]}) if politician_data["found"] else {},
+            "relevant_ratings": politician_data.get("relevant_ratings", []) if politician_data["found"] else [],
+            "recent_votes": politician_data.get("recent_votes", []) if politician_data["found"] else [],
+            "photo_url": politician_data.get("photo_url", "") if politician_data["found"] else "",
+            "source_url": politician_data.get("source_url", "") if politician_data["found"] else congress_data.get("source_url", ""),
+            "congress_data": congress_data if congress_data["found"] else None,
+            "individual_fec": individual_fec if individual_fec["found"] else None,
+            "news": news_data,
+            "legal": legal_data,
+            "fec": fec_data,
+            "summary": summary
+        }
     
     # Not a politician — treat as public figure
     news_data = get_news_sentiment(name)
