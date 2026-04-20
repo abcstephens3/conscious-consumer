@@ -107,7 +107,7 @@ def search_business(business_name: str):
     base_score = 100
     flags = []
     
-        # Factor NLRB into score
+    # Factor NLRB into score
     if nlrb_data["found"] and nlrb_data["case_count"] > 0:
         base_score -= nlrb_data["score_impact"]
         flags.append(f"NLRB unfair labor practice cases: {nlrb_data['case_count']} charges filed")
