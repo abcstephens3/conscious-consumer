@@ -22,14 +22,21 @@ def search_member(name):
         if not members:
             return {"found": False}
         
-        # Try to match name
-        name_lower = name.lower()
+        # Try to match name more precisely
+        name_parts = name.lower().split()
         for m in members:
-            full = f"{m.get('name', '')}".lower()
-            if any(part in full for part in name_lower.split()):
+            full = m.get('name', '').lower()
+            # Require at least last name match
+            if name_parts[-1] in full:
                 return {"found": True, "member": m}
         
-        return {"found": True, "member": members[0]}
+        # Only return first result if name parts strongly match
+        if members:
+            first = members[0].get('name', '').lower()
+            if any(part in first for part in name_parts if len(part) > 3):
+                return {"found": True, "member": members[0]}
+        
+        return {"found": False}
     
     except Exception as e:
         return {"found": False, "error": str(e)}

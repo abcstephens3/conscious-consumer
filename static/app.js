@@ -1160,7 +1160,9 @@ function displayPublicFigureResults(data) {
     const isPolitician = data.type === 'politician';
 
     // Community flags
-    const flagsSource = isPolitician ? data.community_ratings : data.community_flags;
+    const flagsSource = isPolitician 
+        ? (data.community_ratings && Object.keys(data.community_ratings).length > 0 ? data.community_ratings : data.community_flags || {})
+        : data.community_flags || {};
     const communityHtml = Object.entries(flagsSource).map(([community, value]) => {
         const hasIssue = isPolitician
             ? (value !== null && value < 50)
