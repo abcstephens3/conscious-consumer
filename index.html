@@ -70,12 +70,10 @@
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/></svg>
             Route Planner
         </div>
-        
         <div class="nav-item" id="nav-political" onclick="switchPanel('political')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-                    Public Figures
-                </div>
-        
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            Public Figures
+        </div>
         <div class="nav-label">Info</div>
         <div class="nav-item" id="nav-about" onclick="switchPanel('about')">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
@@ -357,9 +355,13 @@
                 <div class="hero-title">Know who you follow and support</div>
                 <div class="hero-sub">Public figures — elected officials, corporate leaders, entertainers, and influencers — hold power that directly affects communities. This tool surfaces their documented public record so you can make informed decisions about who you support, follow, and amplify.</div>
             </div>
-            <div class="search-bar-wrap">
-                <input type="text" id="politicalInput" placeholder="e.g. Bernie Sanders, Elon Musk, Taylor Swift..." />
-                <button class="btn-primary" onclick="searchPublicFigure()">Search</button>
+            <div class="search-section">
+                <h3>Search a Public Figure</h3>
+                <div class="search-bar">
+                    <input type="text" id="politicalInput" placeholder="e.g. Bernie Sanders, Elon Musk, Taylor Swift..." />
+                    <button class="btn-primary" onclick="searchPublicFigure()">Search</button>
+                </div>
+                <p class="search-hint">Try: Bernie Sanders, Elon Musk, Taylor Swift, Marco Rubio</p>
             </div>
             <div id="political-results"></div>
         </div>

@@ -1223,17 +1223,52 @@ function displayPublicFigureResults(data) {
            </div>`
         : '';
 
-    // FEC section
-    const fecHtml = data.fec && data.fec.found
+    // Individual FEC donations
+    const indFec = data.individual_fec;
+    const indFecHtml = indFec && indFec.found
         ? `<div class="card">
-            <h4>Political Donations</h4>
-            ${data.fec.committees ? data.fec.committees.map(c => `
-                <div class="flag-item"><div class="flag-dot"></div>${c}</div>`).join('') : ''}
-            <a href="https://www.fec.gov/data/committees/?q=${encodeURIComponent(data.name)}" target="_blank"
+            <h4>Personal Political Donations</h4>
+            <p style="font-size:0.82em; color:var(--blue-muted); margin-bottom:10px;">
+                ${indFec.total_donations} donations totaling $${indFec.total_amount?.toLocaleString() || 0}
+            </p>
+            ${indFec.party_breakdown ? Object.entries(indFec.party_breakdown).map(([party, amount]) => `
+                <div class="flag-item">
+                    <div class="flag-dot"></div>
+                    ${party}: $${amount.toLocaleString()}
+                </div>`).join('') : ''}
+            ${indFec.recipients ? indFec.recipients.map(r => `
+                <div class="flag-item" style="font-size:0.82em;">
+                    <div class="flag-dot" style="background:var(--blue-muted)"></div>
+                    ${r.recipient} — $${r.amount?.toLocaleString()} (${r.date})
+                </div>`).join('') : ''}
+            <a href="${indFec.source_url}" target="_blank"
                style="font-size:0.78em; color:var(--teal); font-weight:600; margin-top:8px; display:inline-block;">
                View Full FEC Records →</a>
-           </div>`
-        : '';
+           </div>` : '';
+
+    // Congress.gov bill sponsorships
+    const congressData = data.congress_data;
+    const congressHtml = congressData && congressData.found
+        ? `<div class="card">
+            <h4>Congressional Activity</h4>
+            <p style="font-size:0.82em; color:var(--blue-muted); margin-bottom:10px;">
+                ${congressData.sponsored_count || 0} bills sponsored · ${congressData.cosponsored_count || 0} bills cosponsored
+            </p>
+            ${congressData.community_bills ? Object.entries(congressData.community_bills)
+                .filter(([, bills]) => bills.length > 0)
+                .map(([community, bills]) => `
+                    <div style="margin-bottom:10px;">
+                        <div style="font-size:0.75em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--teal); margin-bottom:4px;">${community.toUpperCase()} Legislation</div>
+                        ${bills.map(b => `
+                            <div class="flag-item" style="font-size:0.82em;">
+                                <div class="flag-dot" style="background:var(--teal)"></div>
+                                ${b.title}
+                            </div>`).join('')}
+                    </div>`).join('') : ''}
+            <a href="${congressData.source_url}" target="_blank"
+               style="font-size:0.78em; color:var(--teal); font-weight:600; margin-top:8px; display:inline-block;">
+               View Congress.gov Profile →</a>
+           </div>` : '';
 
     // VoteSmart link (politicians only)
     const voteSmartHtml = isPolitician && data.source_url
@@ -1268,10 +1303,11 @@ function displayPublicFigureResults(data) {
             ${communityHtml}
         </div>
 
-        ${ratingsHtml}
         ${votesHtml}
+        ${congressHtml}
         ${newsHtml}
         ${legalHtml}
+        ${indFecHtml}
         ${fecHtml}
         ${voteSmartHtml}
     `;

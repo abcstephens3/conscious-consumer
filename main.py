@@ -7,6 +7,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from votesmart import get_politician_data
+from congress_api import get_congress_member_data
+from fec import get_individual_donations
 from fec import get_fec_donations
 from news import get_news_sentiment
 from legal import get_legal_records
@@ -421,37 +423,40 @@ def search_business(business_name: str):
 
 @app.post("/search_public_figure")
 def search_public_figure(name: str):
-    # First try VoteSmart — if found, they're a politician
+    # Try VoteSmart first
     politician_data = get_politician_data(name)
     
-    if politician_data["found"]:
-        # Pull additional data for politicians
+    # Try Congress.gov as backup or supplement
+    congress_data = get_congress_member_data(name)
+    
+    # Also get individual FEC donations
+    individual_fec = get_individual_donations(name)
+    
+    if politician_data["found"] or congress_data["found"]:
         news_data = get_news_sentiment(name)
         legal_data = get_legal_records(name)
         fec_data = get_fec_donations(name)
         
-        # Generate summary
-        summary = generate_summary(name, None, [], {}, {}, legal_data)
+        # Merge data — VoteSmart takes priority, Congress.gov fills gaps
+        name_out = politician_data.get("name") if politician_data["found"] else congress_data.get("name", name)
+        party_out = politician_data.get("party") if politician_data["found"] else congress_data.get("party", "")
+        state_out = politician_data.get("state") if politician_data["found"] else congress_data.get("state", "")
+        office_out = politician_data.get("office") if politician_data["found"] else congress_data.get("office", "")
+        
+        summary = generate_summary(name_out, None, [], {}, {}, legal_data)
         
         return {
-            "found": True,
-            "type": "politician",
-            "name": politician_data["name"],
-            "party": politician_data.get("party", ""),
-            "state": politician_data.get("state", ""),
-            "office": politician_data.get("office", ""),
-            "rating_category": get_politician_rating(politician_data["score"]),
-            "community_ratings": politician_data["community_ratings"],
-            "relevant_ratings": politician_data["relevant_ratings"],
-            "recent_votes": politician_data["recent_votes"],
-            "photo_url": politician_data["photo_url"],
-            "source_url": politician_data["source_url"],
-            "news": news_data,
-            "legal": legal_data,
-            "fec": fec_data,
-            "summary": summary,
-            "candidate_id": politician_data["candidate_id"]
-        }
+        "found": True,
+        "type": "public_figure",
+        "name": name,
+        "rating_category": rating_category,
+        "community_flags": community_flags,
+        "individual_fec": individual_fec if individual_fec["found"] else None,
+        "news": news_data,
+        "legal": legal_data,
+        "fec": fec_data,
+        "summary": summary
+    }
     
     # Not a politician — treat as public figure
     news_data = get_news_sentiment(name)
