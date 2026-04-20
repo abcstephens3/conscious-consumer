@@ -1,4 +1,4 @@
-const CACHE_NAME = 'conscious-consumer-v1';
+const CACHE_NAME = 'conscious-consumer-v3';
 const urlsToCache = ['/app', '/static/icon-192.png', '/static/icon-512.png'];
 
 self.addEventListener('install', event => {

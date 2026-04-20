@@ -143,8 +143,10 @@ const COMMUNITIES_INFO = {
 };
 
 function updateSourceCount() {
-    const el = document.getElementById('source-count');
-    if (el) el.textContent = Object.keys(DATA_SOURCES).length;
+    ['source-count', 'source-count-business'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = Object.keys(DATA_SOURCES).length;
+    });
 }
 
 function updateCompanyCount() {
