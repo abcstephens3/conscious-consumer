@@ -80,8 +80,6 @@ def daily_spotlight():
     if _spotlight_cache and (time.time() - _spotlight_cache_time) < SPOTLIGHT_CACHE_DURATION:
         return _spotlight_cache
     
-    import requests
-    import os
     NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
     
     result = {"positive": None, "negative": None}
@@ -421,6 +419,16 @@ def search_business(business_name: str):
         "human_rights_data": hr_data
     }
 
+def get_politician_rating(score):
+    if score >= 75:
+        return "Community Champion"
+    elif score >= 50:
+        return "Mixed Record"
+    elif score >= 25:
+        return "Accountability Concerns"
+    else:
+        return "Poor Accountability"
+
 @app.post("/search_public_figure")
 def search_public_figure(name: str):
     # Try VoteSmart first
@@ -474,10 +482,10 @@ def search_public_figure(name: str):
     # Determine community flags from news and legal
     flags = []
     all_text = ""
-    if news_data.get("found"):
-        all_text += " ".join(news_data.get("flagged_headlines", []))
-    if legal_data.get("found"):
-        all_text += " ".join(legal_data.get("flagged_cases", []))
+    headlines = news_data.get("flagged_headlines", []) if news_data.get("found") else []
+    all_text += " ".join([h.get("title", "") if isinstance(h, dict) else str(h) for h in headlines])
+    cases = legal_data.get("flagged_cases", []) if legal_data.get("found") else []
+    all_text += " ".join([c.get("title", "") if isinstance(c, dict) else str(c) for c in cases])
     all_text = all_text.lower()
     
     community_flags = {
@@ -521,21 +529,12 @@ def search_public_figure(name: str):
         "name": name,
         "rating_category": rating_category,
         "community_flags": community_flags,
+        "individual_fec": individual_fec if individual_fec["found"] else None,
         "news": news_data,
         "legal": legal_data,
         "fec": fec_data,
         "summary": summary
     }
-
-def get_politician_rating(score):
-    if score >= 75:
-        return "Community Champion"
-    elif score >= 50:
-        return "Mixed Record"
-    elif score >= 25:
-        return "Accountability Concerns"
-    else:
-        return "Poor Accountability"
 
 @app.post("/travel")
 def travel_safety(location: str):
