@@ -22,13 +22,18 @@ def search_member(name):
         if not members:
             return {"found": False}
         
-        # Try to match name more precisely
+        # Try to match name — Congress.gov returns "LastName, FirstName" format
         name_parts = name.lower().split()
+        last_name = name_parts[-1]
+        first_name = name_parts[0] if len(name_parts) > 1 else ""
+        
         for m in members:
             full = m.get('name', '').lower()
-            # Require at least last name match
-            if name_parts[-1] in full:
+            # Congress returns "Warren, Elizabeth" format
+            if last_name in full and (not first_name or first_name in full):
                 return {"found": True, "member": m}
+        
+        return {"found": False}
         
         # Only return first result if name parts strongly match
         if members:

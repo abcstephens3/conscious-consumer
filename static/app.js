@@ -1226,6 +1226,16 @@ function displayPublicFigureResults(data) {
         : '';
 
     // Individual FEC donations
+    const fecHtml = data.fec && data.fec.found
+        ? `<div class="card">
+            <h4>Political Donations (Committee)</h4>
+            ${data.fec.committees ? data.fec.committees.map(c => `
+                <div class="flag-item"><div class="flag-dot"></div>${c}</div>`).join('') : ''}
+            <a href="https://www.fec.gov/data/committees/?q=${encodeURIComponent(data.name)}" target="_blank"
+               style="font-size:0.78em; color:var(--teal); font-weight:600; margin-top:8px; display:inline-block;">
+               View Full FEC Records →</a>
+           </div>` : '';
+
     const indFec = data.individual_fec;
     const indFecHtml = indFec && indFec.found
         ? `<div class="card">
